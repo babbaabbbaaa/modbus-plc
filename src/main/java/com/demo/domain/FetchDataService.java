@@ -9,17 +9,19 @@ import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersResponse;
 import com.serotonin.modbus4j.msg.WriteRegisterRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.xwpf.usermodel.TableRowHeightRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -93,9 +95,11 @@ public class FetchDataService {
             plcData.setWeldFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7013)));
 
             plcData.setBarcodeData(getBarcodeData(slaveId, 7054));
-            plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
+            if (null != patternConfig) {
+                plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
+            }
             checkDup(plcData);
-        } catch (ModbusTransportException e) {
+        } catch (Exception e) {
             log.error("cannot communicate with plc: ", e);
         }
         return plcData;
@@ -116,7 +120,7 @@ public class FetchDataService {
         return data[0];
     }
 
-    private void getData(int slaveId) throws ModbusTransportException {
+    public PLCData getData(int slaveId) throws ModbusTransportException {
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 0, 156);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
@@ -131,13 +135,16 @@ public class FetchDataService {
         if (valid) {
             //7000 ON/OFF SIGNAL
             //7001 Data Ready
+            plcData.setReady(data[1]);
             //7002 DUP SIGNAL
+            plcData.setDuplicate(data[2]);
             //7003 Product Type ID
             short productTypeId = data[3];
             PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
             plcData.setProductTypeId(productTypeId);
             //7004 Float Ratio
             short ratio = data[4];
+            plcData.setRatio(ratio);
             //7005 RESERVED
             //7006 GENERAL
             plcData.setGeneralFunc(GeneralFunctionEnum.mapDefinition(data[6]));
@@ -197,19 +204,21 @@ public class FetchDataService {
             plcData.setHeightMeasure20(getFloatValue(data[52], data[53], ratio));
             //7054 ~ 7154 Barcode Data
             int size = 0;
-            for (int i = 54; i < 155; i ++) {
+            for (int i = 54; i <= 154; i ++) {
                 if (data[i] > 0) {
                     size ++;
                 }
             }
-            byte[] barcodeBytes = new byte[size * 2];
-            for (int i = 54, j = 0; i < 155; i ++) {
-                if (data[i] > 0) {
-                    short s = data[i];
-
-                }
+            ByteBuffer byteBuffer = ByteBuffer.allocate(size * 2);
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+            shortBuffer.put(Arrays.copyOfRange(data, 54, size));
+            plcData.setBarcodeData(new String(byteBuffer.array(), StandardCharsets.UTF_8));
+            if (null != patternConfig) {
+                plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
             }
         }
+        return plcData;
     }
 
     private float getFloatValue(short height, short low, int ratio) {
@@ -243,8 +252,9 @@ public class FetchDataService {
     }
 
     private String getBarcode(String barcodeData, int start, int end) {
-        if (Objects.equals("error", barcodeData)) {
-            return barcodeData;
+        if (!StringUtils.hasText(barcodeData) || "error".equalsIgnoreCase(barcodeData)
+                || barcodeData.length() < end) {
+            return "";
         }
         if (StringUtils.hasText(barcodeData) && barcodeData.length() > end) {
             return barcodeData.substring(start, end);

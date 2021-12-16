@@ -58,6 +58,10 @@ public class PLCData {
     private String comments;
     @Transient
     private short ratio;
+    @Transient
+    private short duplicate;
+    @Transient
+    private short ready;
 
 
 }
