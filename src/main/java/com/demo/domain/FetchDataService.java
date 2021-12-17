@@ -46,6 +46,7 @@ public class FetchDataService {
             return;
         }
         PLCData plcData = createPLC();
+        checkDup(plcData);
         plcRepository.save(plcData);
         setShortValue(slaveId, 7001, (short) 0);//mark the data read done
     }
@@ -55,6 +56,7 @@ public class FetchDataService {
         plcData.setDataSource("自动线");
         plcData.setLogTime(LocalDateTime.now());
         try {
+
             int divides = getShortValue(slaveId, 7004);
             //measurement data
             plcData.setHeightMeasure1(getFloatValue(slaveId, 7014, divides));
@@ -84,6 +86,9 @@ public class FetchDataService {
             plcData.setProductTypeId(productTypeId);
 
 
+            plcData.setDuplicate(getShortValue(slaveId, 7002));
+            plcData.setReady(getShortValue(slaveId, 7001));
+
             //functional check
             plcData.setGeneralFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7006)));
             plcData.setHeightFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7007)));
@@ -96,9 +101,9 @@ public class FetchDataService {
 
             plcData.setBarcodeData(getBarcodeData(slaveId, 7054));
             if (null != patternConfig) {
+                plcData.setRatio(patternConfig.getRatio());
                 plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
             }
-            checkDup(plcData);
         } catch (Exception e) {
             log.error("cannot communicate with plc: ", e);
         }
@@ -110,7 +115,7 @@ public class FetchDataService {
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
         int d = Integer.parseInt(fillBinary(data[1]) + fillBinary(data[0]), 2);
-        return ((float) d) / divides;
+        return ((float) d) / 2000;
     }
 
     private short getShortValue(int slaveId, int offset) throws ModbusTransportException {

@@ -188,7 +188,7 @@ class TestPage extends React.Component{
       disabled: true
     },
     {
-      label: '测高系数(7004)',
+      label: '测高系数(配置)',
       controlType: 'Input',
       key: 'ratio',
       disabled: true
