@@ -245,7 +245,8 @@ public class FetchDataService {
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
         shortBuffer.put(Arrays.copyOfRange(data, 0, size));
-        return new String(byteBuffer.array(), StandardCharsets.UTF_8);
+        String barcode = new String(byteBuffer.array(), StandardCharsets.UTF_8);
+        return barcode.trim();
     }
 
     private String getBarcode(String barcodeData, int start, int end) {
