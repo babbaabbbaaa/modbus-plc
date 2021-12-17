@@ -10,7 +10,7 @@ const apis = {
   secureConfig: `${prefix}/secure/config`,
   secureConfigs: `${prefix}/secure/configs`,
   secureLogin: `${prefix}/secure/login`,
-  secureSignal: `${prefix}/secure/signal`,
+  secureSignal: `${prefix}/plc/signal`,
   test: `${prefix}/plc/test`
 }
 
