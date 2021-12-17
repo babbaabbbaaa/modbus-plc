@@ -9,9 +9,13 @@ import com.demo.domain.PLCDataService;
 import com.demo.model.PLCConfirmModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.model.Response;
+import com.serotonin.modbus4j.ModbusMaster;
+import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
-import lombok.AllArgsConstructor;
+import com.serotonin.modbus4j.locator.BaseLocator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +24,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("plc")
 public class PLCController {
@@ -29,6 +32,19 @@ public class PLCController {
     private final PLCDataService plcDataService;
     private final PatternConfigService patternConfigService;
     private final FetchDataService fetchDataService;
+    private final BaseLocator<Number> signalLocator;
+
+    private ModbusMaster modbusMaster;
+
+    public PLCController(PLCDataService plcDataService,
+                         PatternConfigService patternConfigService,
+                         FetchDataService fetchDataService,
+                         @Value("${modbus.slave_id}") int slaveId) {
+        this.plcDataService = plcDataService;
+        this.patternConfigService = patternConfigService;
+        this.fetchDataService = fetchDataService;
+        this.signalLocator = BaseLocator.holdingRegister(slaveId, 7000, DataType.TWO_BYTE_INT_SIGNED);
+    }
 
     @PostMapping("search")
     public Response<Page<PLCData>> search(@RequestBody PLCSearchCriteria criteria) {
@@ -62,7 +78,21 @@ public class PLCController {
         if (fetchDataService.getModbusMaster() == null) {
             return Response.success(new PLCData());
         }
-        return Response.success(fetchDataService.getData(1));
+        return Response.success(fetchDataService.createPLC());
     }
+
+    @GetMapping("signal")
+    public Response<Short> signal() throws ModbusTransportException, ErrorResponseException {
+        if (null == modbusMaster) {
+            return Response.success((short) 1);
+        }
+        return Response.success(modbusMaster.getValue(signalLocator).shortValue());
+    }
+
+    @Autowired(required = false)
+    public void setModbusMaster(ModbusMaster modbusMaster) {
+        this.modbusMaster = modbusMaster;
+    }
+
 
 }

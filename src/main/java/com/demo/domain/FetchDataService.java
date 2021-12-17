@@ -121,7 +121,7 @@ public class FetchDataService {
     }
 
     public PLCData getData(int slaveId) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 0, 156);
+        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7000, 156);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
         boolean valid = false;
@@ -234,21 +234,18 @@ public class FetchDataService {
     private String getBarcodeData(int slaveId, int offset) throws ModbusTransportException {
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, offset, 100);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
-        byte[] data = response.getData();
-
+        short[] data = response.getShortData();
         int size = 0;
-        for (byte d : data) {
+        for (short d : data) {
             if (d > 0) {
                 size++;
             }
         }
-        byte[] ready2Use = new byte[size];
-        for (int i = 0; i < size; ) {
-            ready2Use[i] = data[i + 1];
-            ready2Use[i + 1] = data[i];
-            i += 2;
-        }
-        return new String(ready2Use, StandardCharsets.UTF_8);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(size * 2);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+        shortBuffer.put(Arrays.copyOfRange(data, 0, size));
+        return new String(byteBuffer.array(), StandardCharsets.UTF_8);
     }
 
     private String getBarcode(String barcodeData, int start, int end) {

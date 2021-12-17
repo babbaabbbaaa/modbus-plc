@@ -25,7 +25,6 @@ import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -42,7 +41,8 @@ public class SecureController {
     private ModbusMaster modbusMaster;
 
     public SecureController(PatternConfigService patternConfigService,
-                            PLCDataService plcDataService, @Value("${modbus.slave_id}") int slaveId,
+                            PLCDataService plcDataService,
+                            @Value("${modbus.slave_id}") int slaveId,
                             @Value("${config.password}") String configPwd) throws ModbusInitException {
         this.patternConfigService = patternConfigService;
         this.plcDataService = plcDataService;
@@ -57,7 +57,6 @@ public class SecureController {
 
     @GetMapping("signal")
     public Response<Short> signal() throws ModbusTransportException, ErrorResponseException {
-//        return Response.success((short) (new SecureRandom().nextBoolean() ? 1 : 0));
         return Response.success(modbusMaster.getValue(signalLocator).shortValue());
     }
 
