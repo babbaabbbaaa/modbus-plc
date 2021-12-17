@@ -57,33 +57,40 @@ public class FetchDataService {
         plcData.setLogTime(LocalDateTime.now());
         try {
 
-            int divides = getShortValue(slaveId, 7004);
-            //measurement data
-            plcData.setHeightMeasure1(getFloatValue(slaveId, 7014, divides));
-            plcData.setHeightMeasure2(getFloatValue(slaveId, 7016, divides));
-            plcData.setHeightMeasure3(getFloatValue(slaveId, 7018, divides));
-            plcData.setHeightMeasure4(getFloatValue(slaveId, 7020, divides));
-            plcData.setHeightMeasure5(getFloatValue(slaveId, 7022, divides));
-            plcData.setHeightMeasure6(getFloatValue(slaveId, 7024, divides));
-            plcData.setHeightMeasure7(getFloatValue(slaveId, 7026, divides));
-            plcData.setHeightMeasure8(getFloatValue(slaveId, 7028, divides));
-            plcData.setHeightMeasure9(getFloatValue(slaveId, 7030, divides));
-            plcData.setHeightMeasure10(getFloatValue(slaveId, 7032, divides));
-            plcData.setHeightMeasure11(getFloatValue(slaveId, 7034, divides));
-            plcData.setHeightMeasure12(getFloatValue(slaveId, 7036, divides));
-            plcData.setHeightMeasure13(getFloatValue(slaveId, 7038, divides));
-            plcData.setHeightMeasure14(getFloatValue(slaveId, 7040, divides));
-            plcData.setHeightMeasure15(getFloatValue(slaveId, 7042, divides));
-            plcData.setHeightMeasure16(getFloatValue(slaveId, 7044, divides));
-            plcData.setHeightMeasure17(getFloatValue(slaveId, 7046, divides));
-            plcData.setHeightMeasure18(getFloatValue(slaveId, 7048, divides));
-            plcData.setHeightMeasure19(getFloatValue(slaveId, 7050, divides));
-            plcData.setHeightMeasure20(getFloatValue(slaveId, 7052, divides));
-
             //product type
             short productTypeId = getShortValue(slaveId, 7003);
             PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
             plcData.setProductTypeId(productTypeId);
+
+            plcData.setBarcodeData(getBarcodeData(slaveId, 7054));
+            short ratio = 2000;
+            if (null != patternConfig) {
+                ratio = patternConfig.getRatio() == 0 ? (2000) : patternConfig.getRatio();
+                plcData.setRatio(patternConfig.getRatio());
+                plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
+            }
+            //measurement data
+            plcData.setHeightMeasure1(getFloatValue(slaveId, 7014, ratio));
+            plcData.setHeightMeasure2(getFloatValue(slaveId, 7016, ratio));
+            plcData.setHeightMeasure3(getFloatValue(slaveId, 7018, ratio));
+            plcData.setHeightMeasure4(getFloatValue(slaveId, 7020, ratio));
+            plcData.setHeightMeasure5(getFloatValue(slaveId, 7022, ratio));
+            plcData.setHeightMeasure6(getFloatValue(slaveId, 7024, ratio));
+            plcData.setHeightMeasure7(getFloatValue(slaveId, 7026, ratio));
+            plcData.setHeightMeasure8(getFloatValue(slaveId, 7028, ratio));
+            plcData.setHeightMeasure9(getFloatValue(slaveId, 7030, ratio));
+            plcData.setHeightMeasure10(getFloatValue(slaveId, 7032, ratio));
+            plcData.setHeightMeasure11(getFloatValue(slaveId, 7034, ratio));
+            plcData.setHeightMeasure12(getFloatValue(slaveId, 7036, ratio));
+            plcData.setHeightMeasure13(getFloatValue(slaveId, 7038, ratio));
+            plcData.setHeightMeasure14(getFloatValue(slaveId, 7040, ratio));
+            plcData.setHeightMeasure15(getFloatValue(slaveId, 7042, ratio));
+            plcData.setHeightMeasure16(getFloatValue(slaveId, 7044, ratio));
+            plcData.setHeightMeasure17(getFloatValue(slaveId, 7046, ratio));
+            plcData.setHeightMeasure18(getFloatValue(slaveId, 7048, ratio));
+            plcData.setHeightMeasure19(getFloatValue(slaveId, 7050, ratio));
+            plcData.setHeightMeasure20(getFloatValue(slaveId, 7052, ratio));
+
 
 
             plcData.setDuplicate(getShortValue(slaveId, 7002));
@@ -99,23 +106,19 @@ public class FetchDataService {
             plcData.setSpinCheckFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7012)));
             plcData.setWeldFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7013)));
 
-            plcData.setBarcodeData(getBarcodeData(slaveId, 7054));
-            if (null != patternConfig) {
-                plcData.setRatio(patternConfig.getRatio());
-                plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
-            }
+
         } catch (Exception e) {
             log.error("cannot communicate with plc: ", e);
         }
         return plcData;
     }
 
-    private float getFloatValue(int slaveId, int offset, int divides) throws ModbusTransportException {
+    private float getFloatValue(int slaveId, int offset, int ratio) throws ModbusTransportException {
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, offset, 2);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
         int d = Integer.parseInt(fillBinary(data[1]) + fillBinary(data[0]), 2);
-        return ((float) d) / 2000;
+        return ((float) d) / ratio;
     }
 
     private short getShortValue(int slaveId, int offset) throws ModbusTransportException {
