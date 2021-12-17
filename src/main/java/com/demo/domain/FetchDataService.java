@@ -223,7 +223,7 @@ public class FetchDataService {
 
     private float getFloatValue(short height, short low, int ratio) {
         int d = Integer.parseInt(fillBinary(height) + fillBinary(low), 2);
-        return ((float) d) / ratio;
+        return ((float) d) / 2000;
     }
 
     private void setShortValue(int slaveId, int offset, short value) throws ModbusTransportException {
