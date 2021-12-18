@@ -92,7 +92,7 @@ public enum ExcelFormat {
                 cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
                 cellStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
                 cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                cellStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.000"));
+                cellStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.0000"));
                 return cellStyle;
             });
 
