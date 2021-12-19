@@ -1,6 +1,7 @@
 package com.demo.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +21,7 @@ public class PLCData {
     private int index;
     private String dataSource;
     private short productTypeId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime logTime;
     private float heightMeasure1;
     private float heightMeasure2;
@@ -52,7 +54,7 @@ public class PLCData {
     private String barcodeData;
     private String barcode;
     @Enumerated(EnumType.STRING)
-    private BarcodeDuplicateEnum duplicated;
+    private BarcodeDuplicateEnum duplicated = BarcodeDuplicateEnum.NONE;
     private LocalDateTime confirmedTime;
     private String confirmedIp;
     private String comments;

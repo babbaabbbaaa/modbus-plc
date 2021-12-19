@@ -56,7 +56,6 @@ public class FetchDataService {
         plcData.setDataSource("自动线");
         plcData.setLogTime(LocalDateTime.now());
         try {
-
             //product type
             short productTypeId = getShortValue(slaveId, 7003);
             PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
@@ -91,8 +90,6 @@ public class FetchDataService {
             plcData.setHeightMeasure19(getFloatValue(slaveId, 7050, ratio));
             plcData.setHeightMeasure20(getFloatValue(slaveId, 7052, ratio));
 
-
-
             plcData.setDuplicate(getShortValue(slaveId, 7002));
             plcData.setReady(getShortValue(slaveId, 7001));
 
@@ -107,7 +104,7 @@ public class FetchDataService {
             plcData.setWeldFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7013)));
 
 
-        } catch (Exception e) {
+        } catch (ModbusTransportException e) {
             log.error("cannot communicate with plc: ", e);
         }
         return plcData;
@@ -129,7 +126,7 @@ public class FetchDataService {
     }
 
     public PLCData getData(int slaveId) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7000, 156);
+        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7001, 156);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
         boolean valid = false;
