@@ -59,7 +59,7 @@ public class PLCData {
     private String confirmedIp;
     private String comments;
     @Transient
-    private short ratio;
+    private int ratio;
     @Transient
     private short duplicate;
     @Transient

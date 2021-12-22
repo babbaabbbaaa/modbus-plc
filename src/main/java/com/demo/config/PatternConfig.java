@@ -21,5 +21,5 @@ public class PatternConfig {
     private short productTypeId;
     private int start;
     private int end;
-    private short ratio;
+    private int ratio;
 }

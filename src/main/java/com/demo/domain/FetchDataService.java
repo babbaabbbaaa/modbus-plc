@@ -62,7 +62,7 @@ public class FetchDataService {
             plcData.setProductTypeId(productTypeId);
 
             plcData.setBarcodeData(getBarcodeData(slaveId, 7054));
-            short ratio = 2000;
+            int ratio = 2000;
             if (null != patternConfig) {
                 ratio = patternConfig.getRatio() == 0 ? (2000) : patternConfig.getRatio();
                 plcData.setRatio(patternConfig.getRatio());
@@ -126,7 +126,7 @@ public class FetchDataService {
     }
 
     public PLCData getData(int slaveId) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7001, 156);
+        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7000, 125);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
         boolean valid = false;
@@ -208,17 +208,29 @@ public class FetchDataService {
             //7052 ~ 7053 Test 20
             plcData.setHeightMeasure20(getFloatValue(data[52], data[53], ratio));
             //7054 ~ 7154 Barcode Data
-            int size = 0;
-            for (int i = 54; i <= 154; i ++) {
-                if (data[i] > 0) {
-                    size ++;
-                }
-            }
-            ByteBuffer byteBuffer = ByteBuffer.allocate(size * 2);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(200);
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
             ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-            shortBuffer.put(Arrays.copyOfRange(data, 54, size));
-            plcData.setBarcodeData(new String(byteBuffer.array(), StandardCharsets.UTF_8));
+            int length = data.length;
+            for (int i = 54; i < length; i ++) {
+                if (data[i] > 0) {
+                    shortBuffer.put(data[i]);
+                }
+            }
+            if (data[length - 1] > 0) {
+                request = new ReadHoldingRegistersRequest(slaveId, 7125, 28);
+                response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
+                short[] add = response.getShortData();
+                if (add[0] > 0) {
+                    for (int i = 0; i < length; i ++) {
+                        if (add[i] > 0) {
+                            shortBuffer.put(data[i]);
+                        }
+                    }
+                }
+            }
+            String barcodeData = new String(byteBuffer.array(), StandardCharsets.UTF_8);
+            plcData.setBarcodeData(barcodeData.trim());
             if (null != patternConfig) {
                 plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
             }
@@ -240,17 +252,15 @@ public class FetchDataService {
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, offset, 100);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
-        int size = 0;
-        for (short d : data) {
-            if (d > 0) {
-                size++;
-            }
-        }
-        ByteBuffer byteBuffer = ByteBuffer.allocate(size * 2);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(200);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-        shortBuffer.put(Arrays.copyOfRange(data, 0, size));
-        String barcode = new String(byteBuffer.array(), StandardCharsets.UTF_8);
+        for (short d : data) {
+            if (d > 0) {
+                shortBuffer.put(d);
+            }
+        }
+        String barcode = new String(Arrays.copyOfRange(byteBuffer.array(), 0, shortBuffer.position() * 2), StandardCharsets.UTF_8);
         return barcode.trim();
     }
 
