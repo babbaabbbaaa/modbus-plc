@@ -30,13 +30,13 @@ class TestPage extends React.Component {
             key: 'generalFunc',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
-            label: '产品类型(7003)',
+            label: '测高功能',
             controlType: 'Input',
-            key: 'productTypeId',
+            key: 'heightFunc',
             disabled: true,
             labelCol: {
                 span: 9
@@ -57,7 +57,7 @@ class TestPage extends React.Component {
             key: 'scanFunc',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -84,7 +84,7 @@ class TestPage extends React.Component {
             key: 'flagFunc',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -111,7 +111,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure2',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -138,7 +138,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure5',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -165,7 +165,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure8',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -192,7 +192,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure11',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -219,7 +219,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure14',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -246,7 +246,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure17',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -273,7 +273,7 @@ class TestPage extends React.Component {
             key: 'heightMeasure20',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
         {
@@ -295,12 +295,12 @@ class TestPage extends React.Component {
             }
         },
         {
-            label: '测高功能',
+            label: '产品类型(7003)',
             controlType: 'Input',
-            key: 'heightFunc',
+            key: 'productTypeId',
             disabled: true,
             labelCol: {
-                span: 6
+                span: 8
             }
         },
 
