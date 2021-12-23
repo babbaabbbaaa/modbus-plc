@@ -81,6 +81,14 @@ public class PLCController {
         return Response.success(fetchDataService.createPLC());
     }
 
+    @GetMapping("data")
+    public Response<PLCData> data() throws ModbusTransportException {
+        if (fetchDataService.getModbusMaster() == null) {
+            return Response.success(new PLCData());
+        }
+        return Response.success(fetchDataService.getData());
+    }
+
     @GetMapping("signal")
     public Response<Short> signal() throws ModbusTransportException, ErrorResponseException {
         if (null == modbusMaster) {

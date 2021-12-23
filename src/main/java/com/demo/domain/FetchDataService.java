@@ -61,7 +61,7 @@ public class FetchDataService {
             PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
             plcData.setProductTypeId(productTypeId);
 
-            plcData.setBarcodeData(getBarcodeData(slaveId, 7054));
+            plcData.setBarcodeData(getBarcodeData(slaveId));
             int ratio = 2000;
             if (null != patternConfig) {
                 ratio = patternConfig.getRatio() == 0 ? (2000) : patternConfig.getRatio();
@@ -125,7 +125,7 @@ public class FetchDataService {
         return data[0];
     }
 
-    public PLCData getData(int slaveId) throws ModbusTransportException {
+    public PLCData getData() throws ModbusTransportException {
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7000, 125);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
@@ -240,7 +240,7 @@ public class FetchDataService {
 
     private float getFloatValue(short height, short low, int ratio) {
         int d = Integer.parseInt(fillBinary(height) + fillBinary(low), 2);
-        return ((float) d) / 2000;
+        return ((float) d) / ratio;
     }
 
     private void setShortValue(int slaveId, int offset, short value) throws ModbusTransportException {
@@ -248,8 +248,8 @@ public class FetchDataService {
         modbusMaster.send(request);
     }
 
-    private String getBarcodeData(int slaveId, int offset) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, offset, 100);
+    private String getBarcodeData(int slaveId) throws ModbusTransportException {
+        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7054, 100);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
         ByteBuffer byteBuffer = ByteBuffer.allocate(200);

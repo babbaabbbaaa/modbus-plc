@@ -7,7 +7,6 @@ import com.demo.utility.ExcelHelper;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
-import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.serotonin.modbus4j.locator.BaseLocator;
 import lombok.extern.slf4j.Slf4j;
@@ -57,10 +56,6 @@ public class PLCDataService {
         List<PLCData> plcData = plcRepository.findAll(plcRepository.buildSpecification(criteria));
         return ExcelHelper.writeBean(plcData, ExcelHeaderConstants.EXCEL_HEADERS);
 
-    }
-
-    public List<PLCData> findByBarcode(String barcode) {
-        return plcRepository.getDataByBarcode(barcode);
     }
 
     @Transactional
