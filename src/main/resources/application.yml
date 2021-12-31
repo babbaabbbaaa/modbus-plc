@@ -17,9 +17,9 @@ spring:
       maximum-pool-size: 10
       driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
-    url: jdbc:mysql://192.168.17.103:3306/plc
+    url: jdbc:mysql://localhost:3306/plc
     user: root
-    password: 123456
+    password: 12345678
     create-schemas: on
     schemas: migration
     driver-class-name: com.mysql.cj.jdbc.Driver

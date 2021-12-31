@@ -58,6 +58,7 @@ public class PLCData {
     private LocalDateTime confirmedTime;
     private String confirmedIp;
     private String comments;
+    private String qualify;
     @Transient
     private int ratio;
     @Transient

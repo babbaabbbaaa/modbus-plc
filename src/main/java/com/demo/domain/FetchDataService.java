@@ -67,6 +67,7 @@ public class FetchDataService {
                 ratio = patternConfig.getRatio() == 0 ? (2000) : patternConfig.getRatio();
                 plcData.setRatio(patternConfig.getRatio());
                 plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
+                plcData.setQualify(getQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
             }
             //measurement data
             plcData.setHeightMeasure1(getFloatValue(slaveId, 7014, ratio));
@@ -271,6 +272,13 @@ public class FetchDataService {
         }
         if (StringUtils.hasText(barcodeData) && barcodeData.length() > end) {
             return barcodeData.substring(start, end);
+        }
+        return "";
+    }
+
+    private String getQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
+        if (StringUtils.hasText(barcodeData) && barcodeData.length() > qualifyEnd) {
+            return barcodeData.substring(qualifyStart, qualifyEnd);
         }
         return "";
     }
