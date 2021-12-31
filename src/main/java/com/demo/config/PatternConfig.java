@@ -22,4 +22,6 @@ public class PatternConfig {
     private int start;
     private int end;
     private int ratio;
+    private int qualifiedStart;
+    private int qualifiedEnd;
 }

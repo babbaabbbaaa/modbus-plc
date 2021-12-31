@@ -208,6 +208,13 @@ class FilterPage extends React.Component{
           break;
         default: break;
       }
+
+      if (record.barcodeData) {
+        let qualified = record.barcodeData.substr(record.barcodeData.length - 1, 1);
+        if (qualified.toUpperCase() !== 'A' && qualified.toUpperCase() !== 'B') {
+          className = 'bg-red';
+        }
+      }
       return className
     }
     return <div className='page-container'>

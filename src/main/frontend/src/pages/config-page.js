@@ -1,8 +1,8 @@
 import React from 'react';
-import { Form, Row, Col, Button, Modal, message } from 'antd';
+import {Form, Row, Col, Button, Modal, message} from 'antd';
 import TablePanel from '@/components/table';
 import OperateModal from '../components/operate-modal';
-import { secureConfig, secureConfigs, secureClear, secureLogin, secureSignal } from '@/service/config-service';
+import {secureConfig, secureConfigs, secureClear, secureLogin, secureSignal} from '@/service/config-service';
 
 
 class ConfigPage extends React.Component {
@@ -27,12 +27,12 @@ class ConfigPage extends React.Component {
             message: '请输入产品类型ID'
         }]
     }, {
-        label: '开始位置',
+        label: '二维码截取开始位置',
         controlType: 'InputNumber',
         placeholder: '请输入',
         key: 'start'
     }, {
-        label: '结束位置',
+        label: '二维码截取结束位置',
         controlType: 'InputNumber',
         placeholder: '请输入',
         key: 'end'
@@ -41,7 +41,19 @@ class ConfigPage extends React.Component {
         controlType: 'InputNumber',
         placeholder: '请输入',
         key: 'ratio'
-    }]
+    }, {
+        label: '合格位起始位置',
+        controlType: 'InputNumber',
+        placeholder: '请输入',
+        key: 'qualifiedStart'
+    }, {
+        label: '合格位结束位置',
+        controlType: 'InputNumber',
+        placeholder: '请输入',
+        key: 'qualifiedEnd'
+    }
+    ]
+
     constructor(props) {
         super(props);
         this.state = {
@@ -61,12 +73,12 @@ class ConfigPage extends React.Component {
                 key: 'productTypeId',
                 width: 165
             }, {
-                title: '开始位置',
+                title: '二维码截取开始位置',
                 dataIndex: 'start',
                 key: 'start',
                 width: 165
             }, {
-                title: '结束位置',
+                title: '二维码截取结束位置',
                 dataIndex: 'end',
                 key: 'end',
                 width: 165
@@ -75,7 +87,18 @@ class ConfigPage extends React.Component {
                 dataIndex: 'ratio',
                 key: 'ratio',
                 width: 165
-            }],
+            }, {
+                title: '合格位起始位置',
+                dataIndex: 'qualifiedStart',
+                key: 'qualifiedStart',
+                width: 165
+            }, {
+                title: '合格位结束位置',
+                dataIndex: 'qualifiedEnd',
+                key: 'qualifiedEnd',
+                width: 165
+            }
+            ],
             dataSource: [],
             selectedRowKeys: [],
             selectedRows: [],
@@ -135,7 +158,7 @@ class ConfigPage extends React.Component {
             okText: '确认',
             cancelText: '取消',
             onOk: () => {
-                secureClear({ productTypeId: this.state.selectedRows[0].productTypeId }).then(res => {
+                secureClear({productTypeId: this.state.selectedRows[0].productTypeId}).then(res => {
                     if (res.code === 0) {
                         message.success('清除成功！');
                         this.getConfigs();
@@ -163,7 +186,7 @@ class ConfigPage extends React.Component {
     }
 
     render() {
-        const { columns, dataSource, isModalVisible, title, selectedRowKeys, editData } = this.state;
+        const {columns, dataSource, isModalVisible, title, selectedRowKeys, editData} = this.state;
         const rowSelection = {
             onChange: this.onSelectChange,
         };
@@ -172,41 +195,41 @@ class ConfigPage extends React.Component {
             return 'center'
         }
 
-        return <div className = 'page-container' >
-            <Form className = 'page-form'
-                name = 'search'
-                ref = { this.formRef } >
-                <Row >
-                    <Col xs = { 24 }
-                        sm = { 24 }
-                        md = { 24 }
-                        lg = { 24 }
-                        xl = { 24 } >
-                        <Button className = "btn submit-btn"
-                            disabled = { selectedRowKeys.length !== 1 }
-                            onClick = { this.clearHandle } > 清除数据库配置 </Button>
-                        <Button className = "btn submit-btn"
-                            disabled = { selectedRowKeys.length !== 1 }
-                            onClick = { this.editHandle } > 编辑配置 </Button> 
-                        <Button className = "btn submit-btn" onClick = { this.addHandle } > 新增 </Button>  
-                    </Col> 
-                </Row> 
-            </Form> 
+        return <div className='page-container'>
+            <Form className='page-form'
+                  name='search'
+                  ref={this.formRef}>
+                <Row>
+                    <Col xs={24}
+                         sm={24}
+                         md={24}
+                         lg={24}
+                         xl={24}>
+                        <Button className="btn submit-btn"
+                                disabled={selectedRowKeys.length !== 1}
+                                onClick={this.clearHandle}> 清除数据库配置 </Button>
+                        <Button className="btn submit-btn"
+                                disabled={selectedRowKeys.length !== 1}
+                                onClick={this.editHandle}> 编辑配置 </Button>
+                        <Button className="btn submit-btn" onClick={this.addHandle}> 新增 </Button>
+                    </Col>
+                </Row>
+            </Form>
             <TablePanel
-                columns = { columns }
-                rowSelection = { rowSelection }
-                rowClassName = { rowClassName }
-                showHeader = { true }
-                dataSource = { dataSource }
-            /> 
+                columns={columns}
+                rowSelection={rowSelection}
+                rowClassName={rowClassName}
+                showHeader={true}
+                dataSource={dataSource}
+            />
             <OperateModal
-                isModalVisible = { isModalVisible }
-                title = { title }
-                data = { editData }
-                modalContent = { this.modalItem }
-                addConfigItem = { this.addConfigItem }
-            /> 
-        </div >
+                isModalVisible={isModalVisible}
+                title={title}
+                data={editData}
+                modalContent={this.modalItem}
+                addConfigItem={this.addConfigItem}
+            />
+        </div>
     }
 }
 
