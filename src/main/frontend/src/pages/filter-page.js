@@ -6,6 +6,7 @@ import {searchList,confirmItem,exportList,configOption} from '@/service/filter-s
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
+let invalidQualified = ['C', 'D', 'E', 'F'];
 class FilterPage extends React.Component{
   options = {
     title: '操作',
@@ -209,9 +210,8 @@ class FilterPage extends React.Component{
         default: break;
       }
 
-      if (record.barcodeData) {
-        let qualified = record.barcodeData.substr(record.barcodeData.length - 1, 1);
-        if (qualified.toUpperCase() !== 'A' && qualified.toUpperCase() !== 'B') {
+      if (record.qualified) {
+        if (invalidQualified.includes(record.qualified.toUpperCase())) {
           className = 'bg-red';
         }
       }
