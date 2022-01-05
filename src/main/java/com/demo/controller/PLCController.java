@@ -98,9 +98,9 @@ public class PLCController {
     }
 
     @GetMapping("clear")
-    public Response<Void> clear(int offset) throws ModbusTransportException, ErrorResponseException {
+    public Response<Void> clear(int offset, int value) throws ModbusTransportException, ErrorResponseException {
         if (null != modbusMaster) {
-            modbusMaster.setValue(BaseLocator.holdingRegister(1, offset, DataType.TWO_BYTE_INT_SIGNED), 0);
+            modbusMaster.setValue(BaseLocator.holdingRegister(1, offset, DataType.TWO_BYTE_INT_SIGNED), value);
         }
         return Response.success();
     }

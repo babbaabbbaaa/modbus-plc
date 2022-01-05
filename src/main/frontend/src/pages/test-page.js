@@ -307,6 +307,7 @@ class TestPage extends React.Component {
     ]
 
     testHandle = () => {
+        this.formRef.current.setFieldsValue({})
         testSearch().then(res => {
             if (res.code === 0) {
                 this.formRef.current.setFieldsValue({...res.data })

@@ -11,7 +11,7 @@ const apis = {
   secureConfigs: `${prefix}/secure/configs`,
   secureLogin: `${prefix}/secure/login`,
   secureSignal: `${prefix}/plc/signal`,
-  test: `${prefix}/plc/test`
+  test: `${prefix}/plc/data`
 }
 
 export default apis;

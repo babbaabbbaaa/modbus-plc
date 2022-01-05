@@ -138,6 +138,8 @@ public class FetchDataService {
             }
         }
         PLCData plcData = new PLCData();
+        plcData.setDataSource("自动线");
+        plcData.setLogTime(LocalDateTime.now());
         if (valid) {
             //7000 ON/OFF SIGNAL
             //7001 Data Ready
@@ -147,9 +149,11 @@ public class FetchDataService {
             //7003 Product Type ID
             short productTypeId = data[3];
             PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
+            int ratio = 2000;
+            if (null != patternConfig) {
+                ratio = patternConfig.getRatio() == 0 ? 2000 : patternConfig.getRatio();
+            }
             plcData.setProductTypeId(productTypeId);
-            //7004 Float Ratio
-            short ratio = data[4];
             plcData.setRatio(ratio);
             //7005 RESERVED
             //7006 GENERAL
@@ -234,6 +238,7 @@ public class FetchDataService {
             plcData.setBarcodeData(barcodeData.trim());
             if (null != patternConfig) {
                 plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
+                plcData.setQualified(getQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
             }
         }
         return plcData;
