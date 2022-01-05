@@ -31,7 +31,7 @@ public interface PLCRepository extends JpaRepository<PLCData, Long>, JpaSpecific
                 predicates.add(builder.equal(root.get("barcode"), criteria.getBarcode()));
             }
             if (StringUtils.hasText(criteria.getBarcodeData())) {
-                predicates.add(builder.equal(root.get("barcode"), criteria.getBarcodeData()));
+                predicates.add(builder.equal(root.get("barcodeData"), criteria.getBarcodeData()));
             }
             LocalDate from = criteria.getFrom();
             LocalDate end = criteria.getEnd();

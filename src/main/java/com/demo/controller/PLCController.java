@@ -97,6 +97,14 @@ public class PLCController {
         return Response.success(modbusMaster.getValue(signalLocator).shortValue());
     }
 
+    @GetMapping("clear")
+    public Response<Void> clear(int offset) throws ModbusTransportException, ErrorResponseException {
+        if (null != modbusMaster) {
+            modbusMaster.setValue(BaseLocator.holdingRegister(1, offset, DataType.TWO_BYTE_INT_SIGNED), 0);
+        }
+        return Response.success();
+    }
+
     @Autowired(required = false)
     public void setModbusMaster(ModbusMaster modbusMaster) {
         this.modbusMaster = modbusMaster;
