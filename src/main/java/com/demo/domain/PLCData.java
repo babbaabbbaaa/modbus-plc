@@ -62,9 +62,11 @@ public class PLCData {
     @Transient
     private int ratio;
     @Transient
-    private short duplicate;
+    private short duplicate; //重码标记
     @Transient
     private short ready;
+    @Transient
+    private boolean valid;
 
 
 }
