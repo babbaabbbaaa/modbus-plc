@@ -303,6 +303,15 @@ class TestPage extends React.Component {
                 span: 8
             }
         },
+        {
+            label: '产品合格位',
+            controlType: 'Input',
+            key: 'qualified',
+            disabled: true,
+            labelCol: {
+                span: 9
+            }
+        },
 
     ]
 

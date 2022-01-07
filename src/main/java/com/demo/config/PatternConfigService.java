@@ -29,6 +29,8 @@ public class PatternConfigService {
             ready2Save.setEnd(patternConfig.getEnd());
             ready2Save.setProductType(patternConfig.getProductType());
             ready2Save.setRatio(patternConfig.getRatio());
+            ready2Save.setQualifiedStart(patternConfig.getQualifiedStart());
+            ready2Save.setQualifiedEnd(patternConfig.getQualifiedEnd());
         }
         return patternConfigRepository.save(ready2Save);
     }

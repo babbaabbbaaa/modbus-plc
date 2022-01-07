@@ -73,13 +73,13 @@ public class PLCController {
         return Response.success(patternConfigService.findAllConfig());
     }
 
-    @GetMapping("test")
-    public Response<PLCData> test() throws ModbusTransportException {
-        if (fetchDataService.getModbusMaster() == null) {
-            return Response.success(new PLCData());
-        }
-        return Response.success(fetchDataService.createPLC());
-    }
+//    @GetMapping("test")
+//    public Response<PLCData> test() throws ModbusTransportException {
+//        if (fetchDataService.getModbusMaster() == null) {
+//            return Response.success(new PLCData());
+//        }
+//        return Response.success(fetchDataService.createPLC());
+//    }
 
     @GetMapping("data")
     public Response<PLCData> data() throws ModbusTransportException {

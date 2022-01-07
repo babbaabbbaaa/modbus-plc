@@ -4,7 +4,10 @@ package com.demo.domain;
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigRepository;
 import com.serotonin.modbus4j.ModbusMaster;
+import com.serotonin.modbus4j.code.DataType;
+import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
+import com.serotonin.modbus4j.locator.BaseLocator;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersResponse;
 import com.serotonin.modbus4j.msg.WriteRegisterRequest;
@@ -20,7 +23,6 @@ import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -30,6 +32,7 @@ public class FetchDataService {
     private final PLCRepository plcRepository;
     private final PatternConfigRepository patternConfigRepository;
     private final int slaveId;
+    private final BaseLocator<Number> dataReadyLocator;
 
     private ModbusMaster modbusMaster;
 
@@ -39,10 +42,11 @@ public class FetchDataService {
         this.plcRepository = plcRepository;
         this.patternConfigRepository = patternConfigRepository;
         this.slaveId = slaveId;
+        dataReadyLocator = BaseLocator.holdingRegister(slaveId, 7001, DataType.TWO_BYTE_INT_SIGNED);
     }
 
-    public synchronized void process() throws ModbusTransportException {
-        if (getShortValue(slaveId, 7001) != 1) {
+    public synchronized void process() throws ModbusTransportException, ErrorResponseException {
+        if (isDataReady()) {
             return;
         }
         PLCData plcData = getData();
@@ -51,81 +55,6 @@ public class FetchDataService {
             plcRepository.save(plcData);
         }
         setShortValue(slaveId, 7001, (short) 0);//mark the data read done
-    }
-
-    public PLCData createPLC() {
-        PLCData plcData = new PLCData();
-        plcData.setDataSource("自动线");
-        plcData.setLogTime(LocalDateTime.now());
-        try {
-            //product type
-            short productTypeId = getShortValue(slaveId, 7003);
-            PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
-            plcData.setProductTypeId(productTypeId);
-
-            plcData.setBarcodeData(getBarcodeData(slaveId));
-            int ratio = 2000;
-            if (null != patternConfig) {
-                ratio = patternConfig.getRatio() == 0 ? (2000) : patternConfig.getRatio();
-                plcData.setRatio(patternConfig.getRatio());
-                plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
-                plcData.setQualified(getQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
-            }
-            //measurement data
-            plcData.setHeightMeasure1(getFloatValue(slaveId, 7014, ratio));
-            plcData.setHeightMeasure2(getFloatValue(slaveId, 7016, ratio));
-            plcData.setHeightMeasure3(getFloatValue(slaveId, 7018, ratio));
-            plcData.setHeightMeasure4(getFloatValue(slaveId, 7020, ratio));
-            plcData.setHeightMeasure5(getFloatValue(slaveId, 7022, ratio));
-            plcData.setHeightMeasure6(getFloatValue(slaveId, 7024, ratio));
-            plcData.setHeightMeasure7(getFloatValue(slaveId, 7026, ratio));
-            plcData.setHeightMeasure8(getFloatValue(slaveId, 7028, ratio));
-            plcData.setHeightMeasure9(getFloatValue(slaveId, 7030, ratio));
-            plcData.setHeightMeasure10(getFloatValue(slaveId, 7032, ratio));
-            plcData.setHeightMeasure11(getFloatValue(slaveId, 7034, ratio));
-            plcData.setHeightMeasure12(getFloatValue(slaveId, 7036, ratio));
-            plcData.setHeightMeasure13(getFloatValue(slaveId, 7038, ratio));
-            plcData.setHeightMeasure14(getFloatValue(slaveId, 7040, ratio));
-            plcData.setHeightMeasure15(getFloatValue(slaveId, 7042, ratio));
-            plcData.setHeightMeasure16(getFloatValue(slaveId, 7044, ratio));
-            plcData.setHeightMeasure17(getFloatValue(slaveId, 7046, ratio));
-            plcData.setHeightMeasure18(getFloatValue(slaveId, 7048, ratio));
-            plcData.setHeightMeasure19(getFloatValue(slaveId, 7050, ratio));
-            plcData.setHeightMeasure20(getFloatValue(slaveId, 7052, ratio));
-
-            plcData.setDuplicate(getShortValue(slaveId, 7002));
-            plcData.setReady(getShortValue(slaveId, 7001));
-
-            //functional check
-            plcData.setGeneralFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7006)));
-            plcData.setHeightFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7007)));
-            plcData.setFlagFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7008)));
-            plcData.setScanFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7009)));
-            plcData.setTyphoonFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7010)));
-            plcData.setSlotDepthFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7011)));
-            plcData.setSpinCheckFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7012)));
-            plcData.setWeldFunc(GeneralFunctionEnum.mapDefinition(getShortValue(slaveId, 7013)));
-
-
-        } catch (ModbusTransportException e) {
-            log.error("cannot communicate with plc: ", e);
-        }
-        return plcData;
-    }
-
-    private float getFloatValue(int slaveId, int offset, int ratio) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, offset, 2);
-        ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
-        short[] data = response.getShortData();
-        int d = Integer.parseInt(fillBinary(data[1]) + fillBinary(data[0]), 2);
-        return ((float) d) / ratio;
-    }
-
-    private short getShortValue(int slaveId, int offset) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, offset, 1);
-        ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
-        short[] data = response.getShortData();
-        return data[0];
     }
 
     public PLCData getData() throws ModbusTransportException {
@@ -245,9 +174,16 @@ public class FetchDataService {
         return plcData;
     }
 
+    private boolean isDataReady() throws ModbusTransportException, ErrorResponseException {
+        return modbusMaster.getValue(dataReadyLocator).shortValue() == 1;
+    }
+
     private float getFloatValue(short height, short low, int ratio) {
-        int d = Integer.parseInt(fillBinary(low) + fillBinary(height), 2);
-        return ((float) d) / ratio;
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putShort(low);
+        buffer.putShort(height);
+        int data = buffer.getInt(0);
+        return ((float) data) / ratio;
     }
 
     private void setShortValue(int slaveId, int offset, short value) throws ModbusTransportException {
@@ -255,21 +191,6 @@ public class FetchDataService {
         modbusMaster.send(request);
     }
 
-    private String getBarcodeData(int slaveId) throws ModbusTransportException {
-        ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7054, 100);
-        ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
-        short[] data = response.getShortData();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(200);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-        for (short d : data) {
-            if (d > 0) {
-                shortBuffer.put(d);
-            }
-        }
-        String barcode = new String(Arrays.copyOfRange(byteBuffer.array(), 0, shortBuffer.position() * 2), StandardCharsets.UTF_8);
-        return barcode.trim();
-    }
 
     private String getBarcode(String barcodeData, int start, int end) {
         if (!StringUtils.hasText(barcodeData) || "error".equalsIgnoreCase(barcodeData)
@@ -283,7 +204,7 @@ public class FetchDataService {
     }
 
     private String getQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
-        if (StringUtils.hasText(barcodeData) && barcodeData.length() > qualifyEnd) {
+        if (StringUtils.hasText(barcodeData) && barcodeData.length() >= qualifyEnd) {
             return barcodeData.substring(qualifyStart, qualifyEnd);
         }
         return "";
@@ -300,14 +221,6 @@ public class FetchDataService {
             plcRepository.saveAll(plcList);
             setShortValue(slaveId, 7002, (short) 1);
         }
-    }
-
-    private String fillBinary(short value) {
-        StringBuilder binary = new StringBuilder(Integer.toBinaryString(value & 0xFFFF));
-        while (binary.length() < 16) {
-            binary.insert(0, "0");
-        }
-        return binary.toString();
     }
 
     @Autowired(required = false)

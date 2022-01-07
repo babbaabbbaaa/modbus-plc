@@ -47,7 +47,7 @@ public class ScheduledJob {
     public void read() {
         try {
             fetchDataService.process();
-        } catch (ModbusTransportException e) {
+        } catch (ModbusTransportException | ErrorResponseException e) {
             log.error("read data failed: ", e);
         }
     }
