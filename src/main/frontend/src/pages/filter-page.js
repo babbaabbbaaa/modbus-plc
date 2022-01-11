@@ -180,8 +180,9 @@ class FilterPage extends React.Component{
         label: '时间',
         controlType: 'RangePicker',
         placeholder: ['开始时间','结束时间'],
-        format: 'YYYY-MM-DD',
+        format: 'YYYY-MM-DD HH:mm:ss',
         key: 'date',
+        showTime: true,
         col: {xs:24, sm:12,md:8,lg:8,xl:6},
         changeValue: this.dateChange
       },
