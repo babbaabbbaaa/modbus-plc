@@ -205,7 +205,7 @@ public class FetchDataService {
 
     private String getQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
         if (StringUtils.hasText(barcodeData) && barcodeData.length() >= qualifyEnd) {
-            return barcodeData.substring(qualifyStart, qualifyEnd);
+            return barcodeData.substring(qualifyStart, qualifyEnd).toUpperCase();
         }
         return "";
     }

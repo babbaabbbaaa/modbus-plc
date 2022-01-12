@@ -36,7 +36,8 @@ class FilterPage extends React.Component{
         productTypeId: '',
         barcode: '',
         barcodeData: '',
-        productOptions: []
+        productOptions: [],
+        qualifiedList:[]
       }
     }
   }
@@ -47,6 +48,9 @@ class FilterPage extends React.Component{
     this.timer = setInterval(()=>{
       this.getTableList()
     },1000)
+    this.setState({
+      qualifiedList: [{label: "合格", value: 1}, {label: "不合格", value: 0}]
+    })
   }
 
   componentWillUnmount(){
@@ -166,7 +170,7 @@ class FilterPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -199,7 +203,15 @@ class FilterPage extends React.Component{
         placeholder: '请输入',
         key: 'barcode',
         col: {xs:24, sm:12,md:8,lg:8,xl:6}
-      }
+      },
+      {
+        label: '产品合格位',
+        controlType: 'Select',
+        placeholder: '请选择',
+        key: 'qualified',
+        col: {xs:24, sm:12,md:10,lg:10,xl:8},
+        options: qualifiedList
+      },
     ];
     const rowClassName = (record) => {
       let className = '';

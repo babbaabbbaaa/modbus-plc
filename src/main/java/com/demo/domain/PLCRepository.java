@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,19 +33,27 @@ public interface PLCRepository extends JpaRepository<PLCData, Long>, JpaSpecific
             if (StringUtils.hasText(criteria.getBarcodeData())) {
                 predicates.add(builder.equal(root.get("barcodeData"), criteria.getBarcodeData()));
             }
-            LocalDate from = criteria.getFrom();
-            LocalDate end = criteria.getEnd();
+            LocalDateTime from = criteria.getFrom();
+            LocalDateTime end = criteria.getEnd();
             if (null == from && predicates.isEmpty()) {
-                from = LocalDate.now();
+                from = LocalDate.now().atStartOfDay();
             }
             if (null == end && predicates.isEmpty()) {
-                end = LocalDate.now();
+                end = LocalDateTime.now();
             }
             if (null != from) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("logTime"), from.atStartOfDay()));
+                predicates.add(builder.greaterThanOrEqualTo(root.get("logTime"), from));
             }
             if (null != end) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("logTime"), end.atTime(LocalTime.MAX)));
+                predicates.add(builder.lessThanOrEqualTo(root.get("logTime"), end));
+            }
+            if (null != criteria.getQualified()) {
+                if (criteria.getQualified() == 0) {
+                    predicates.add(builder.greaterThanOrEqualTo(root.get("qualified"), "C"));
+                }
+                if (criteria.getQualified() == 1) {
+                    predicates.add(builder.not(builder.greaterThanOrEqualTo(root.get("qualified"), "C")));
+                }
             }
             predicates.add(builder.equal(root.get("productTypeId"), criteria.getProductTypeId()));
             return query.where(predicates.toArray(new Predicate[0])).orderBy(new OrderImpl(root.get("logTime"), false)).getRestriction();
