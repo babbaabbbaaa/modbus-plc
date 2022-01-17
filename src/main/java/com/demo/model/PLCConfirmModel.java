@@ -9,4 +9,5 @@ import lombok.Setter;
 public class PLCConfirmModel {
 
     private String barcode;
+    private Integer productTypeId;
 }

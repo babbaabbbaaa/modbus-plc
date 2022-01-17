@@ -17,8 +17,8 @@ import java.util.List;
 
 public interface PLCRepository extends JpaRepository<PLCData, Long>, JpaSpecificationExecutor<PLCData> {
 
-    @Query("from PLCData where barcode = :#{#barcode}")
-    List<PLCData> getDataByBarcode(String barcode);
+    @Query("from PLCData where barcode = :#{#barcode} and product_type_id = :#{#productTypeId}")
+    List<PLCData> getDataByBarcode(String barcode, Integer productTypeId);
 
     @Query("delete from PLCData as d where d.productTypeId = :#{#productTypeId}")
     @Modifying
@@ -48,12 +48,7 @@ public interface PLCRepository extends JpaRepository<PLCData, Long>, JpaSpecific
                 predicates.add(builder.lessThanOrEqualTo(root.get("logTime"), end));
             }
             if (null != criteria.getQualified()) {
-                if (criteria.getQualified() == 0) {
-                    predicates.add(builder.greaterThanOrEqualTo(root.get("qualified"), "C"));
-                }
-                if (criteria.getQualified() == 1) {
-                    predicates.add(builder.not(builder.greaterThanOrEqualTo(root.get("qualified"), "C")));
-                }
+                predicates.add(builder.equal(root.get("qualified"), criteria.getQualified()));
             }
             predicates.add(builder.equal(root.get("productTypeId"), criteria.getProductTypeId()));
             return query.where(predicates.toArray(new Predicate[0])).orderBy(new OrderImpl(root.get("logTime"), false)).getRestriction();

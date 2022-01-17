@@ -58,7 +58,8 @@ public class PLCData {
     private LocalDateTime confirmedTime;
     private String confirmedIp;
     private String comments;
-    private String qualified = "";
+    private String barcodeQualify = "";
+    private boolean qualified;
     @Transient
     private int ratio;
     @Transient

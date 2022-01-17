@@ -23,11 +23,13 @@ import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
 public class FetchDataService {
+
+    private static final Set<String> NOT_QUALIFIED_TAGS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("C", "D", "E", "F")));
 
     private final PLCRepository plcRepository;
     private final PatternConfigRepository patternConfigRepository;
@@ -46,12 +48,12 @@ public class FetchDataService {
     }
 
     public synchronized void process() throws ModbusTransportException, ErrorResponseException {
-        if (isDataReady()) {
+        if (isDataNotReady()) {
             return;
         }
         PLCData plcData = getData();
         if (plcData.isValid()) {
-            checkDup(plcData);
+            checkDup(plcData, plcData.getProductTypeId());
             plcRepository.save(plcData);
         }
         setShortValue(slaveId, 7001, (short) 0);//mark the data read done
@@ -169,13 +171,14 @@ public class FetchDataService {
         plcData.setBarcodeData(barcodeData.trim());
         if (null != patternConfig) {
             plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
-            plcData.setQualified(getQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
+            plcData.setBarcodeQualify(getBarcodeQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
         }
+        plcData.setQualified(isQualified(plcData.getBarcodeQualify(), Arrays.copyOfRange(data, 6, 13)));
         return plcData;
     }
 
-    private boolean isDataReady() throws ModbusTransportException, ErrorResponseException {
-        return modbusMaster.getValue(dataReadyLocator).shortValue() == 1;
+    private boolean isDataNotReady() throws ModbusTransportException, ErrorResponseException {
+        return modbusMaster.getValue(dataReadyLocator).shortValue() != 1;
     }
 
     private float getFloatValue(short height, short low, int ratio) {
@@ -203,18 +206,27 @@ public class FetchDataService {
         return "";
     }
 
-    private String getQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
+    private String getBarcodeQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
         if (StringUtils.hasText(barcodeData) && barcodeData.length() >= qualifyEnd) {
             return barcodeData.substring(qualifyStart, qualifyEnd).toUpperCase();
         }
         return "";
     }
 
-    private void checkDup(PLCData plcData) throws ModbusTransportException {
+    private boolean isQualified(String barcodeQualify, short... func) {
+        for (short f : func) {
+            if (f == 2) {
+                return false;
+            }
+        }
+        return !NOT_QUALIFIED_TAGS.contains(barcodeQualify);
+    }
+
+    private void checkDup(PLCData plcData, int productTypeId) throws ModbusTransportException {
         if (!StringUtils.hasText(plcData.getBarcode()) || "error".equalsIgnoreCase(plcData.getBarcode())) {
             return;
         }
-        List<PLCData> plcList = plcRepository.getDataByBarcode(plcData.getBarcode());
+        List<PLCData> plcList = plcRepository.getDataByBarcode(plcData.getBarcode(), productTypeId);
         if (!CollectionUtils.isEmpty(plcList)) {
             plcList.forEach(v -> v.setDuplicated(BarcodeDuplicateEnum.DUP));
             plcData.setDuplicated(BarcodeDuplicateEnum.DUP);

@@ -138,7 +138,7 @@ class FilterPage extends React.Component{
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        confirmItem({barcode: record.barcode}).then(res=>{
+        confirmItem({barcode: record.barcode, productTypeId: record.productTypeId}).then(res=>{
           if(res.code === 0) {
             message.success('确认成功');
             this.getTableList();
@@ -205,7 +205,7 @@ class FilterPage extends React.Component{
         col: {xs:24, sm:12,md:8,lg:8,xl:6}
       },
       {
-        label: '产品合格位',
+        label: '产品合格',
         controlType: 'Select',
         placeholder: '请选择',
         key: 'qualified',
@@ -223,8 +223,8 @@ class FilterPage extends React.Component{
         default: break;
       }
 
-      if (record.qualified) {
-        if (invalidQualified.includes(record.qualified.toUpperCase())) {
+      if (record.barcodeQualify) {
+        if (invalidQualified.includes(record.barcodeQualify.toUpperCase())) {
           className = 'bg-red';
         }
       }

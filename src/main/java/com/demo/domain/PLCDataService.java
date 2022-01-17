@@ -38,8 +38,8 @@ public class PLCDataService {
         return plcRepository.findAll(plcRepository.buildSpecification(criteria), criteria.createPageRequest());
     }
 
-    public void confirmDuplicate(String barcode) throws ModbusTransportException, ErrorResponseException {
-        List<PLCData> plcData = plcRepository.getDataByBarcode(barcode);
+    public void confirmDuplicate(String barcode, Integer productTypeId) throws ModbusTransportException, ErrorResponseException {
+        List<PLCData> plcData = plcRepository.getDataByBarcode(barcode, productTypeId);
         if (!CollectionUtils.isEmpty(plcData)) {
             for (PLCData plc : plcData) {
                 plc.setDuplicated(BarcodeDuplicateEnum.CONFIRMED);

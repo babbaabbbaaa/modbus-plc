@@ -64,7 +64,7 @@ public class PLCController {
 
     @PostMapping("confirm")
     public Response<Void> confirm(@RequestBody PLCConfirmModel confirmModel) throws ModbusTransportException, ErrorResponseException {
-        plcDataService.confirmDuplicate(confirmModel.getBarcode());
+        plcDataService.confirmDuplicate(confirmModel.getBarcode(), confirmModel.getProductTypeId());
         return Response.success();
     }
 

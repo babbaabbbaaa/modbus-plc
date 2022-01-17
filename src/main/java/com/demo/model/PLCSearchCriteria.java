@@ -24,7 +24,7 @@ public class PLCSearchCriteria {
     private LocalDateTime end;
     private String barcode;
     private String barcodeData;
-    private Integer qualified;
+    private Boolean qualified;
     private int page;
     private int size;
 
