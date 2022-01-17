@@ -30,6 +30,8 @@ class FilterPage extends React.Component{
       page: 1,
       size: 10,
       totalCount: 0,
+      qualifiedNum: 0,
+      failedNum: 0,
       searchParam: {
         end: null,
         from: null,
@@ -170,7 +172,7 @@ class FilterPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList,qualifiedNum, failedNum } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -248,6 +250,14 @@ class FilterPage extends React.Component{
           </Col>
           <Col xs={24} sm={12} md={8} lg={6} xl={6}>
             <Button className="btn submit-btn" onClick={this.exportHandle}>导出</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={24} sm={12} md={6} lg={4} xl={4}>
+            <div>合格数量：{ qualifiedNum }</div>
+          </Col>
+          <Col xs={24} sm={12} md={6} lg={4} xl={4}>
+            <div>不合格数量：{ failedNum }</div>
           </Col>
         </Row>
       </Form>
