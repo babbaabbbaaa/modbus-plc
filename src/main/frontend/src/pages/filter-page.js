@@ -2,7 +2,7 @@ import React from 'react';
 import {Form,Row,Col,Button,Modal,message} from 'antd';
 import TablePanel from '@/components/table';
 import columns from '@/column/filter-column';
-import {searchList,confirmItem,exportList,configOption} from '@/service/filter-service';
+import {searchList,confirmItem,exportList,configOption, countQualifiedProducts} from '@/service/filter-service';
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
@@ -30,8 +30,8 @@ class FilterPage extends React.Component{
       page: 1,
       size: 10,
       totalCount: 0,
-      qualifiedNum: 0,
-      failedNum: 0,
+      qualifiedCount: 0,
+      notQualifiedCount: 0,
       searchParam: {
         end: null,
         from: null,
@@ -113,6 +113,15 @@ class FilterPage extends React.Component{
         })
       }
     })
+    countQualifiedProducts(params).then(res => {
+        const {code, data} = res;
+        if (code === 0) {
+            this.setState({
+                qualifiedCount: data.qualifiedCount,
+                notQualifiedCount: data.notQualifiedCount
+            })
+        }
+    })
   }
 
   searchHandle = () => {
@@ -172,7 +181,7 @@ class FilterPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList,qualifiedNum, failedNum } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList,qualifiedNum, failedNum, qualifiedCount, notQualifiedCount } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -254,10 +263,10 @@ class FilterPage extends React.Component{
         </Row>
         <Row>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
-            <div>合格数量：{ qualifiedNum }</div>
+            <div>合格数量：{ qualifiedCount }</div>
           </Col>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
-            <div>不合格数量：{ failedNum }</div>
+            <div>不合格数量：{ notQualifiedCount }</div>
           </Col>
         </Row>
       </Form>

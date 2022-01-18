@@ -1,6 +1,7 @@
 package com.demo.domain;
 
 
+import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.utility.ExcelHeaderConstants;
 import com.demo.utility.ExcelHelper;
@@ -16,8 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -25,17 +28,37 @@ public class PLCDataService {
 
     private final PLCRepository plcRepository;
     private final BaseLocator<Number> duplicateLocator;
+    private final EntityManager entityManager;
 
     private ModbusMaster modbusMaster;
 
     public PLCDataService(PLCRepository plcRepository,
-                          @Value("${modbus.slave_id}") int slaveId) {
+                          @Value("${modbus.slave_id}") int slaveId, EntityManager entityManager) {
         this.plcRepository = plcRepository;
         this.duplicateLocator = BaseLocator.holdingRegister(slaveId, 7002, DataType.TWO_BYTE_INT_SIGNED);
+        this.entityManager = entityManager;
     }
 
     public Page<PLCData> search(PLCSearchCriteria criteria) {
         return plcRepository.findAll(plcRepository.buildSpecification(criteria), criteria.createPageRequest());
+    }
+
+    public PLCQualifiedProductCountModel countQualifiedProducts(PLCSearchCriteria criteria) {
+        List<Object[]> results = entityManager.createQuery(plcRepository.buildCountQualifiedProducts(criteria, entityManager.getCriteriaBuilder())).getResultList();
+        PLCQualifiedProductCountModel model = new PLCQualifiedProductCountModel();
+        if (!CollectionUtils.isEmpty(results)) {
+            for (Object[] result : results) {
+                if (result.length == 2) {
+                    if (Objects.equals(result[0], true)) {
+                        model.setQualifiedCount(result[1]);
+                    }
+                    if (Objects.equals(result[0], false)) {
+                        model.setNotQualifiedCount(result[1]);
+                    }
+                }
+            }
+        }
+        return model;
     }
 
     public void confirmDuplicate(String barcode, Integer productTypeId) throws ModbusTransportException, ErrorResponseException {
