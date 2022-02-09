@@ -1,9 +1,9 @@
 const href = `${window.location.protocol}//${window.location.host}`;
 const BASE_URL_LIST={
-    PROD:{
+    ASC:{
       baseUrl: href
     },
-    UAT:{
+    EXAM:{
       baseUrl: href
     },
     QA:{

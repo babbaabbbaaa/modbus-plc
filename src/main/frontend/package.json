@@ -66,11 +66,10 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "build-dev": "node scripts/build-dev.js",
-    "build-qa": "node scripts/build-qa.js",
-    "build-uat": "node scripts/build-uat.js",
-    "build-prod": "node scripts/build-prod.js"
+    "start-asc": "node scripts/start-asc.js",
+    "start-exam": "node scripts/start-exam.js",
+    "build-asc": "node scripts/build-asc.js",
+    "build-exam": "node scripts/build-exam.js"
   },
   "eslintConfig": {
     "extends": [

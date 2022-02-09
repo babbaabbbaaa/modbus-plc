@@ -7,6 +7,24 @@ const data = [
     width: 60
   },
   {
+    title: '自动线检测结果',
+    dataIndex: 'autoInspectResult',
+    key: 'autoInspectResult',
+    width: 135
+  },
+  {
+    title: '人工复检结果',
+    dataIndex: 'manualReinspectResult',
+    key: 'manualReinspectResult',
+    width: 135
+  },
+  {
+    title: '复检人员',
+    dataIndex: 'reinspectBy',
+    key: 'reinspectBy',
+    width: 135
+  },
+  {
     title: '数据源',
     dataIndex: 'dataSource',
     key: 'dataSource',

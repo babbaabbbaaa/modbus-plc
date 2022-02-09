@@ -74,6 +74,7 @@ function getClientEnvironment(publicUrl) {
         NODE_ENV: process.env.NODE_ENV || 'development',
         PUBLIC_ENV: process.env.PUBLIC_ENV || 'DEV',
         REACT_APP_BASE_URL: process.env.REACT_APP_BASE_URL || 'DEV',
+        REACT_APP_NAME: process.env.REACT_APP_NAME || 'EXAM',
         // Useful for resolving the correct path to static assets in `public`.
         // For example, <img src={process.env.PUBLIC_URL + '/img/logo.png'} />.
         // This should only be used as an escape hatch. Normally you would put
