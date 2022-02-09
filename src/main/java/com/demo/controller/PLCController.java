@@ -7,6 +7,7 @@ import com.demo.domain.FetchDataService;
 import com.demo.domain.PLCData;
 import com.demo.domain.PLCDataService;
 import com.demo.model.PLCConfirmModel;
+import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.model.Response;
 import com.serotonin.modbus4j.ModbusMaster;
@@ -73,13 +74,10 @@ public class PLCController {
         return Response.success(patternConfigService.findAllConfig());
     }
 
-//    @GetMapping("test")
-//    public Response<PLCData> test() throws ModbusTransportException {
-//        if (fetchDataService.getModbusMaster() == null) {
-//            return Response.success(new PLCData());
-//        }
-//        return Response.success(fetchDataService.createPLC());
-//    }
+    @PostMapping("count")
+    public Response<PLCQualifiedProductCountModel> count(@RequestBody PLCSearchCriteria criteria) throws ModbusTransportException {
+        return Response.success(plcDataService.countQualifiedProducts(criteria));
+    }
 
     @GetMapping("data")
     public Response<PLCData> data() throws ModbusTransportException {

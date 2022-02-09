@@ -4,6 +4,11 @@ import http from '@/config/request';
 export const searchList = (params) => {
   return http.post(`${apis.search}`,params,{withCredentials:false});
 }
+
+export const countQualifiedProducts = (params) => {
+  return http.post(`${apis.count}`,params,{withCredentials:false});
+}
+
 export const confirmItem = (params) => {
   return http.post(`${apis.confirm}`,params);
 }

@@ -230,6 +230,7 @@ public class FetchDataService {
         if (!CollectionUtils.isEmpty(plcList)) {
             plcList.forEach(v -> v.setDuplicated(BarcodeDuplicateEnum.DUP));
             plcData.setDuplicated(BarcodeDuplicateEnum.DUP);
+            plcData.setQualified(false);
             plcRepository.saveAll(plcList);
             setShortValue(slaveId, 7002, (short) 1);
         }
