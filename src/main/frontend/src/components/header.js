@@ -1,20 +1,43 @@
 import React from 'react'
-import { Menu } from 'antd';
+import { Menu,Dropdown } from 'antd';
 import { Link } from 'react-router-dom';
 import Semaphore from '@/components/semaphore';
+import { logout } from '@/service/common-service';
 
 class Header extends React.Component {
     pathname = (window.location.hash).substr(2) || 'filter'
     state = {
         current: this.pathname,
+        userName: '',
     };
+
+    menu = (
+        <Menu>
+          <Menu.Item>
+            <div className='logout' onClick={this.logout}>退出账号</div>
+          </Menu.Item>
+        </Menu>
+    );
+
+    logout = () => {
+        logout().then(res=>{
+            localStorage.clear()
+        })
+    }
+
+    componentDidMount () {
+        this.setState({
+            userName: localStorage.getItem('userInfo')
+        })
+        
+    }
 
     handleClick = e => {
         console.log('click ', e);
         this.setState({ current: e.key });
     }; 
     render() {
-        const { current } = this.state;
+        const { current,userName } = this.state;
         return (
             <div className = 'page-header'>
                 <Menu onClick = { this.handleClick } selectedKeys = {[current]} mode = "horizontal" >
@@ -28,7 +51,12 @@ class Header extends React.Component {
                         <Link to = "/config" > 安全控制器 </Link>
                     </Menu.Item > 
                 </Menu>
-                <Semaphore / >
+                <div className='header-right'>
+                    <Semaphore />
+                    <Dropdown overlay={this.menu} placement="bottomLeft" arrow>
+                        <div className='user-info'>{userName}</div>
+                    </Dropdown>
+                </div>
             </div>
         );
     }

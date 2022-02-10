@@ -8,6 +8,10 @@ function columnRender (value, row, index) {
   return obj;
 }
 
+function changeValue (value) {
+
+}
+
 const data = [ 
   {
     title: '序号',

@@ -83,11 +83,15 @@ service.interceptors.response.use(
     loadingCount = 0;
     Loading.hidden();
     requestList = [];
+    // eslint-disable-next-line no-mixed-operators
     const status = error.response&&error.response.status|| error.status;
     const data =  error.response&&error.response.data||{};
     const { debugMessage } = data;
-    if (status === 403) {      
+    if(status === 401){
+      localStorage.clear();
       inputPassword();
+    }else if (status === 403) {  
+      message.error('无权限操作！');  
     }else{
       error.response&& message.error(debugMessage||'error')
     }

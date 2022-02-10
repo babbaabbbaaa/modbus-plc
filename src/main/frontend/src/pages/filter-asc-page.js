@@ -1,10 +1,12 @@
 import React from 'react';
-import {Form,Row,Col,Button,Modal,message} from 'antd';
+import {Form,Row,Col,Button,Modal,Select,message} from 'antd';
 import TablePanel from '@/components/table';
 import columns from '@/column/filter-asc-column';
-import {searchList,confirmItem,exportList,configOption} from '@/service/filter-service';
+import {searchList,confirmItem,exportList,configOption,reinspect} from '@/service/filter-service';
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
+
+const { Option } = Select;
 
 let invalidQualified = ['C', 'D', 'E', 'F'];
 class FilterPage extends React.Component{
@@ -27,7 +29,7 @@ class FilterPage extends React.Component{
         barcode: '',
         barcodeData: '',
         productOptions: [],
-        qualifiedList:[]
+        manualReinspectResultOptions:[]
       }
     }
   }
@@ -35,11 +37,18 @@ class FilterPage extends React.Component{
   componentDidMount () {
     this.getTableList();
     this.getConfigOption();
+    let tableColumns = columns.map(item => {
+      if(item.dataIndex === 'manualReinspectResult'){
+        item.render = (value, row, index)=>this.columnRender(value, row, index);
+      }
+      return item;
+    })
     this.timer = setInterval(()=>{
       this.getTableList()
     },1000)
     this.setState({
-      qualifiedList: [{label: "合格", value: 1}, {label: "不合格", value: 0}]
+      columns: tableColumns,
+      manualReinspectResultOptions: [{label: "空", value: '空'}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
     })
   }
 
@@ -122,6 +131,25 @@ class FilterPage extends React.Component{
     })
   }
 
+  changeValue = (value,record,index,e) => {
+    console.log(e,value,record,index)
+    Modal.confirm({
+      title: `是否要将人工复检结果修改为${e}?`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        reinspect({id: record.id, status: e}).then(res=>{
+          if(res.code === 0) {
+            message.success('确认成功');
+            this.getTableList();
+          }else{
+            message.error(res.message||'确认失败！');
+          }
+        })
+      }
+    });
+  }
+
   searchHandle = () => {
     this.getTableList()
 
@@ -178,8 +206,18 @@ class FilterPage extends React.Component{
     })
   }
 
+  columnRender = (value, row, index) => {
+    return <Select 
+      defaultValue={value}
+      onChange={this.changeValue.bind(this,value,row,index)}>
+      <Option value='空'>空</Option>        
+      <Option value='复检NG'>复检NG</Option>
+      <Option value='复检OK'>复检OK</Option>
+    </Select>
+  }
+
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList,qualifiedNum, failedNum } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, manualReinspectResultOptions,qualifiedNum, failedNum } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -222,10 +260,11 @@ class FilterPage extends React.Component{
       },
       {
         label: '人工复检结果',
-        controlType: 'Input',
+        controlType: 'Select',
         placeholder: '请输入',
         key: 'manualReinspectResult',
-        col: {xs:24, sm:12,md:10,lg:10,xl:8}
+        col: {xs:24, sm:12,md:10,lg:10,xl:8},
+        options: manualReinspectResultOptions
       },
       {
         label: '复检人员',

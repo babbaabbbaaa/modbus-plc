@@ -2,7 +2,6 @@ import apis from '@/config/api';
 import http from '@/config/request';
 
 export const secureConfig = (params) => {
-
   return http.post(`${apis.secureConfig}`,params);
 }
 export const secureConfigs = (params) => {

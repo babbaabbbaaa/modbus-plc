@@ -25,10 +25,12 @@ class Login extends PureComponent {
   handleOk = () => {
     this.formRef.current.validateFields()
     .then(values => {
-      console.log(values.password)
-      console.log(md5(values.password))
+      let params = new FormData();
+      params.append('username',values.password);
+      params.append('password',values.password);
       secureLogin(md5(values.password)).then(res => {
         if(res.code === 0){
+          localStorage.setItem('userInfo',res.data)
           this.setState({
             visible: false
           })

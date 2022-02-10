@@ -43,7 +43,7 @@ const FormCondition = (condition) => {
 		case 'Select':
 			return (
 				<Select
-          mode={mode}
+          			mode={mode}
 					allowClear={allowClear===undefined? true:allowClear}
 					defaultValue={defaultValue}
 					onChange={changeValue}

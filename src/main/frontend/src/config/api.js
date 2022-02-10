@@ -12,7 +12,10 @@ const apis = {
   secureLogin: `${prefix}/secure/login`,
   secureSignal: `${prefix}/plc/signal`,
   test: `${prefix}/plc/data`,
-  count: `${prefix}/plc/count`
+  count: `${prefix}/plc/count`,
+  reinspect: `${prefix}/secure/reinspect`,
+  login: `${prefix}/login`,
+  logout: `${prefix}/logout`
 }
 
 export default apis;

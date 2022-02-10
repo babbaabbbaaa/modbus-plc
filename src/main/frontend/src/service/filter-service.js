@@ -18,3 +18,6 @@ export const exportList = (params) => {
 export const configOption = () => {
   return http.post(`${apis.configs}`);
 }
+export const reinspect = (params) => {
+    return http.get(`${apis.reinspect}?id=${params.id}&status=${params.status}`)
+}
