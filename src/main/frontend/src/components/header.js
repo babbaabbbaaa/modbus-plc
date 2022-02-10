@@ -50,6 +50,9 @@ class Header extends React.Component {
                     <Menu.Item key = "config" >
                         <Link to = "/config" > 安全控制器 </Link>
                     </Menu.Item > 
+                    <Menu.Item key = "user" >
+                        <Link to = "/user" > 用户管理 </Link>
+                    </Menu.Item > 
                 </Menu>
                 <div className='header-right'>
                     <Semaphore />

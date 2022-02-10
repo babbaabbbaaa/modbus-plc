@@ -15,7 +15,10 @@ const apis = {
   count: `${prefix}/plc/count`,
   reinspect: `${prefix}/secure/reinspect`,
   login: `${prefix}/login`,
-  logout: `${prefix}/logout`
+  logout: `${prefix}/logout`,
+  userChange: `${prefix}/user/update`,
+  userList: `${prefix}/user/all`,
+  roleList: `${prefix}/user/roles`,
 }
 
 export default apis;

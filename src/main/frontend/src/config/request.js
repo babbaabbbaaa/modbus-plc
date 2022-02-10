@@ -65,12 +65,20 @@ service.interceptors.response.use(
     let requestFlag = JSON.stringify(response.config.url) + JSON.stringify(response.config.data) + '&' + response.config.method;
     requestList.splice(requestList.findIndex(item => item === requestFlag), 1);
     const {config,data} = response;
-    const {code,msg}=data;
+    const {code,message}=data;
     if (Object.prototype.toString.call(data) === "[object Blob]") {
       return response;
     }
     if(code&&code!==200){
-      message.error(msg);
+      if(code === 401){
+        localStorage.clear();
+        inputPassword();
+        return Promise.reject(response.data);
+      }else if (code === 403) {  
+        message.error('无权限操作！',20); 
+        return Promise.reject(response.data); 
+      }
+      message.error(message,10);
       return Promise.reject(response.data);
     }else{
       if(config.uploadOrDownload){

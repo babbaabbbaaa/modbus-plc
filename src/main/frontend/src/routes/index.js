@@ -1,6 +1,7 @@
 import ConfigPage from '@/pages/config-page';
 import FilterPage from '@/pages/filter-page';
 import TestPage from '@/pages/test-page';
+import UserPage from '@/pages/user-page';
 import FilterAscPage from '@/pages/filter-asc-page';
 
 const routes = {
@@ -16,6 +17,10 @@ const routes = {
     {
       path: '/test',
       component: TestPage
+    },
+    {
+      path: '/user',
+      component: UserPage
     }
   ],
   EXAM: [
@@ -30,6 +35,10 @@ const routes = {
     {
       path: '/test',
       component: TestPage
+    },
+    {
+      path: '/user',
+      component: UserPage
     }
   ]
 }  
