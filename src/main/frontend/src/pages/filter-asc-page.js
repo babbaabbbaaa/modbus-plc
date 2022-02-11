@@ -2,26 +2,36 @@ import React from 'react';
 import {Form,Row,Col,Button,Modal,Select,message} from 'antd';
 import TablePanel from '@/components/table';
 import columns from '@/column/filter-asc-column';
-import {searchList,confirmItem,exportList,configOption,reinspect} from '@/service/filter-service';
+import {searchList,confirmItem,exportList,configOption,reinspect,countQualifiedProducts} from '@/service/filter-service';
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
 const { Option } = Select;
 
 let invalidQualified = ['C', 'D', 'E', 'F'];
-class FilterPage extends React.Component{
+class FilterAscPage extends React.Component{
   formRef = React.createRef();
-
+  options = {
+    title: '操作',
+    dataIndex: 'options',
+    key: 'options',
+    width: 85,
+    render: (text,record) => {
+      if(record.duplicated === 'DUP'){
+        return <Button className='table-sure-btn' onClick={this.confirmHandle.bind(this,record)}>确认</Button>
+      }
+    }
+  }
   constructor(props){
     super(props);
     this.state = { 
-      columns: [...columns],
+      columns: [this.options,...columns],
       dataSource: [],
       page: 1,
       size: 10,
       totalCount: 0,
-      qualifiedNum: 0,
-      failedNum: 0,
+      qualifiedCount: 0,
+      notQualifiedCount: 0,
       searchParam: {
         end: null,
         from: null,
@@ -129,6 +139,15 @@ class FilterPage extends React.Component{
         })
       }
     })
+    countQualifiedProducts(params).then(res => {
+      const {code, data} = res;
+      if (code === 0) {
+        this.setState({
+          qualifiedCount: data.qualifiedCount,
+          notQualifiedCount: data.notQualifiedCount
+        })
+      }
+    })
   }
 
   changeValue = (value,record,index,e) => {
@@ -217,7 +236,7 @@ class FilterPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, manualReinspectResultOptions,qualifiedNum, failedNum } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, manualReinspectResultOptions,qualifiedCount,notQualifiedCount } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -311,6 +330,14 @@ class FilterPage extends React.Component{
             <Button className="btn submit-btn" onClick={this.exportHandle}>导出</Button>
           </Col>
         </Row>
+        <Row>
+          <Col xs={24} sm={12} md={6} lg={4} xl={4}>
+            <div className='text-line'>合格数量：{ qualifiedCount }</div>
+          </Col>
+          <Col xs={24} sm={12} md={6} lg={4} xl={4}>
+            <div className='text-line'>不合格数量：{ notQualifiedCount }</div>
+          </Col>
+        </Row>
       </Form>
       <TablePanel
         columns={columns}
@@ -327,4 +354,4 @@ class FilterPage extends React.Component{
   }
 }
 
-export default FilterPage;
+export default FilterAscPage;

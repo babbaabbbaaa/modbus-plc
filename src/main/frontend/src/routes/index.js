@@ -3,6 +3,7 @@ import FilterPage from '@/pages/filter-page';
 import TestPage from '@/pages/test-page';
 import UserPage from '@/pages/user-page';
 import FilterAscPage from '@/pages/filter-asc-page';
+import TestAscPage from '@/pages/test-asc-page';
 
 const routes = {
   ASC: [
@@ -16,7 +17,7 @@ const routes = {
     },
     {
       path: '/test',
-      component: TestPage
+      component: TestAscPage
     },
     {
       path: '/user',

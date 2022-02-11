@@ -114,19 +114,18 @@ class FilterPage extends React.Component{
       }
     })
     countQualifiedProducts(params).then(res => {
-        const {code, data} = res;
-        if (code === 0) {
-            this.setState({
-                qualifiedCount: data.qualifiedCount,
-                notQualifiedCount: data.notQualifiedCount
-            })
-        }
+      const {code, data} = res;
+      if (code === 0) {
+        this.setState({
+          qualifiedCount: data.qualifiedCount,
+          notQualifiedCount: data.notQualifiedCount
+        })
+      }
     })
   }
 
   searchHandle = () => {
     this.getTableList()
-
   }
 
   resetHandle = () => {
@@ -181,7 +180,7 @@ class FilterPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList,qualifiedNum, failedNum, qualifiedCount, notQualifiedCount } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList, qualifiedCount, notQualifiedCount } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -263,10 +262,10 @@ class FilterPage extends React.Component{
         </Row>
         <Row>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
-            <div>合格数量：{ qualifiedCount }</div>
+            <div className='text-line'>合格数量：{ qualifiedCount }</div>
           </Col>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
-            <div>不合格数量：{ notQualifiedCount }</div>
+            <div className='text-line'>不合格数量：{ notQualifiedCount }</div>
           </Col>
         </Row>
       </Form>

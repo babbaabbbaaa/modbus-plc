@@ -5,7 +5,7 @@ import OperateModal from '../components/operate-modal';
 import {secureConfig, secureConfigs, secureClear, secureLogin, secureSignal} from '@/service/config-service';
 
 
-class ConfigPage extends React.Component {
+class ConfigAscPage extends React.Component {
 
     formRef = React.createRef();
     modalItem = [{
@@ -234,4 +234,4 @@ class ConfigPage extends React.Component {
     }
 }
 
-export default ConfigPage;
+export default ConfigAscPage;

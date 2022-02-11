@@ -137,8 +137,8 @@ const data = [
   },
   {
     title: '打标使用状态',
-    dataIndex: 'holeSelection',
-    key: 'holeSelection',
+    dataIndex: 'codeReadingFunc',
+    key: 'codeReadingFunc',
     width: 135
   },
   {

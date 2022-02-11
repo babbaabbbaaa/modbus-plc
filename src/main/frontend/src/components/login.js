@@ -30,7 +30,7 @@ class Login extends PureComponent {
     params.append('password',passwordValue);
     login(params).then(res => {
       if(res.code === 0){
-        localStorage.setItem('userInfo',res.data)
+        localStorage.setItem('userInfo',JSON.stringify(res.data))
         this.setState({
           visible: false
         })
@@ -80,7 +80,7 @@ class Login extends PureComponent {
       <Row className='page-form'>
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>
           <Form.Item name='password'>
-            <Input type="text" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle} autoFocus/>
+            <Input type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle} autoFocus/>
           </Form.Item>
         </Col>
       </Row>
