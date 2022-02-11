@@ -104,6 +104,7 @@ class ConfigPage extends React.Component {
             selectedRows: [],
             editData: {},
             isLight: 0,
+            title: '新增配置',
             isModalVisible: false
         }
     }
@@ -227,7 +228,7 @@ class ConfigPage extends React.Component {
                 title={title}
                 data={editData}
                 modalContent={this.modalItem}
-                addConfigItem={this.addConfigItem}
+                operateModalSure={this.addConfigItem}
             />
         </div>
     }

@@ -1,80 +1,105 @@
 import React from 'react';
-import {Form,Row,Col,Button,Modal,message} from 'antd';
+import {Form,Button,message} from 'antd';
 import TablePanel from '@/components/table';
-import columns from '@/column/filter-column';
 import {userChange,userList,roleList} from '@/service/user-service';
-import FormCondition from '@/components/form-condition';
-import {download} from '@/utils/index';
+import OperateModal from '../components/operate-modal';
 
-let invalidQualified = ['C', 'D', 'E', 'F'];
 class UserPage extends React.Component{
-  options = {
-    title: '操作',
-    dataIndex: 'options',
-    key: 'options',
-    width: 85,
-    render: (text,record) => {
-      if(record.duplicated === 'DUP'){
-        return <Button className='table-sure-btn' onClick={this.confirmHandle.bind(this,record)}>确认</Button>
-      }
-    }
-  }
-
   formRef = React.createRef();
-
+	columns = [
+		{
+			title: 'ID',
+			dataIndex: 'id',
+			key: 'id',
+			width: 80
+		},{
+			title: '用户名',
+			dataIndex: 'username',
+			key: 'username',
+			width: 160
+		},{
+			title: '卡号',
+			dataIndex: 'cardNumber',
+			key: 'cardNumber',
+			width: 260
+		},{
+			title: '角色',
+			dataIndex: 'roles',
+			key: 'roles',
+			width: 260,
+			render: (value,record,index) => {
+				return  <div>
+					{
+						record.roles.map(item => {
+							return <span>{item.roleName},</span>
+						})
+					}
+				</div>
+			}
+		},{
+			title: '操作',
+			dataIndex: 'option',
+			key: 'option',
+			align: 'center',
+			width: 100,
+			render: (value,record,index) => {
+				return  <Button className='submit-btn' onClick={this.editUser.bind(this,value,record,index)}>编辑</Button>
+			}
+		},
+	];
   constructor(props){
     super(props);
     this.state = { 
-      columns: [
-				{
-					title: 'ID',
-					dataIndex: 'index',
-					key: 'index',
-					width: 80
-				},{
-					title: '用户名',
-					dataIndex: 'username',
-					key: 'username',
-					width: 160
-				},{
-					title: '卡号',
-					dataIndex: 'index',
-					key: 'index',
-					width: 260
-				},{
-					title: '角色',
-					dataIndex: 'roles',
-					key: 'roles',
-					width: 260,
-					render: (value,record,index) => {
-						return  <div>
-							{
-								record.roles.map(item => {
-									return <span>{item.roleName}</span>
-								})
-							}
-						</div>
-					}
-				},
-			],
       dataSource: [],
-      page: 1,
-      size: 10,
-      totalCount: 0,
       roleList: [],
-      searchParam: {
-        end: null,
-        from: null,
-        productTypeId: '',
-        barcode: '',
-        barcodeData: '',
-        productOptions: [],
-        qualifiedList:[]
-      }
+			modalItem: [],
+			title: '新增用户'
     }
   }
-  timer = null;
   componentDidMount () {
+		this.setState({
+			modalItem: [
+				{
+					label: 'ID',
+					controlType: 'Input',
+					placeholder: '请输入',
+					key: 'id',
+					disabled: true
+				}, 
+				{
+					label: '用户名',
+					controlType: 'Input',
+					placeholder: '请输入',
+					key: 'username',
+					rules: [{
+            required: true,
+            message: '请输入用户名'
+        }]
+				}, 
+				{
+					label: '卡号',
+					controlType: 'Input',
+					placeholder: '请输入',
+					key: 'cardNumber',
+					rules: [{
+            required: true,
+            message: '请输入卡号'
+        }]
+				}, 
+				{
+					label: '角色',
+					controlType: 'Select',
+					placeholder: '请选择',
+					key: 'roles',
+					mode: 'multiple',
+					options: this.state.roleList,
+					rules: [{
+            required: true,
+            message: '请选择角色'
+        }]
+				}
+			]
+		})
     this.getTableList();
     this.getRoleList();
     
@@ -94,23 +119,92 @@ class UserPage extends React.Component{
   getRoleList = () => {
     roleList().then(res=>{
 			const {code,data} =res;
-			this.setState({
-				roleList: data
-			})
+			if(code === 0){
+				let list = data.map(item => {
+					item.label = item.roleName;
+					item.value = item.roleName;
+					return item;
+				})
+				this.setState({
+					roleList: list
+				})
+			}
     })
   }
 
+	addNewUser = () => {
+		this.setState({
+			isModalVisible: true,
+			title: '新增用户'
+		})
+	}
+
+	editUser = (value,record,index) => {
+		let roles = record.roles.length>0&&record.roles.map(item=> {
+			return item.roleName
+		})
+		let data = {
+			id: record.id,
+			username: record.username,
+			roles: roles,
+			cardNumber: record.cardNumber
+		}
+		console.log(roles)
+		this.setState({
+			title: '',
+			editData: data,
+			isModalVisible: true
+		})
+	}
+
+	changeUser =  (type, data) => {
+		
+		if (type) {
+			// eslint-disable-next-line array-callback-return
+			let roles = this.state.roleList.filter(item => {
+				if(data.roles.indexOf(item.roleName)> -1){
+					return item;
+				}
+			});
+			let params = {
+				cardNumber: data.cardNumber,
+				id: data.id,
+				username: data.username,
+				roles: roles
+			}
+			userChange(params).then(res => {
+					message.success(`${this.state.title}成功！`);
+					this.getTableList();
+					this.setState({
+						editData: {},
+						isModalVisible: false
+					});
+			})
+		} else {
+			this.setState({
+				isModalVisible: false
+			})
+		}
+	}
+
   render () {
-    const { columns, dataSource } = this.state;
+    const { dataSource,isModalVisible,editData,title,modalItem } = this.state;
     return <div className='page-container'>
       <Form className='page-form' name='search' ref={this.formRef}>
-        <Button>新增用户</Button>
+        <Button className='submit-btn' onClick={this.addNewUser}>新增用户</Button>
       </Form>
       <TablePanel
-        columns={columns}
+        columns={this.columns}
         showHeader={true}
         dataSource={dataSource}
       />
+			{isModalVisible&&<OperateModal
+				isModalVisible={isModalVisible}
+				title={title}
+				data={editData}
+				modalContent={modalItem}
+				operateModalSure={this.changeUser}
+			/>}
     </div>
   }
 }

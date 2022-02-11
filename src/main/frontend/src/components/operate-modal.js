@@ -3,12 +3,13 @@ import { Form,Row,Col,Modal, Button } from 'antd';
 import FormCondition from '@/components/form-condition';
 
 const OperateModal = (props) => {
-  const { isModalVisible,addConfigItem,title,modalContent,data} = props;
+  const { isModalVisible,operateModalSure,title,modalContent,data} = props;
   const [form] = Form.useForm();
   // const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    if (data&&title!=='新增配置') {
+    console.log(title)
+    if (data&&title.indexOf('新增')<0) {
       form.setFieldsValue({
         ...data
       });
@@ -20,7 +21,7 @@ const OperateModal = (props) => {
   const handleOk = () => {
     form.validateFields()
     .then(values => {
-      addConfigItem(true,values)
+      operateModalSure(true,values)
     })
     .catch(errorInfo => {
       console.log(errorInfo)
@@ -28,7 +29,7 @@ const OperateModal = (props) => {
   };
 
   const handleCancel = () => {
-    addConfigItem(false)
+    operateModalSure(false)
   };
 
   return (
