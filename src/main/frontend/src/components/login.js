@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { Form,Row,Col,Modal, Button,Input } from 'antd';
-import {secureLogin} from '@/service/config-service';
+import {login} from '@/service/common-service';
 import md5 from 'md5';
 
 class Login extends PureComponent {
@@ -9,7 +9,8 @@ class Login extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
-			visible: false
+			visible: false,
+      passwordValue: ''
 		};
 	}
   
@@ -23,31 +24,50 @@ class Login extends PureComponent {
 	}
 
   handleOk = () => {
-    this.formRef.current.validateFields()
-    .then(values => {
-      let params = new FormData();
-      params.append('username',values.password);
-      params.append('password',values.password);
-      secureLogin(md5(values.password)).then(res => {
-        if(res.code === 0){
-          localStorage.setItem('userInfo',res.data)
-          this.setState({
-            visible: false
-          })
-          window.location.reload();
-        }
-      })
+    const { passwordValue } = this.state;
+    let params = new FormData();
+    params.append('username',passwordValue);
+    params.append('password',passwordValue);
+    login(params).then(res => {
+      if(res.code === 0){
+        localStorage.setItem('userInfo',res.data)
+        this.setState({
+          visible: false
+        })
+        window.location.reload();
+      }
     })
     .catch(errorInfo => {
       console.log(errorInfo)
     });
   };
 
+  keyDownHandle = (e) => {
+    if (e.keyCode === 13) {
+			this.handleOk();
+		}
+  }
+
+  changeHandle = (e) => {
+    let value = e.target.value;
+    if(value.indexOf('↵')>-1){
+      let data = value.split('↵')[0];
+      console.log(data)
+      this.setState({
+        passwordValue: data
+      },this.handleOk)
+    }else{
+      this.setState({
+        passwordValue: value
+      })
+    }
+  }
+
 	render() {
-		const { visible } = this.state;
+		const { visible,passwordValue } = this.state;
 		return (
 			<Modal 
-      title='请输入密码' 
+      title='请输入' 
       closable={false}
       maskClosable={false}
       visible={visible} 
@@ -57,15 +77,13 @@ class Login extends PureComponent {
         <Button key="back" onClick={this.handleCancel}>取消</Button>,
         <Button key="submit" type="primary" onClick={this.handleOk}>确定</Button>]}
     >
-      <Form className='page-form' name='search' ref={this.formRef}>
-        <Row>
-          <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-            <Form.Item name='password' label='密码'>
-              <Input type="password"/>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+      <Row className='page-form'>
+        <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+          <Form.Item name='password'>
+            <Input type="text" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle} autoFocus/>
+          </Form.Item>
+        </Col>
+      </Row>
     </Modal>
 		);
 	}
