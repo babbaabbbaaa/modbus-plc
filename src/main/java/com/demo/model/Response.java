@@ -35,4 +35,8 @@ public class Response<T> {
     public static <T> Response<T> forbidden() {
         return new Response<>(403, "Forbidden", null);
     }
+
+    public static <T> Response<T> notAuthenticated() {
+        return new Response<>(401, "Not Authenticated", null);
+    }
 }

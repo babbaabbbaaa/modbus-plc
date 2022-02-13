@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -30,6 +31,9 @@ public class ExcelCell {
     private Method invokeMethod;
     private final String methodName;
     private final DataType format;
+    private int xOffset = 0;
+    private int yOffset = 1;
+    private boolean merged = false;
 
     public ExcelCell(String header, int columnWidth, String methodName, Class<?> type, DataType format) {
         this.header = header;
@@ -43,6 +47,12 @@ public class ExcelCell {
         }
     }
 
+    public ExcelCell(String header, int columnWidth, String methodName, Class<?> type, DataType format, int xOffset, int yOffset) {
+        this(header, columnWidth, methodName, type, format);
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.merged = true;
+    }
 
     public void createHeader(Row row, CellStyle cellStyle, int index) {
         Cell cell = row.createCell(index);
@@ -55,6 +65,14 @@ public class ExcelCell {
     public void createCell(Row row, CellStyle cellStyle, Object value, int index) {
         Cell cell = row.createCell(index);
         cell.setCellStyle(cellStyle);
+        if (merged) {
+            int rowNum = row.getRowNum();
+            int colNum = cell.getColumnIndex();
+            CellRangeAddress range = new CellRangeAddress(rowNum, rowNum + yOffset, colNum, colNum + xOffset);
+            row.getSheet().addMergedRegion(range);
+            range.forEach(cellAddress -> row.getSheet().getRow(cellAddress.getRow()).getCell(cellAddress.getColumn(), Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
+                    .setCellStyle(cellStyle));
+        }
         if (value instanceof Double) {
             cell.setCellValue((Double) value);
         } else if (value instanceof Integer) {
@@ -72,6 +90,7 @@ public class ExcelCell {
         } else {
             cell.setCellValue(value == null ? "" : value.toString());
         }
+
     }
 
     private Method getInvokeMethod(Class<?> clazz) throws NoSuchMethodException {

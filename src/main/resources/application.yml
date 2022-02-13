@@ -1,5 +1,8 @@
 server:
   port: 8080
+  servlet:
+    session:
+      timeout: 30s
 
 modbus:
   host: 192.168.3.1
@@ -16,13 +19,17 @@ spring:
       idle-timeout: 300000
       maximum-pool-size: 10
       driver-class-name: com.mysql.cj.jdbc.Driver
-  flyway:
-    url: jdbc:mysql://localhost:3306/plc
-    user: root
-    password: 12345678
-    create-schemas: on
-    schemas: migration
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+#  flyway:
+#    url: jdbc:mysql://localhost:3306/plc
+#    user: root
+#    password: 12345678
+#    create-schemas: on
+#    schemas: migration
+#    driver-class-name: com.mysql.cj.jdbc.Driver
 
 jasypt:
   encryptor:

@@ -1,5 +1,7 @@
 package com.demo.utility;
 
+import com.demo.cast.DieCasting;
+import com.demo.cast.SubDieCasting;
 import com.demo.domain.PLCData;
 
 import java.util.Arrays;
@@ -42,5 +44,29 @@ public class ExcelHeaderConstants {
             new ExcelCell("测高数值18", 4000, "getHeightMeasure18", PLCData.class, DataType.FLOAT),
             new ExcelCell("测高数值19", 4000, "getHeightMeasure19", PLCData.class, DataType.FLOAT),
             new ExcelCell("测高数值20", 4000, "getHeightMeasure20", PLCData.class, DataType.FLOAT)
+    );
+
+    public static final List<ExcelCell> DIE_CASTING_EXCEL_HEADERS = Arrays.asList(
+            new ExcelCell("序号", 2500, "getIndex", DieCasting.class, DataType.INTEGER, 0, 1),
+            new ExcelCell("时间", 5000, "getLogTime", DieCasting.class, DataType.STRING, 0, 1),
+            new ExcelCell("模具号", 5000, "getMoldNo", DieCasting.class, DataType.STRING, 0, 1),
+            new ExcelCell("压射号", 5000, "getInjectionNo", DieCasting.class, DataType.STRING, 0, 1),
+            new ExcelCell("流水号", 2500, "getSerialNumber", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("SR1000二维码编号", 14000, "getBarcodeData", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("读码判定结果", 4000, "getCodeReadingFunc", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("铝重差值", 5000, "getWeightDifference", SubDieCasting.class, DataType.FLOAT),
+            new ExcelCell("铝重判定结果", 5000, "getWeightResult", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("自动线检测结果", 5000, "getAutoInspectResult", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("人工复检结果", 5000, "getManualReinspectResult", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("复检人员", 5000, "getReinspectBy", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("二维码字符提取", 5000, "getBarcode", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("二维码等级提取", 5000, "getBarcodeGrade", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("铝重公差上限设定值", 4000, "getMaxWeightTolerance", SubDieCasting.class, DataType.FLOAT),
+            new ExcelCell("铝重公差下限设定值", 4000, "getMinWeightTolerance", SubDieCasting.class, DataType.FLOAT),
+            new ExcelCell("铝重压铸前", 4000, "getWeightBeforeDieCasting", SubDieCasting.class, DataType.FLOAT),
+            new ExcelCell("铝重压铸后", 4000, "getWeightAfterDieCasting", SubDieCasting.class, DataType.FLOAT),
+            new ExcelCell("使用产品穴数选择", 4000, "getHoleSelection", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("打标使用状态", 4000, "getMarkingFunc", SubDieCasting.class, DataType.STRING),
+            new ExcelCell("数据源", 3000, "getDatasource", SubDieCasting.class, DataType.STRING)
     );
 }

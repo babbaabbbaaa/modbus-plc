@@ -1,9 +1,7 @@
 package com.demo.utility;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -73,7 +71,7 @@ public enum ExcelFormat {
                 cellStyle.setBorderTop(BorderStyle.THIN);
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-                cellStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.000"));
+                cellStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.0000"));
                 return cellStyle;
             });
 
@@ -111,7 +109,7 @@ public enum ExcelFormat {
                 cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
                 cellStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
                 cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                cellStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.000"));
+                cellStyle.setDataFormat(workbook.createDataFormat().getFormat("#,##0.0000"));
                 return cellStyle;
             });
 

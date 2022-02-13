@@ -3,6 +3,9 @@ package com.demo.domain;
 
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigRepository;
+import com.demo.enums.BarcodeDuplicateEnum;
+import com.demo.enums.GeneralFunctionEnum;
+import com.demo.plc.IDataFetchService;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -14,6 +17,7 @@ import com.serotonin.modbus4j.msg.WriteRegisterRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,7 +31,8 @@ import java.util.*;
 
 @Slf4j
 @Service
-public class FetchDataService {
+@Profile("stamping")
+public class FetchDataService implements IDataFetchService {
 
     private static final Set<String> NOT_QUALIFIED_TAGS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("C", "D", "E", "F")));
 
@@ -47,6 +52,7 @@ public class FetchDataService {
         dataReadyLocator = BaseLocator.holdingRegister(slaveId, 7001, DataType.TWO_BYTE_INT_SIGNED);
     }
 
+    @Override
     public synchronized void process() throws ModbusTransportException, ErrorResponseException {
         if (isDataNotReady()) {
             return;
@@ -181,29 +187,10 @@ public class FetchDataService {
         return modbusMaster.getValue(dataReadyLocator).shortValue() != 1;
     }
 
-    private float getFloatValue(short height, short low, int ratio) {
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putShort(low);
-        buffer.putShort(height);
-        int data = buffer.getInt(0);
-        return ((float) data) / ratio;
-    }
 
     private void setShortValue(int slaveId, int offset, short value) throws ModbusTransportException {
         WriteRegisterRequest request = new WriteRegisterRequest(slaveId, offset, value);
         modbusMaster.send(request);
-    }
-
-
-    private String getBarcode(String barcodeData, int start, int end) {
-        if (!StringUtils.hasText(barcodeData) || "error".equalsIgnoreCase(barcodeData)
-                || barcodeData.length() < end) {
-            return "";
-        }
-        if (StringUtils.hasText(barcodeData) && barcodeData.length() > end) {
-            return barcodeData.substring(start, end);
-        }
-        return "";
     }
 
     private String getBarcodeQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
