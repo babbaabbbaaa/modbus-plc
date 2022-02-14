@@ -15,6 +15,7 @@ class FilterAscPage extends React.Component{
     title: '操作',
     dataIndex: 'options',
     key: 'options',
+    fixed: 'left',
     width: 85,
     render: (text,record) => {
       if(record.duplicated === 'DUP'){
@@ -132,7 +133,6 @@ class FilterAscPage extends React.Component{
             }
           })
         })
-        console.log(tableList)
         this.setState({
           dataSource: tableList,
           totalCount: data.totalElements
@@ -206,6 +206,10 @@ class FilterAscPage extends React.Component{
     });
   }
 
+  focusHandle = () => {
+    document.getElementById('barcodeRef').select();
+  }
+
   onPageChange = (page) => {
     this.setState({ page: page }, this.getTableList);
   }
@@ -253,22 +257,15 @@ class FilterAscPage extends React.Component{
         format: 'YYYY-MM-DD HH:mm:ss',
         key: 'date',
         showTime: true,
-        col: {xs:24, sm:12,md:8,lg:8,xl:6},
+        col: {xs:24, sm:12,md:10,lg:10,xl:8},
         changeValue: this.dateChange
-      },
-      {
-        label: 'SR1000二维码编号',
-        controlType: 'Input',
-        placeholder: '请输入',
-        key: 'barcodeData',
-        col: {xs:24, sm:12,md:8,lg:8,xl:6}
       },
       {
         label: '二维码字符提取',
         controlType: 'Input',
         placeholder: '请输入',
         key: 'barcode',
-        col: {xs:24, sm:12,md:8,lg:8,xl:6}
+        col: {xs:24, sm:12,md:10,lg:10,xl:8}
       },
       {
         label: '自动线检测结果',
@@ -291,6 +288,15 @@ class FilterAscPage extends React.Component{
         placeholder: '请输入',
         key: 'reinspectBy',
         col: {xs:24, sm:12,md:10,lg:10,xl:8}
+      },
+      {
+        label: 'SR1000二维码编号',
+        controlType: 'Input',
+        placeholder: '请输入',
+        key: 'barcodeData',
+        ref: 'barcodeRef',
+        onFocus: this.focusHandle,
+        col: {xs:24, sm:24,md:24,lg:24,xl:24}
       },
     ];
     const rowClassName = (record) => {
@@ -315,7 +321,8 @@ class FilterAscPage extends React.Component{
         <Row>
           {
             formCondition.map(condition => {
-              return <Col key={condition.key} xs={24} sm={12} md={8} lg={8} xl={6}>
+              const { col } = condition
+              return <Col key={condition.key} xs={col.xs} sm={col.sm} md={col.md} lg={col.lg} xl={col.xl}>
                 <Form.Item name={condition.key} label={condition.label}>
                     {FormCondition(condition)}
                 </Form.Item>

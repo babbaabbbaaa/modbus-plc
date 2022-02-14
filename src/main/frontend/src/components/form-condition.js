@@ -6,7 +6,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const FormCondition = (condition) => {
-	const { controlType,options,type,disabled,mode,disabledDate,defaultValue,changeValue,placeholder,showSearch,filterOption,allowClear,format,showTime } = condition;
+	const { controlType,options,type,disabled,mode,disabledDate,defaultValue,changeValue,placeholder,showSearch,filterOption,allowClear,format,showTime,onFocus,ref } = condition;
 	switch (controlType) {
 		case 'TextArea':
 			return (
@@ -72,6 +72,8 @@ const FormCondition = (condition) => {
 					defaultValue={defaultValue}
 					onChange={changeValue}
 					disabled={disabled}
+					onFocus={onFocus}
+					id={ref}
 				/>
 			);
 			case 'InputNumber':

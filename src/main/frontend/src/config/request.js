@@ -94,14 +94,14 @@ service.interceptors.response.use(
     // eslint-disable-next-line no-mixed-operators
     const status = error.response&&error.response.status|| error.status;
     const data =  error.response&&error.response.data||{};
-    const { debugMessage } = data;
+    const {message } = data;
     if(status === 401){
       localStorage.clear();
       inputPassword();
     }else if (status === 403) {  
       message.error('无权限操作！');  
     }else{
-      error.response&& message.error(debugMessage||'error')
+      error.response&& message.error(message||'error')
     }
     return Promise.reject(error);
   }
