@@ -3,13 +3,15 @@ import { Menu,Dropdown } from 'antd';
 import { Link } from 'react-router-dom';
 import Semaphore from '@/components/semaphore';
 import { logout } from '@/service/common-service';
+import Login from '@/components/login';
 
 class Header extends React.Component {
 	pathname = (window.location.hash).substr(2) || 'filter'
 	state = {
 		current: this.pathname,
 		userName: '',
-		roles: []
+		roles: [],
+		isLogin: false
 	};
 
 	menu = (
@@ -26,14 +28,22 @@ class Header extends React.Component {
 		})
 	}
 
+	clickLogin = () => {
+		Login.show();
+	}
+
 	componentDidMount () {
 		let userInfo = localStorage.getItem('userInfo')||'{}';
 		userInfo = JSON.parse(userInfo);
+		let loginInfo = false;
+		if(userInfo.username){
+			loginInfo = true;
+		}
 		this.setState({
 			userName: userInfo.username||'',
-			roles: userInfo.roles||[]
-		})
-			
+			roles: userInfo.roles||[],
+			isLogin: loginInfo
+		});
 	}
 
 	handleClick = e => {
@@ -41,7 +51,7 @@ class Header extends React.Component {
 		this.setState({ current: e.key });
 	}; 
 	render() {
-		const { current,userName,roles } = this.state;
+		const { current,userName,roles,isLogin } = this.state;
 		return (
 			<div className = 'page-header'>
 				<Menu onClick = { this.handleClick } selectedKeys = {[current]} mode = "horizontal" >
@@ -62,9 +72,12 @@ class Header extends React.Component {
 				</Menu>
 				<div className='header-right'>
 					<Semaphore />
-					<Dropdown overlay={this.menu} placement="bottomLeft" arrow>
-						<div className='user-info'>{userName}</div>
-					</Dropdown>
+					{
+						isLogin?<Dropdown overlay={this.menu} placement="bottomLeft" arrow>
+							<div className='user-info'>{userName}</div>
+						</Dropdown>:<div className='header-login' onClick={this.clickLogin}>登录</div>
+						
+					}
 				</div>
 			</div>
 		);

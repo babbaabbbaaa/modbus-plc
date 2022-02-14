@@ -7,7 +7,7 @@ function App() {
   let userInfo = localStorage.getItem('userInfo')||'{}';
   userInfo = JSON.parse(userInfo);
   let roles = userInfo.roles||[];
-  let routeList = [];
+  let routeList = routes;
   if(roles.indexOf('ADMIN')<0){
     routeList = routes.filter(item => {
       if(item.path !== '/user'){
