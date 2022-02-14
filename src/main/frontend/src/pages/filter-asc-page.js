@@ -113,7 +113,7 @@ class FilterAscPage extends React.Component{
       from: searchParam.from
     }
     searchList(params).then(res => {
-      const {code,data} = res;
+      const {code,data,msg} = res;
       if(code === 0){
         this.errMessageShow = true;
         // eslint-disable-next-line array-callback-return
@@ -145,14 +145,14 @@ class FilterAscPage extends React.Component{
       }else{
         if(this.errMessageShow){
           this.errMessageShow = false;
-          message.error(message,10)
+          message.error(msg,10)
         }
       }
     }).catch(err=>{
-      const {message} = err;
+      const {msg} = err;
       if(this.errMessageShow){
         this.errMessageShow = false;
-        message.error(message,10)
+        message.error(msg,10)
       }
     })
     countQualifiedProducts(params).then(res => {
@@ -178,7 +178,7 @@ class FilterAscPage extends React.Component{
             message.success('确认成功');
             this.getTableList();
           }else{
-            message.error(res.message||'确认失败！');
+            message.error(res.msg||'确认失败！');
           }
         })
       }
@@ -321,7 +321,12 @@ class FilterAscPage extends React.Component{
         case 'DUP': 
           this.showDup = false;
           if(this.showDup){
-            message.confirm('该二维码重码！');
+            Modal.confirm({
+              title: 'Confirm',
+              content: '该二维码重码！',
+              okText: '确认',
+              cancelText: '取消',
+            });
           }
           className = 'bg-red';
           break;
@@ -337,9 +342,6 @@ class FilterAscPage extends React.Component{
       }
       return className
     }
-    
-    
-    message.confirm('该二维码重码！');
     return <div className='page-container'>
       <Form className='page-form' name='search' ref={this.formRef}>
         <Row>

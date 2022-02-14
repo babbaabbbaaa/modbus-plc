@@ -113,7 +113,7 @@ class FilterPage extends React.Component{
       from: searchParam.from
     }
     searchList(params).then(res => {
-      const {code,data,message} = res;
+      const {code,data,msg} = res;
       if(code === 0){
         this.errMessageShow = true;
         // eslint-disable-next-line array-callback-return
@@ -127,14 +127,14 @@ class FilterPage extends React.Component{
       }else{
         if(this.errMessageShow){
           this.errMessageShow = false;
-          message.error(message,10)
+          message.error(msg,10)
         }
       }
     }).catch(err=>{
-      const {message} = err;
+      const {msg} = err;
       if(this.errMessageShow){
         this.errMessageShow = false;
-        message.error(message,10)
+        message.error(msg,10)
       }
     })
     countQualifiedProducts(params).then(res => {
@@ -177,7 +177,7 @@ class FilterPage extends React.Component{
             message.success('确认成功');
             this.getTableList();
           }else{
-            message.error(res.message||'确认失败！');
+            message.error(res.msg||'确认失败！');
           }
         })
       }
@@ -219,7 +219,7 @@ class FilterPage extends React.Component{
             message.success('确认成功');
             this.getTableList();
           }else{
-            message.error(res.message||'确认失败！');
+            message.error(res.msg||'确认失败！');
           }
         })
       }
@@ -288,7 +288,12 @@ class FilterPage extends React.Component{
         case 'DUP': 
           this.showDup = false;
           if(this.showDup){
-            message.confirm('该二维码重码！');
+            Modal.confirm({
+              title: 'Confirm',
+              content: '该二维码重码！',
+              okText: '确认',
+              cancelText: '取消',
+            });
           }
           className = 'bg-red';
           break;

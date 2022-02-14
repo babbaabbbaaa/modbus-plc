@@ -65,7 +65,7 @@ service.interceptors.response.use(
     let requestFlag = JSON.stringify(response.config.url) + JSON.stringify(response.config.data) + '&' + response.config.method;
     requestList.splice(requestList.findIndex(item => item === requestFlag), 1);
     const {config,data} = response;
-    const {code,message}=data;
+    const {code,msg}=data;
     if (Object.prototype.toString.call(data) === "[object Blob]") {
       return response;
     }
@@ -78,7 +78,7 @@ service.interceptors.response.use(
         message.error('无权限操作！',20); 
         return Promise.reject(response.data); 
       }
-      message.error(message,10);
+      message.error(msg,10);
       return Promise.reject(response.data);
     }else{
       if(config.uploadOrDownload){
@@ -94,14 +94,14 @@ service.interceptors.response.use(
     // eslint-disable-next-line no-mixed-operators
     const status = error.response&&error.response.status|| error.status;
     const data =  error.response&&error.response.data||{};
-    const {message } = data;
+    const {msg } = data;
     if(status === 401){
       localStorage.clear();
       inputPassword();
     }else if (status === 403) {  
       message.error('无权限操作！');  
     }else{
-      error.response&& message.error(message||'error')
+      error.response&& message.error(msg||'error')
     }
     return Promise.reject(error);
   }
