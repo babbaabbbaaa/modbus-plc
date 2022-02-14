@@ -1,4 +1,4 @@
-package com.demo;
+package com.demo.configuration;
 
 import com.serotonin.modbus4j.ModbusFactory;
 import com.serotonin.modbus4j.ModbusMaster;

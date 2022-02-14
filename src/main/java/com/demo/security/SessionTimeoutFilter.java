@@ -1,4 +1,4 @@
-package com.demo;
+package com.demo.security;
 
 import com.demo.model.Response;
 import com.demo.utility.JsonUtil;

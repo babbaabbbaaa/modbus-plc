@@ -1,6 +1,5 @@
 package com.demo.security;
 
-import com.demo.SessionTimeoutFilter;
 import com.demo.authentication.UserService;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,7 +7,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.security.web.session.SessionManagementFilter;
 
 @EnableWebSecurity
 public class AppWebSecurityConfig extends WebSecurityConfigurerAdapter {
