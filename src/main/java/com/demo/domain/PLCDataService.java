@@ -1,8 +1,10 @@
 package com.demo.domain;
 
 
+import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
+import com.demo.plc.IDataSearchService;
 import com.demo.utility.ExcelHeaderConstants;
 import com.demo.utility.ExcelHelper;
 import com.serotonin.modbus4j.ModbusMaster;
@@ -13,18 +15,19 @@ import com.serotonin.modbus4j.locator.BaseLocator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 @Slf4j
-public class PLCDataService {
+@Profile("stamping")
+public class PLCDataService implements IDataSearchService {
 
     private final PLCRepository plcRepository;
     private final BaseLocator<Number> duplicateLocator;
@@ -39,10 +42,12 @@ public class PLCDataService {
         this.entityManager = entityManager;
     }
 
+    @Override
     public Page<PLCData> search(PLCSearchCriteria criteria) {
         return plcRepository.findAll(plcRepository.buildSpecification(criteria), criteria.createPageRequest());
     }
 
+    @Override
     public PLCQualifiedProductCountModel countQualifiedProducts(PLCSearchCriteria criteria) {
         List<Object[]> results = entityManager.createQuery(plcRepository.buildCountQualifiedProducts(criteria, entityManager.getCriteriaBuilder())).getResultList();
         PLCQualifiedProductCountModel model = new PLCQualifiedProductCountModel();
@@ -61,6 +66,7 @@ public class PLCDataService {
         return model;
     }
 
+    @Override
     public void confirmDuplicate(String barcode, Integer productTypeId) throws ModbusTransportException, ErrorResponseException {
         List<PLCData> plcData = plcRepository.getDataByBarcode(barcode, productTypeId);
         if (!CollectionUtils.isEmpty(plcData)) {
@@ -75,13 +81,18 @@ public class PLCDataService {
         }
     }
 
+    @Override
     public byte[] export(PLCSearchCriteria criteria) throws Exception {
         List<PLCData> plcData = plcRepository.findAll(plcRepository.buildSpecification(criteria));
         return ExcelHelper.writeBean(plcData, ExcelHeaderConstants.EXCEL_HEADERS);
-
     }
 
-    @Transactional
+    @Override
+    public int reinspect(int id, String status) {
+        return 0;
+    }
+
+    @Override
     public int clear(short productTypeId) {
         return plcRepository.deleteAllByProductTypeId(productTypeId);
     }

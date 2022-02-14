@@ -1,7 +1,10 @@
 package com.demo.utility;
 
-import com.demo.domain.BarcodeDuplicateEnum;
+import com.demo.cast.DieCasting;
+import com.demo.cast.SubDieCasting;
 import com.demo.domain.PLCData;
+import com.demo.enums.BarcodeDuplicateEnum;
+import com.demo.plc.IPLCData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -14,9 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.demo.domain.BarcodeDuplicateEnum.CONFIRMED;
-import static com.demo.domain.BarcodeDuplicateEnum.DUP;
 
 /**
  * @author Rocker Chen
@@ -31,7 +31,7 @@ public class ExcelHelper {
      * @param headerList a title list with Excel title and bean field
      * @return an Excel workbook filled with PLC data
      */
-    public static byte[] writeBean(List<PLCData> rows, List<ExcelCell> headerList) throws Exception {
+    public static byte[] writeBean(List<? extends IPLCData> rows, List<ExcelCell> headerList) throws Exception {
         SXSSFWorkbook workbook = new SXSSFWorkbook();
         XSSFFont headerFont = (XSSFFont) workbook.createFont();
         headerFont.setFontName("Arial");
@@ -48,13 +48,33 @@ public class ExcelHelper {
         }
         Map<Integer, CellStyle> cellStyleMap = new HashMap<>();
         i = 1;
+        int rowNo = 1;
         if (!CollectionUtils.isEmpty(rows)) {
-            for (PLCData row : rows) {
-                row.setIndex(i);
-                SXSSFRow body = sheet.createRow(i++);
-                int j = 0;
-                for (ExcelCell item : headerList) {
-                    item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), row.getDuplicated()), item.getInvokeMethod().invoke(row), j++);
+            for (IPLCData row : rows) {
+                row.setIndex(i++);
+                if (row instanceof PLCData) {
+                    int j = 0;
+                    SXSSFRow body = sheet.createRow(rowNo);
+                    for (ExcelCell item : headerList) {
+                        item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), row.getDuplicated()), item.getInvokeMethod().invoke(row), j++);
+                    }
+                    rowNo++;
+                } else if (row instanceof DieCasting) {
+                    List<SubDieCasting> subDieCastings = ((DieCasting) row).getSubDieCastings();
+                    int rowIndex = rowNo;
+                    for (SubDieCasting subDieCasting : subDieCastings) {
+                        SXSSFRow body = sheet.createRow(rowIndex++);
+                        for (int headIndex = 4; headIndex < headerList.size(); headIndex++) {
+                            ExcelCell item = headerList.get(headIndex);
+                            item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), subDieCasting.getDuplicated()), item.getInvokeMethod().invoke(subDieCasting), headIndex);
+                        }
+                    }
+                    for (int headIndex = 0; headIndex < 4; headIndex++) {
+                        ExcelCell item = headerList.get(headIndex);
+                        SXSSFRow body = sheet.getRow(rowNo);
+                        item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), row.getDuplicated()), item.getInvokeMethod().invoke(row), headIndex);
+                    }
+                    rowNo = rowIndex;
                 }
             }
         }

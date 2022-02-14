@@ -5,11 +5,13 @@ import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
 import com.demo.domain.FetchDataService;
 import com.demo.domain.PLCData;
-import com.demo.domain.PLCDataService;
 import com.demo.model.PLCConfirmModel;
 import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.model.Response;
+import com.demo.plc.IDataFetchService;
+import com.demo.plc.IDataSearchService;
+import com.demo.plc.IPLCData;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
@@ -30,43 +33,38 @@ import java.util.List;
 public class PLCController {
 
 
-    private final PLCDataService plcDataService;
+    private final IDataSearchService dataSearchService;
     private final PatternConfigService patternConfigService;
-    private final FetchDataService fetchDataService;
+    private final IDataFetchService dataFetchService;
     private final BaseLocator<Number> signalLocator;
 
     private ModbusMaster modbusMaster;
 
-    public PLCController(PLCDataService plcDataService,
+    public PLCController(IDataSearchService dataSearchService,
                          PatternConfigService patternConfigService,
-                         FetchDataService fetchDataService,
+                         IDataFetchService dataFetchService,
                          @Value("${modbus.slave_id}") int slaveId) {
-        this.plcDataService = plcDataService;
+        this.dataSearchService = dataSearchService;
         this.patternConfigService = patternConfigService;
-        this.fetchDataService = fetchDataService;
+        this.dataFetchService = dataFetchService;
         this.signalLocator = BaseLocator.holdingRegister(slaveId, 7000, DataType.TWO_BYTE_INT_SIGNED);
     }
 
     @PostMapping("search")
-    public Response<Page<PLCData>> search(@RequestBody PLCSearchCriteria criteria) {
-        return Response.success(plcDataService.search(criteria));
+    public Response<Page<? extends IPLCData>> search(@RequestBody PLCSearchCriteria criteria) {
+        return Response.success(dataSearchService.search(criteria));
     }
 
     @PostMapping("export")
+    @PreAuthorize("hasRole('EXPORT')")
     public ResponseEntity<byte[]> export(@RequestBody PLCSearchCriteria criteria) throws Exception {
-        byte[] bytes = plcDataService.export(criteria);
+        byte[] bytes = dataSearchService.export(criteria);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentLength(bytes.length);
         String filename = URLEncoder.encode("PLC追溯文件.xlsx", StandardCharsets.UTF_8.displayName()).replaceAll("\\\\+", "%20");
         headers.setContentDisposition(ContentDisposition.attachment().filename(filename, StandardCharsets.UTF_8).build());
         return new ResponseEntity<>(bytes, headers, HttpStatus.CREATED);
-    }
-
-    @PostMapping("confirm")
-    public Response<Void> confirm(@RequestBody PLCConfirmModel confirmModel) throws ModbusTransportException, ErrorResponseException {
-        plcDataService.confirmDuplicate(confirmModel.getBarcode(), confirmModel.getProductTypeId());
-        return Response.success();
     }
 
     @PostMapping("configs")
@@ -76,15 +74,15 @@ public class PLCController {
 
     @PostMapping("count")
     public Response<PLCQualifiedProductCountModel> count(@RequestBody PLCSearchCriteria criteria) throws ModbusTransportException {
-        return Response.success(plcDataService.countQualifiedProducts(criteria));
+        return Response.success(dataSearchService.countQualifiedProducts(criteria));
     }
 
     @GetMapping("data")
-    public Response<PLCData> data() throws ModbusTransportException {
-        if (fetchDataService.getModbusMaster() == null) {
+    public Response<IPLCData> data() throws ModbusTransportException {
+        if (dataFetchService.getModbusMaster() == null) {
             return Response.success(new PLCData());
         }
-        return Response.success(fetchDataService.getData());
+        return Response.success(dataFetchService.getData());
     }
 
     @GetMapping("signal")
@@ -103,6 +101,11 @@ public class PLCController {
         return Response.success();
     }
 
+    /**
+     * get the value of the register
+     * @param offset register
+     * @return value of the register
+     */
     @GetMapping("show")
     public Response<Integer> show(int offset) throws ModbusTransportException, ErrorResponseException {
         if (null != modbusMaster) {

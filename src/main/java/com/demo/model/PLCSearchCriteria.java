@@ -25,6 +25,9 @@ public class PLCSearchCriteria {
     private String barcode;
     private String barcodeData;
     private Boolean qualified;
+    private String autoInspectResult;
+    private String manualReinspectResult;
+    private String reinspectBy;
     private int page;
     private int size;
 

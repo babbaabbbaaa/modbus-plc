@@ -1,6 +1,8 @@
 package com.demo.domain;
 
 
+import com.demo.enums.BarcodeDuplicateEnum;
+import com.demo.plc.IPLCData;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "plc_data")
-public class PLCData {
+public class PLCData implements IPLCData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +62,9 @@ public class PLCData {
     private String comments;
     private String barcodeQualify = "";
     private boolean qualified;
+    private String autoInspectResult;
+    private String manualReinspectResult;
+    private String reinspectBy;
     @Transient
     private int ratio;
     @Transient

