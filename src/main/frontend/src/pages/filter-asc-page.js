@@ -11,6 +11,9 @@ const { Option } = Select;
 let invalidQualified = ['C', 'D', 'E', 'F'];
 class FilterAscPage extends React.Component{
   formRef = React.createRef();
+  showDup = true;
+  
+  errMessageShow = true;
   options = {
     title: '操作',
     dataIndex: 'options',
@@ -92,6 +95,7 @@ class FilterAscPage extends React.Component{
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
+    this.showDup = true;
     this.setState({
       searchParam: {
         page: 1,
@@ -111,6 +115,7 @@ class FilterAscPage extends React.Component{
     searchList(params).then(res => {
       const {code,data} = res;
       if(code === 0){
+        this.errMessageShow = true;
         // eslint-disable-next-line array-callback-return
         let tableList = [];
         data.content.map((item,index) => {
@@ -137,6 +142,17 @@ class FilterAscPage extends React.Component{
           dataSource: tableList,
           totalCount: data.totalElements
         })
+      }else{
+        if(this.errMessageShow){
+          this.errMessageShow = false;
+          message.error(message,10)
+        }
+      }
+    }).catch(err=>{
+      const {message} = err;
+      if(this.errMessageShow){
+        this.errMessageShow = false;
+        message.error(message,10)
       }
     })
     countQualifiedProducts(params).then(res => {
@@ -302,7 +318,12 @@ class FilterAscPage extends React.Component{
     const rowClassName = (record) => {
       let className = '';
       switch(record.duplicated){
-        case 'DUP': className = 'bg-red';
+        case 'DUP': 
+          this.showDup = false;
+          if(this.showDup){
+            message.confirm('该二维码重码！');
+          }
+          className = 'bg-red';
           break;
         case 'CONFIRMED' : className = 'bg-yellow'
           break;
@@ -316,6 +337,9 @@ class FilterAscPage extends React.Component{
       }
       return className
     }
+    
+    
+    message.confirm('该二维码重码！');
     return <div className='page-container'>
       <Form className='page-form' name='search' ref={this.formRef}>
         <Row>

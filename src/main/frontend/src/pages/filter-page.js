@@ -23,6 +23,8 @@ class FilterPage extends React.Component{
 
   formRef = React.createRef();
   showDup = true;
+  
+  errMessageShow = true;
   constructor(props){
     super(props);
     this.state = { 
@@ -33,8 +35,6 @@ class FilterPage extends React.Component{
       totalCount: 0,
       qualifiedCount: 0,
       notQualifiedCount: 0,
-      errMessageShow: true,
-      showDup: true,
       searchParam: {
         end: null,
         from: null,
@@ -115,6 +115,7 @@ class FilterPage extends React.Component{
     searchList(params).then(res => {
       const {code,data,message} = res;
       if(code === 0){
+        this.errMessageShow = true;
         // eslint-disable-next-line array-callback-return
         data.content.map((item,index) => {
           item.index = index+1+(page-1)*size;
@@ -124,11 +125,17 @@ class FilterPage extends React.Component{
           totalCount: data.totalElements
         })
       }else{
-        message.error(message,10)
+        if(this.errMessageShow){
+          this.errMessageShow = false;
+          message.error(message,10)
+        }
       }
     }).catch(err=>{
       const {message} = err;
-      message.error(message,10)
+      if(this.errMessageShow){
+        this.errMessageShow = false;
+        message.error(message,10)
+      }
     })
     countQualifiedProducts(params).then(res => {
       const {code, data} = res;
@@ -230,7 +237,7 @@ class FilterPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList, qualifiedCount, notQualifiedCount,showDup } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList, qualifiedCount, notQualifiedCount } = this.state;
     const formCondition = [
       {
         label: '产品类型',
