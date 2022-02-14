@@ -16,7 +16,13 @@ class Login extends PureComponent {
   
 
 	show() {
-		this.setState({ visible: true });
+		this.setState({ visible: true },()=>{
+      let timer = setTimeout(()=>{
+        clearTimeout(timer);
+        console.log(document.getElementById('loginInput'))
+        document.getElementById('loginInput').focus();
+      },5)
+    });
 	}
 
 	handleCancel = () => {
@@ -80,7 +86,7 @@ class Login extends PureComponent {
       <Row className='page-form'>
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>
           <Form.Item name='password'>
-            <Input type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle} autoFocus={visible}/>
+            <Input id='loginInput' type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle}/>
           </Form.Item>
         </Col>
       </Row>
