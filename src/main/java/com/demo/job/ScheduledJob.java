@@ -1,7 +1,7 @@
 package com.demo.job;
 
 
-import com.demo.domain.FetchDataService;
+import com.demo.domain.stamping.FetchDataService;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;

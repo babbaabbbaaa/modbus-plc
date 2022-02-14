@@ -1,10 +1,11 @@
-package com.demo.cast;
+package com.demo.domain.casting;
 
 
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigRepository;
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IPLCData;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +25,8 @@ public class DieCasting implements IPLCData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private LocalDateTime logTime = LocalDateTime.now();
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime logTime;
     private int moldNo;
     private int injectionNo;
     private short productTypeId;
@@ -38,6 +40,7 @@ public class DieCasting implements IPLCData {
                       PatternConfigRepository patternConfigRepository,
                       SubDieCastingRepository subDieCastingRepository) {
 
+        this.logTime = LocalDateTime.now();
         this.productTypeId = dataArrays[3];
         this.moldNo = dataArrays[4];
         this.injectionNo = dataArrays[5];
@@ -56,6 +59,7 @@ public class DieCasting implements IPLCData {
             checkDup(subDieCasting.getBarcode(), subDieCastingRepository);
         }
         subDieCasting.setAutoInspectionResult();
+        subDieCasting.setProductTypeId(this.productTypeId);
         this.subDieCastings.add(subDieCasting);
     }
 

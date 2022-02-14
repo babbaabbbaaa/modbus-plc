@@ -1,4 +1,4 @@
-package com.demo.cast;
+package com.demo.domain.casting;
 
 import com.demo.model.PLCSearchCriteria;
 import org.hibernate.query.criteria.internal.OrderImpl;
@@ -22,6 +22,13 @@ public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, J
                 .orderBy(new OrderImpl(root.get("logTime"), false)).getRestriction();
     }
 
+    default CriteriaQuery<Object[]> buildCountQualifiedProducts(PLCSearchCriteria criteria, CriteriaBuilder builder) {
+        CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
+        Root<DieCasting> root = query.from(DieCasting.class);
+        Path<Collection<SubDieCasting>> subDieCasting = root.join("subDieCastings");
+        return query.multiselect(subDieCasting.get("autoInspectResult"), builder.countDistinct(subDieCasting.get("id"))).where(buildPredicates(root, builder, criteria).toArray(new Predicate[0]))
+                .groupBy(subDieCasting.get("autoInspectResult"));
+    }
 
     default List<Predicate> buildPredicates(Root<DieCasting> root, CriteriaBuilder builder, PLCSearchCriteria criteria) {
         List<Predicate> predicates = new ArrayList<>();

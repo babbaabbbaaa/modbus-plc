@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class PLCQualifiedProductCountModel {
 
-    private Object qualifiedCount;
-    private Object notQualifiedCount;
+    private Object qualifiedCount = 0;
+    private Object notQualifiedCount = 0;
 }

@@ -1,4 +1,4 @@
-package com.demo.cast;
+package com.demo.domain.casting;
 
 
 import com.demo.enums.BarcodeDuplicateEnum;
@@ -44,6 +44,7 @@ public class SubDieCasting implements IPLCData {
     private String holeSelection;
     private String codeReadingFunc; // 读码
     private String datasource = "自动线";
+    private int productTypeId;
 
     @Enumerated(EnumType.STRING)
     private BarcodeDuplicateEnum duplicated = BarcodeDuplicateEnum.NONE;

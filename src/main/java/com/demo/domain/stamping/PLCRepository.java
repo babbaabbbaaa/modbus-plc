@@ -1,4 +1,4 @@
-package com.demo.domain;
+package com.demo.domain.stamping;
 
 import com.demo.model.PLCSearchCriteria;
 import org.hibernate.query.criteria.internal.OrderImpl;

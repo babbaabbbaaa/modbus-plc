@@ -1,4 +1,4 @@
-package com.demo.cast;
+package com.demo.domain.casting;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

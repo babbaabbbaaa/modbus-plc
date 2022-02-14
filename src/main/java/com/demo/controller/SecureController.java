@@ -76,7 +76,6 @@ public class SecureController {
         return Response.success();
     }
 
-
     @Autowired(required = false)
     public void setModbusMaster(ModbusMaster modbusMaster) {
         this.modbusMaster = modbusMaster;

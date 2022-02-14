@@ -3,9 +3,7 @@ package com.demo.controller;
 
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
-import com.demo.domain.FetchDataService;
-import com.demo.domain.PLCData;
-import com.demo.model.PLCConfirmModel;
+import com.demo.domain.stamping.PLCData;
 import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.model.Response;

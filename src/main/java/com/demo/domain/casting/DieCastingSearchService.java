@@ -1,6 +1,7 @@
-package com.demo.cast;
+package com.demo.domain.casting;
 
 import com.demo.enums.BarcodeDuplicateEnum;
+import com.demo.exceptions.ServiceException;
 import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.plc.IDataSearchService;
@@ -19,8 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,27 +34,43 @@ public class DieCastingSearchService implements IDataSearchService {
     private final DieCastingRepository dieCastingRepository;
     private final SubDieCastingRepository subDieCastingRepository;
     private final ModbusMaster modbusMaster;
+    private final EntityManager entityManager;
 
     private final BaseLocator<Number> duplicateLocator;
 
     public DieCastingSearchService(DieCastingRepository dieCastingRepository,
                                    SubDieCastingRepository subDieCastingRepository,
-                                   @Autowired(required = false) ModbusMaster modbusMaster) {
+                                   @Autowired(required = false) ModbusMaster modbusMaster, EntityManager entityManager) {
         this.dieCastingRepository = dieCastingRepository;
         this.subDieCastingRepository = subDieCastingRepository;
         this.modbusMaster = modbusMaster;
+        this.entityManager = entityManager;
         this.duplicateLocator = BaseLocator.holdingRegister(1, 7002, DataType.TWO_BYTE_INT_SIGNED);
     }
 
     @Override
     public Page<? extends IPLCData> search(PLCSearchCriteria criteria) {
         Page<DieCasting> dieCastings = dieCastingRepository.findAll(dieCastingRepository.buildSpecification(criteria), criteria.createPageRequest());
+        if (StringUtils.hasText(criteria.getBarcodeData()) && dieCastings.isEmpty()) {
+            throw new ServiceException("二维码有误！");
+        }
         return new PageImpl<>(dieCastings.stream().distinct().collect(Collectors.toList()), dieCastings.getPageable(), dieCastings.getTotalElements());
     }
 
     @Override
     public PLCQualifiedProductCountModel countQualifiedProducts(PLCSearchCriteria criteria) {
-        return new PLCQualifiedProductCountModel();
+        List<Object[]> results = entityManager.createQuery(dieCastingRepository.buildCountQualifiedProducts(criteria, entityManager.getCriteriaBuilder())).getResultList();
+        PLCQualifiedProductCountModel model = new PLCQualifiedProductCountModel();
+        if (!CollectionUtils.isEmpty(results)) {
+            for (Object[] result : results) {
+                if (Objects.equals("合格", result[0])) {
+                    model.setQualifiedCount(result[1]);
+                } else if (Objects.equals("不合格", result[0])) {
+                    model.setNotQualifiedCount(result[1]);
+                }
+            }
+        }
+        return model;
     }
 
     @Override

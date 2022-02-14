@@ -1,4 +1,4 @@
-package com.demo.cast;
+package com.demo.domain.casting;
 
 import com.demo.config.PatternConfigRepository;
 import com.demo.enums.BarcodeDuplicateEnum;

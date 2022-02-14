@@ -1,8 +1,8 @@
 package com.demo.utility;
 
-import com.demo.cast.DieCasting;
-import com.demo.cast.SubDieCasting;
-import com.demo.domain.PLCData;
+import com.demo.domain.casting.DieCasting;
+import com.demo.domain.casting.SubDieCasting;
+import com.demo.domain.stamping.PLCData;
 
 import java.util.Arrays;
 import java.util.List;
