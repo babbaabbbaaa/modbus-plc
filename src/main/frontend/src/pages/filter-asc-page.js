@@ -11,10 +11,14 @@ const { Option } = Select;
 let invalidQualified = ['C', 'D', 'E', 'F'];
 class FilterAscPage extends React.Component{
   formRef = React.createRef();
+  showDup = true;
+  
+  errMessageShow = true;
   options = {
     title: '操作',
     dataIndex: 'options',
     key: 'options',
+    fixed: 'left',
     width: 85,
     render: (text,record) => {
       if(record.duplicated === 'DUP'){
@@ -91,6 +95,7 @@ class FilterAscPage extends React.Component{
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
+    this.showDup = true;
     this.setState({
       searchParam: {
         page: 1,
@@ -110,6 +115,7 @@ class FilterAscPage extends React.Component{
     searchList(params).then(res => {
       const {code,data} = res;
       if(code === 0){
+        this.errMessageShow = true;
         // eslint-disable-next-line array-callback-return
         let tableList = [];
         data.content.map((item,index) => {
@@ -132,11 +138,21 @@ class FilterAscPage extends React.Component{
             }
           })
         })
-        console.log(tableList)
         this.setState({
           dataSource: tableList,
           totalCount: data.totalElements
         })
+      }else{
+        if(this.errMessageShow){
+          this.errMessageShow = false;
+          message.error(message,10)
+        }
+      }
+    }).catch(err=>{
+      const {message} = err;
+      if(this.errMessageShow){
+        this.errMessageShow = false;
+        message.error(message,10)
       }
     })
     countQualifiedProducts(params).then(res => {
@@ -206,6 +222,10 @@ class FilterAscPage extends React.Component{
     });
   }
 
+  focusHandle = () => {
+    document.getElementById('barcodeRef').select();
+  }
+
   onPageChange = (page) => {
     this.setState({ page: page }, this.getTableList);
   }
@@ -253,22 +273,15 @@ class FilterAscPage extends React.Component{
         format: 'YYYY-MM-DD HH:mm:ss',
         key: 'date',
         showTime: true,
-        col: {xs:24, sm:12,md:8,lg:8,xl:6},
+        col: {xs:24, sm:12,md:10,lg:10,xl:8},
         changeValue: this.dateChange
-      },
-      {
-        label: 'SR1000二维码编号',
-        controlType: 'Input',
-        placeholder: '请输入',
-        key: 'barcodeData',
-        col: {xs:24, sm:12,md:8,lg:8,xl:6}
       },
       {
         label: '二维码字符提取',
         controlType: 'Input',
         placeholder: '请输入',
         key: 'barcode',
-        col: {xs:24, sm:12,md:8,lg:8,xl:6}
+        col: {xs:24, sm:12,md:10,lg:10,xl:8}
       },
       {
         label: '自动线检测结果',
@@ -292,11 +305,25 @@ class FilterAscPage extends React.Component{
         key: 'reinspectBy',
         col: {xs:24, sm:12,md:10,lg:10,xl:8}
       },
+      {
+        label: 'SR1000二维码编号',
+        controlType: 'Input',
+        placeholder: '请输入',
+        key: 'barcodeData',
+        ref: 'barcodeRef',
+        onFocus: this.focusHandle,
+        col: {xs:24, sm:24,md:24,lg:24,xl:24}
+      },
     ];
     const rowClassName = (record) => {
       let className = '';
       switch(record.duplicated){
-        case 'DUP': className = 'bg-red';
+        case 'DUP': 
+          this.showDup = false;
+          if(this.showDup){
+            message.confirm('该二维码重码！');
+          }
+          className = 'bg-red';
           break;
         case 'CONFIRMED' : className = 'bg-yellow'
           break;
@@ -310,12 +337,16 @@ class FilterAscPage extends React.Component{
       }
       return className
     }
+    
+    
+    message.confirm('该二维码重码！');
     return <div className='page-container'>
       <Form className='page-form' name='search' ref={this.formRef}>
         <Row>
           {
             formCondition.map(condition => {
-              return <Col key={condition.key} xs={24} sm={12} md={8} lg={8} xl={6}>
+              const { col } = condition
+              return <Col key={condition.key} xs={col.xs} sm={col.sm} md={col.md} lg={col.lg} xl={col.xl}>
                 <Form.Item name={condition.key} label={condition.label}>
                     {FormCondition(condition)}
                 </Form.Item>

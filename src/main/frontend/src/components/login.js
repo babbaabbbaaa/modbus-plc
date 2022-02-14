@@ -80,7 +80,7 @@ class Login extends PureComponent {
       <Row className='page-form'>
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>
           <Form.Item name='password'>
-            <Input type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle} autoFocus/>
+            <Input type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle} autoFocus={visible}/>
           </Form.Item>
         </Col>
       </Row>

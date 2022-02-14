@@ -1,11 +1,12 @@
 import React from 'react';
-import {Form,Row,Col,Button,Modal,message} from 'antd';
+import {Form,Row,Col,Button,Modal,message,Select} from 'antd';
 import TablePanel from '@/components/table';
 import columns from '@/column/filter-column';
-import {searchList,confirmItem,exportList,configOption, countQualifiedProducts} from '@/service/filter-service';
+import {searchList,confirmItem,exportList,configOption, countQualifiedProducts,reinspect} from '@/service/filter-service';
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
+const {Option} = Select;
 let invalidQualified = ['C', 'D', 'E', 'F'];
 class FilterPage extends React.Component{
   options = {
@@ -21,7 +22,9 @@ class FilterPage extends React.Component{
   }
 
   formRef = React.createRef();
-
+  showDup = true;
+  
+  errMessageShow = true;
   constructor(props){
     super(props);
     this.state = { 
@@ -47,11 +50,19 @@ class FilterPage extends React.Component{
   componentDidMount () {
     this.getTableList();
     this.getConfigOption();
+    let tableColumns = columns.map(item => {
+      if(item.dataIndex === 'manualReinspectResult'){
+        item.render = (value, row, index)=>this.columnRender(value, row, index);
+      }
+      return item;
+    })
     this.timer = setInterval(()=>{
       this.getTableList()
     },1000)
     this.setState({
-      qualifiedList: [{label: "合格", value: 1}, {label: "不合格", value: 0}]
+      columns: tableColumns,
+      qualifiedList: [{label: "合格", value: 1}, {label: "不合格", value: 0}],
+      manualReinspectResultOptions: [{label: "空", value: '空'}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
     })
   }
 
@@ -84,6 +95,7 @@ class FilterPage extends React.Component{
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
+    this.showDup = true;
     this.setState({
       searchParam: {
         page: 1,
@@ -101,8 +113,9 @@ class FilterPage extends React.Component{
       from: searchParam.from
     }
     searchList(params).then(res => {
-      const {code,data} = res;
+      const {code,data,message} = res;
       if(code === 0){
+        this.errMessageShow = true;
         // eslint-disable-next-line array-callback-return
         data.content.map((item,index) => {
           item.index = index+1+(page-1)*size;
@@ -111,6 +124,17 @@ class FilterPage extends React.Component{
           dataSource: data.content,
           totalCount: data.totalElements
         })
+      }else{
+        if(this.errMessageShow){
+          this.errMessageShow = false;
+          message.error(message,10)
+        }
+      }
+    }).catch(err=>{
+      const {message} = err;
+      if(this.errMessageShow){
+        this.errMessageShow = false;
+        message.error(message,10)
       }
     })
     countQualifiedProducts(params).then(res => {
@@ -160,6 +184,10 @@ class FilterPage extends React.Component{
     });
   }
 
+  focusHandle = () => {
+    document.getElementById('barcodeRef').select();
+  }
+
   onPageChange = (page) => {
     this.setState({ page: page }, this.getTableList);
   }
@@ -177,6 +205,35 @@ class FilterPage extends React.Component{
     this.setState({
       searchParam
     })
+  }
+
+  changeValue = (value,record,index,e) => {
+    console.log(e,value,record,index)
+    Modal.confirm({
+      title: `是否要将人工复检结果修改为${e}?`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        reinspect({id: record.id, status: e}).then(res=>{
+          if(res.code === 0) {
+            message.success('确认成功');
+            this.getTableList();
+          }else{
+            message.error(res.message||'确认失败！');
+          }
+        })
+      }
+    });
+  }
+
+  columnRender = (value, row, index) => {
+    return <Select 
+      defaultValue={value}
+      onChange={this.changeValue.bind(this,value,row,index)}>
+      <Option value='空'>空</Option>        
+      <Option value='复检NG'>复检NG</Option>
+      <Option value='复检OK'>复检OK</Option>
+    </Select>
   }
 
   render () {
@@ -197,22 +254,15 @@ class FilterPage extends React.Component{
         format: 'YYYY-MM-DD HH:mm:ss',
         key: 'date',
         showTime: true,
-        col: {xs:24, sm:12,md:8,lg:8,xl:6},
+        col: {xs:24, sm:12,md:10,lg:10,xl:8},
         changeValue: this.dateChange
-      },
-      {
-        label: 'SR1000二维码编号',
-        controlType: 'Input',
-        placeholder: '请输入',
-        key: 'barcodeData',
-        col: {xs:24, sm:12,md:8,lg:8,xl:6}
       },
       {
         label: '二维码字符提取',
         controlType: 'Input',
         placeholder: '请输入',
         key: 'barcode',
-        col: {xs:24, sm:12,md:8,lg:8,xl:6}
+        col: {xs:24, sm:12,md:10,lg:10,xl:8}
       },
       {
         label: '产品合格',
@@ -222,11 +272,25 @@ class FilterPage extends React.Component{
         col: {xs:24, sm:12,md:10,lg:10,xl:8},
         options: qualifiedList
       },
+      {
+        label: 'SR1000二维码编号',
+        controlType: 'Input',
+        placeholder: '请输入',
+        key: 'barcodeData',
+        ref: 'barcodeRef',
+        onFocus: this.focusHandle,
+        col: {xs:24, sm:24,md:24,lg:24,xl:24}
+      },
     ];
     const rowClassName = (record) => {
       let className = '';
       switch(record.duplicated){
-        case 'DUP': className = 'bg-red';
+        case 'DUP': 
+          this.showDup = false;
+          if(this.showDup){
+            message.confirm('该二维码重码！');
+          }
+          className = 'bg-red';
           break;
         case 'CONFIRMED' : className = 'bg-yellow'
           break;
@@ -245,7 +309,8 @@ class FilterPage extends React.Component{
         <Row>
           {
             formCondition.map(condition => {
-              return <Col key={condition.key} xs={24} sm={12} md={8} lg={8} xl={6}>
+              const { col } = condition
+              return <Col key={condition.key} xs={col.xs} sm={col.sm} md={col.md} lg={col.lg} xl={col.xl}>
                 <Form.Item name={condition.key} label={condition.label}>
                     {FormCondition(condition)}
                 </Form.Item>
