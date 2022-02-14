@@ -13,7 +13,7 @@ public class Response<T> {
 
 
     private int code;
-    private String message;
+    private String msg;
     private T data;
 
     public static <T> Response<T> success(T data) {
