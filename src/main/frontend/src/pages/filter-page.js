@@ -95,8 +95,6 @@ class FilterPage extends React.Component{
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
-    this.showDup = true;
-    this.showConfirmed = true;
     this.setState({
       searchParam: {
         page: 1,
@@ -186,6 +184,8 @@ class FilterPage extends React.Component{
   }
 
   focusHandle = () => {
+    this.showDup = true;
+    this.showConfirmed = true;
     document.getElementById('barcodeRef').select();
   }
 
@@ -203,6 +203,8 @@ class FilterPage extends React.Component{
       end: dateStrings[1],
       from: dateStrings[0]
     }
+    this.showDup = true;
+    this.showConfirmed = true;
     this.setState({
       searchParam
     })

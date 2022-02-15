@@ -95,8 +95,6 @@ class FilterAscPage extends React.Component{
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
-    this.showDup = true;
-    this.showConfirmed = true;
     this.setState({
       searchParam: {
         page: 1,
@@ -224,6 +222,8 @@ class FilterAscPage extends React.Component{
   }
 
   focusHandle = () => {
+    this.showDup = true;
+    this.showConfirmed = true;
     document.getElementById('barcodeRef').select();
   }
 
@@ -241,6 +241,8 @@ class FilterAscPage extends React.Component{
       end: dateStrings[1],
       from: dateStrings[0]
     }
+    this.showDup = true;
+    this.showConfirmed = true;
     this.setState({
       searchParam
     })
@@ -337,7 +339,7 @@ class FilterAscPage extends React.Component{
               title: 'Confirm',
               content: '该二维码重码！',
               okText: '确认',
-              cancelText: '取消',
+              cancelText: '取消'
             });
             this.showConfirmed = false;
           }
