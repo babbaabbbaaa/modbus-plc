@@ -12,7 +12,7 @@ let invalidQualified = ['C', 'D', 'E', 'F'];
 class FilterAscPage extends React.Component{
   formRef = React.createRef();
   showDup = true;
-  
+  showConfirmed = true;
   errMessageShow = true;
   options = {
     title: '操作',
@@ -96,6 +96,7 @@ class FilterAscPage extends React.Component{
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
     this.showDup = true;
+    this.showConfirmed = true;
     this.setState({
       searchParam: {
         page: 1,
@@ -319,7 +320,6 @@ class FilterAscPage extends React.Component{
       let className = '';
       switch(record.duplicated){
         case 'DUP': 
-          this.showDup = false;
           if(this.showDup){
             Modal.confirm({
               title: 'Confirm',
@@ -327,10 +327,21 @@ class FilterAscPage extends React.Component{
               okText: '确认',
               cancelText: '取消',
             });
+            this.showDup = false;
           }
           className = 'bg-red';
           break;
-        case 'CONFIRMED' : className = 'bg-yellow'
+        case 'CONFIRMED' : 
+          if(this.showConfirmed){
+            Modal.confirm({
+              title: 'Confirm',
+              content: '该二维码重码！',
+              okText: '确认',
+              cancelText: '取消',
+            });
+            this.showConfirmed = false;
+          }
+          className = 'bg-yellow'
           break;
         default: break;
       }

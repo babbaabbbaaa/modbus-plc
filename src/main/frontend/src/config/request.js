@@ -21,7 +21,7 @@ function isCloseLoading() {
 
 var service = axios.create({
   timeout:60000,
-  withCredentials: true
+  withCredentials: true,
 })
 
 let requestList = [];
@@ -69,7 +69,8 @@ service.interceptors.response.use(
     if (Object.prototype.toString.call(data) === "[object Blob]") {
       return response;
     }
-    if(code&&code!==200){
+    console.log(config)
+    if(code&&code!==0){
       if(code === 401){
         localStorage.clear();
         inputPassword();
@@ -78,7 +79,9 @@ service.interceptors.response.use(
         message.error('无权限操作！',20); 
         return Promise.reject(response.data); 
       }
-      message.error(msg,10);
+      if(!config.withCredentials){
+        message.error(msg,10);
+      }
       return Promise.reject(response.data);
     }else{
       if(config.uploadOrDownload){
