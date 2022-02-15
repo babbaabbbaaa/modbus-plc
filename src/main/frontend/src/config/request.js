@@ -79,7 +79,7 @@ service.interceptors.response.use(
         message.error('无权限操作！',20); 
         return Promise.reject(response.data); 
       }
-      if(!config.withCredentials){
+      if(config.withCredentials){
         message.error(msg,10);
       }
       return Promise.reject(response.data);
@@ -95,8 +95,9 @@ service.interceptors.response.use(
     Loading.hidden();
     requestList = [];
     // eslint-disable-next-line no-mixed-operators
-    const status = error.response&&error.response.status|| error.status;
-    const data =  error.response&&error.response.data||{};
+    const status = error?.response?.status|| error.status;
+    const data =  error?.response?.data||{};
+    const config = error?.response?.config||{};
     const {msg } = data;
     if(status === 401){
       localStorage.clear();
@@ -104,7 +105,9 @@ service.interceptors.response.use(
     }else if (status === 403) {  
       message.error('无权限操作！');  
     }else{
-      error.response&& message.error(msg||'error')
+      if(config.withCredentials){
+        message.error(msg,10);
+      }
     }
     return Promise.reject(error);
   }
