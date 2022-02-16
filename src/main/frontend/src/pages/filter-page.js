@@ -127,15 +127,23 @@ class FilterPage extends React.Component{
       }else{
         if(this.errMessageShow){
           this.errMessageShow = false;
-          message.error(msg,10)
+          message.error(msg,6)
         }
+        this.setState({
+          dataSource: [],
+          totalCount: 0
+        })
       }
     }).catch(err=>{
       const {msg} = err;
       if(this.errMessageShow){
         this.errMessageShow = false;
-        message.error(msg,10)
+        message.error(msg,6)
       }
+      this.setState({
+        dataSource: [],
+        totalCount: 0
+      })
     })
     countQualifiedProducts(params).then(res => {
       const {code, data} = res;
@@ -199,6 +207,7 @@ class FilterPage extends React.Component{
   
   changeBarcode = (e) => {
     let value = e.target.value;
+    this.errMessageShow = true;
     let timer = setTimeout(()=>{
       clearTimeout(timer);
       if(this.barcode !== value) {
@@ -206,7 +215,7 @@ class FilterPage extends React.Component{
         this.showConfirmed = true;
         this.showDup = true;
       }
-    },600);
+    },500);
   }
 
 
@@ -302,7 +311,7 @@ class FilterPage extends React.Component{
       let formValue = this.formRef.current.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
-          if(this.showDup&&formValue.barcode===record.barcode){
+          if(this.showDup&&formValue.barcodeData.toUpperCase()===record.barcodeData.toUpperCase()){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',
@@ -314,7 +323,7 @@ class FilterPage extends React.Component{
           className = 'bg-red';
           break;
         case 'CONFIRMED' : 
-          if(this.showConfirmed&&formValue.barcode===record.barcode){
+          if(this.showConfirmed&&formValue.barcodeData.toUpperCase()===record.barcodeData.toUpperCase()){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',

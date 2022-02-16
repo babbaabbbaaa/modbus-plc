@@ -69,7 +69,6 @@ service.interceptors.response.use(
     if (Object.prototype.toString.call(data) === "[object Blob]") {
       return response;
     }
-    console.log(config)
     if(code&&code!==0){
       if(code === 401){
         localStorage.clear();
