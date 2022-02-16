@@ -93,20 +93,11 @@ class FilterAscPage extends React.Component{
     })
   }
 
-  getTableList = async() => {
+  getTableList = () => {
     
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
-    this.setState({
-      searchParam: {
-        page: 1,
-        size: 10,
-        ...formValue,
-        end: searchParam.end,
-        from: searchParam.from
-      }
-    })
     let params = {
       page,
       size,
@@ -141,6 +132,13 @@ class FilterAscPage extends React.Component{
         })
         this.setState({
           dataSource: tableList,
+          searchParam: {
+            page: 1,
+            size: 10,
+            ...formValue,
+            end: searchParam.end,
+            from: searchParam.from
+          },
           totalCount: data.totalElements
         })
       }else{
@@ -245,14 +243,9 @@ class FilterAscPage extends React.Component{
   changeBarcode = (e) => {
     let value = e.target.value;
     this.errMessageShow = true;
-    let timer = setTimeout(()=>{
-      clearTimeout(timer);
-      if(this.barcode !== value) {
-        this.barcode = value;
-        this.showConfirmed = true;
-        this.showDup = true;
-      }
-    },600);
+    this.barcode = value;
+    this.showConfirmed = true;
+    this.showDup = true;
   }
 
   dateChange = (dates, dateStrings) => {

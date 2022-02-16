@@ -96,15 +96,6 @@ class FilterPage extends React.Component{
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
-    this.setState({
-      searchParam: {
-        page: 1,
-        size: 10,
-        ...formValue,
-        end: searchParam.end,
-        from: searchParam.from
-      }
-    })
     let params = {
       page,
       size,
@@ -121,6 +112,13 @@ class FilterPage extends React.Component{
           item.index = index+1+(page-1)*size;
         })
         this.setState({
+          searchParam: {
+            page: 1,
+            size: 10,
+            ...formValue,
+            end: searchParam.end,
+            from: searchParam.from
+          },
           dataSource: data.content,
           totalCount: data.totalElements
         })
@@ -206,16 +204,9 @@ class FilterPage extends React.Component{
 
   
   changeBarcode = (e) => {
-    let value = e.target.value;
     this.errMessageShow = true;
-    let timer = setTimeout(()=>{
-      clearTimeout(timer);
-      if(this.barcode !== value) {
-        this.barcode = value;
-        this.showConfirmed = true;
-        this.showDup = true;
-      }
-    },500);
+    this.showConfirmed = true;
+    this.showDup = true;
   }
 
 
