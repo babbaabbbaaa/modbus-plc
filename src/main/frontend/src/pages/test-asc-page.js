@@ -373,7 +373,7 @@ class TestAscPage extends React.Component {
 			if (res.code === 0) {
 				this.formCommon.current.setFieldsValue({
 					logTime: res.data.logTime,
-					moldNo: res.data.logTime,
+					moldNo: res.data.moldNo,
 					injectionNo: res.data.injectionNo
 				})
 				this.formA.current.setFieldsValue({...res.data.subDieCastings[0]});

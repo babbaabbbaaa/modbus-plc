@@ -311,7 +311,7 @@ class FilterPage extends React.Component{
       let formValue = this.formRef.current.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
-          if(this.showDup&&formValue.barcodeData.toUpperCase()===record.barcodeData.toUpperCase()){
+          if(this.showDup&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',
@@ -323,7 +323,7 @@ class FilterPage extends React.Component{
           className = 'bg-red';
           break;
         case 'CONFIRMED' : 
-          if(this.showConfirmed&&formValue.barcodeData.toUpperCase()===record.barcodeData.toUpperCase()){
+          if(this.showConfirmed&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',

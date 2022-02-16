@@ -15,6 +15,7 @@ class FilterAscPage extends React.Component{
   showDup = true;
   showConfirmed = true;
   errMessageShow = true;
+  running = false;
   options = {
     title: '操作',
     dataIndex: 'options',
@@ -92,7 +93,8 @@ class FilterAscPage extends React.Component{
     })
   }
 
-  getTableList = () => {
+  getTableList = async() => {
+    
     const {searchParam,page,size} = this.state;
     let formValue = this.formRef.current.getFieldsValue();
     delete formValue['date']
@@ -340,7 +342,7 @@ class FilterAscPage extends React.Component{
       let formValue = this.formRef.current.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
-          if(this.showDup&&formValue.barcodeData.toUpperCase()===record.barcodeData.toUpperCase()){
+          if(this.showDup&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',
@@ -352,7 +354,7 @@ class FilterAscPage extends React.Component{
           className = 'bg-red';
           break;
         case 'CONFIRMED' : 
-          if(this.showConfirmed&&formValue.barcodeData.toUpperCase()===record.barcodeData.toUpperCase()){
+          if(this.showConfirmed&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',
