@@ -22,6 +22,7 @@ class FilterPage extends React.Component{
   }
 
   formRef = React.createRef();
+  barcode = '';
   showDup = true;
   showConfirmed = true;
   errMessageShow = true;
@@ -184,8 +185,6 @@ class FilterPage extends React.Component{
   }
 
   focusHandle = () => {
-    this.showDup = true;
-    this.showConfirmed = true;
     document.getElementById('barcodeRef').select();
   }
 
@@ -197,14 +196,26 @@ class FilterPage extends React.Component{
     this.setState({ page: 1, size: pageSize }, this.getTableList);
   }
 
+  
+  changeBarcode = (e) => {
+    let value = e.target.value;
+    let timer = setTimeout(()=>{
+      clearTimeout(timer);
+      if(this.barcode !== value) {
+        this.barcode = value;
+        this.showConfirmed = true;
+        this.showDup = true;
+      }
+    },600);
+  }
+
+
   dateChange = (dates, dateStrings) => {
     let searchParam = {
       ...this.state.searchParam,
       end: dateStrings[1],
       from: dateStrings[0]
     }
-    this.showDup = true;
-    this.showConfirmed = true;
     this.setState({
       searchParam
     })
@@ -281,15 +292,17 @@ class FilterPage extends React.Component{
         placeholder: '请输入',
         key: 'barcodeData',
         ref: 'barcodeRef',
+        changeValue: this.changeBarcode,
         onFocus: this.focusHandle,
         col: {xs:24, sm:24,md:24,lg:24,xl:24}
       },
     ];
     const rowClassName = (record) => {
       let className = '';
+      let formValue = this.formRef.current.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
-          if(this.showDup){
+          if(this.showDup&&formValue.barcode===record.barcode){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',
@@ -301,7 +314,7 @@ class FilterPage extends React.Component{
           className = 'bg-red';
           break;
         case 'CONFIRMED' : 
-          if(this.showConfirmed){
+          if(this.showConfirmed&&formValue.barcode===record.barcode){
             Modal.confirm({
               title: 'Confirm',
               content: '该二维码重码！',
