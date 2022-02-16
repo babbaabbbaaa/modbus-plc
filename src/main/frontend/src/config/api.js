@@ -4,7 +4,7 @@ let prefix = `${BASE_URL.baseUrl}`;
 const apis = {
   search: `${prefix}/plc/search`,
   export: `${prefix}/plc/export`,
-  confirm: `${prefix}/plc/confirm`,
+  confirm: `${prefix}/secure/confirm`,
   configs: `${prefix}/plc/configs`,
   secureClear: `${prefix}/secure/clear`,
   secureConfig: `${prefix}/secure/config`,

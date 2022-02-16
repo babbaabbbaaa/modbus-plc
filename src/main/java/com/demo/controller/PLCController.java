@@ -77,9 +77,6 @@ public class PLCController {
 
     @GetMapping("data")
     public Response<IPLCData> data() throws ModbusTransportException {
-        if (dataFetchService.getModbusMaster() == null) {
-            return Response.success(new PLCData());
-        }
         return Response.success(dataFetchService.getData());
     }
 
@@ -91,6 +88,11 @@ public class PLCController {
         return Response.success(modbusMaster.getValue(signalLocator).shortValue());
     }
 
+    /**
+     * Set the value in PLC according to the register
+     * @param offset register position
+     * @param value the value to set
+     */
     @GetMapping("clear")
     public Response<Void> clear(int offset, int value) throws ModbusTransportException, ErrorResponseException {
         if (null != modbusMaster) {

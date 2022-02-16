@@ -54,7 +54,13 @@ public class DieCastingSearchService implements IDataSearchService {
         if (StringUtils.hasText(criteria.getBarcodeData()) && dieCastings.isEmpty()) {
             throw new ServiceException("二维码有误！");
         }
-        return new PageImpl<>(dieCastings.stream().distinct().collect(Collectors.toList()), dieCastings.getPageable(), dieCastings.getTotalElements());
+        List<DieCasting> dieCastingList = dieCastings.stream().distinct().collect(Collectors.toList());
+        if (StringUtils.hasText(criteria.getBarcodeData())) {
+            for (DieCasting dieCasting : dieCastingList) {
+                dieCasting.setSubDieCastings(dieCasting.getSubDieCastings().stream().filter(sub -> Objects.equals(sub.getBarcodeData(), criteria.getBarcodeData())).collect(Collectors.toList()));
+            }
+        }
+        return new PageImpl<>(dieCastingList, dieCastings.getPageable(), dieCastings.getTotalElements());
     }
 
     @Override
@@ -101,6 +107,6 @@ public class DieCastingSearchService implements IDataSearchService {
 
     @Override
     public int clear(short productTypeId) {
-        return 0;
+        return dieCastingRepository.deleteAllByProductTypeId(productTypeId);
     }
 }

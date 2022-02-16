@@ -5,6 +5,8 @@ import org.hibernate.query.criteria.internal.OrderImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.*;
@@ -16,6 +18,9 @@ import java.util.List;
 
 public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, JpaSpecificationExecutor<DieCasting> {
 
+    @Query("delete from DieCasting where productTypeId = :#{#productTypeId}")
+    @Modifying
+    int deleteAllByProductTypeId(int productTypeId);
 
     default Specification<DieCasting> buildSpecification(PLCSearchCriteria criteria) {
         return (root, query, builder) -> query.where(buildPredicates(root, builder, criteria).toArray(new Predicate[0]))
