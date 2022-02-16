@@ -14,6 +14,9 @@ import com.serotonin.modbus4j.msg.WriteRegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 
 @Service
@@ -41,22 +44,23 @@ public class DieCastingFetchService implements IDataFetchService {
             return;
         }
         DieCasting dieCasting = getData();
-        if (dieCasting.getSubDieCastings().stream().anyMatch(v -> v.getDuplicated() == BarcodeDuplicateEnum.DUP)) {
-            modbusMaster.setValue(BaseLocator.holdingRegister(1, 7002, DataType.TWO_BYTE_INT_SIGNED), 1);
-        }
-        dieCastingRepository.save(getData());
+        checkDup(dieCasting);
+        dieCastingRepository.save(dieCasting);
         setDataReadDone();//mark the data read done
     }
 
     @Override
     public DieCasting getData() throws ModbusTransportException {
+        if (null == modbusMaster) {
+            return DieCasting.EMPTY_DIE_CASTING;
+        }
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(1, 7000, 53);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] dataArrays = response.getShortData();
         request = new ReadHoldingRegistersRequest(1, 7054, 100);
         response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] barcodeArrays = response.getShortData();
-        return new DieCasting(dataArrays, barcodeArrays, patternConfigRepository, subDieCastingRepository);
+        return new DieCasting(dataArrays, barcodeArrays, patternConfigRepository);
     }
 
     @Override
@@ -73,4 +77,21 @@ public class DieCastingFetchService implements IDataFetchService {
         modbusMaster.send(request);
     }
 
+    public void checkDup(DieCasting dieCasting) throws ModbusTransportException, ErrorResponseException {
+        for (SubDieCasting subDieCasting : dieCasting.getSubDieCastings()) {
+            List<SubDieCasting> subDieCastings = subDieCastingRepository
+                    .findSubDieCastingByBarcodeAndProduct(subDieCasting.getBarcodeData(), dieCasting.getProductTypeId());
+            if (!CollectionUtils.isEmpty(subDieCastings)) {
+                for (SubDieCasting sub : subDieCastings) {
+                    sub.setDuplicated(BarcodeDuplicateEnum.DUP);
+                    sub.setAutoInspectionResult();
+                }
+                subDieCastingRepository.saveAll(subDieCastings);
+                modbusMaster.setValue(BaseLocator.holdingRegister(1, 7002, DataType.TWO_BYTE_INT_SIGNED), 1);
+                subDieCasting.setDuplicated(BarcodeDuplicateEnum.DUP);
+                subDieCasting.setAutoInspectionResult();
+            }
+        }
+
+    }
 }

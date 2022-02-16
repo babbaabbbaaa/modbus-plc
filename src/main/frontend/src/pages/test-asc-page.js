@@ -20,67 +20,94 @@ class TestAscPage extends React.Component {
 					key: 'logTime',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '模具号',
+					label: '模具号(D7004)',
 					controlType: 'Input',
 					key: 'moldNo',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '压射号',
+					label: '压射号(D7005)',
 					controlType: 'Input',
 					key: 'injectionNo',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
-				}
+				},
+                {
+                    label: '产品类型(D7003)',
+                    controlType: 'Input',
+                    key: 'productTypeId',
+                    disabled: true,
+                    labelCol: {
+                        span: 8
+                    }
+                }
 			]
 		},
 		{
-			name: '数据A',
+			name: 'A工位',
 			formRef: this.formA,
 			formList: [
 				{
-					label: '流水号',
+					label: '流水号(D7007)',
 					controlType: 'Input',
 					key: 'serialNumber',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: 'SR1000二维码编号',
+					label: '二维码编号(D7054~D7103)',
 					controlType: 'Input',
 					key: 'barcodeData',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
+					}
+				},
+                {
+					label: '二维码截取',
+					controlType: 'Input',
+					key: 'barcode',
+					disabled: true,
+					labelCol: {
+						span: 8
+					}
+				},
+                {
+					label: '二维码等级',
+					controlType: 'Input',
+					key: 'barcodeGrade',
+					disabled: true,
+					labelCol: {
+						span: 8
 					}
 				},
 				{
-					label: '读码判定结果',
+					label: '读码判定结果(D7009)',
 					controlType: 'Input',
 					key: 'codeReadingFunc',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重差值',
+					label: '铝重差值(D7018/D7019)',
 					controlType: 'Input',
 					key: 'weightDifference',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
@@ -89,157 +116,121 @@ class TestAscPage extends React.Component {
 					key: 'weightResult',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '自动线检测结果',
-					controlType: 'Input',
-					key: 'autoInspectResult',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '人工复检结果',
-					controlType: 'Input',
-					key: 'manualReinspectResult',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '复检人员',
-					controlType: 'Input',
-					key: 'reinspectBy',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '二维码字符提取',
-					controlType: 'Input',
-					key: 'barcode',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '二维码等级提取',
-					controlType: 'Input',
-					key: 'barcodeGrade',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '铝重公差上限设定值',
+					label: '铝重公差上限(D7020/D7021)',
 					controlType: 'Input',
 					key: 'maxWeightTolerance',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重公差下限设定值',
+					label: '铝重公差下限(D7022/D7023)',
 					controlType: 'Input',
 					key: 'minWeightTolerance',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重压铸前',
+					label: '铝重压铸前(D7014/D7015)',
 					controlType: 'Input',
 					key: 'weightBeforeDieCasting',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重压铸后',
+					label: '铝重压铸后(D7016/D7017)',
 					controlType: 'Input',
 					key: 'weightAfterDieCasting',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '使用产品/穴数选择',
+					label: '使用产品/穴数选择(D7006)',
 					controlType: 'Input',
 					key: 'holeSelection',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '打标使用状态',
+					label: '打标使用状态(D7008)',
 					controlType: 'Input',
 					key: 'codeReadingFunc',
 					disabled: true,
 					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '数据源',
-					controlType: 'Input',
-					key: 'datasource',
-					disabled: true,
-					labelCol: {
-						span: 9
+						span: 8
 					}
 				}
 			]
 		},
 		{
-			name: '数据B',
+			name: 'B工位',
 			formRef: this.formB,
 			formList: [
 				{
-					label: '流水号',
+					label: '流水号(D7011)',
 					controlType: 'Input',
 					key: 'serialNumber',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: 'SR1000二维码编号',
+					label: '二维码编号(D7104~D7153)',
 					controlType: 'Input',
 					key: 'barcodeData',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
+					}
+				},
+                {
+					label: '二维码截取',
+					controlType: 'Input',
+					key: 'barcode',
+					disabled: true,
+					labelCol: {
+						span: 8
+					}
+				},
+                {
+					label: '二维码等级',
+					controlType: 'Input',
+					key: 'barcodeGrade',
+					disabled: true,
+					labelCol: {
+						span: 8
 					}
 				},
 				{
-					label: '读码判定结果',
+					label: '读码判定结果(D7013)',
 					controlType: 'Input',
 					key: 'codeReadingFunc',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重差值',
+					label: '铝重差值(D7018/D7019)',
 					controlType: 'Input',
 					key: 'weightDifference',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
@@ -248,115 +239,61 @@ class TestAscPage extends React.Component {
 					key: 'weightResult',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '自动线检测结果',
-					controlType: 'Input',
-					key: 'autoInspectResult',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '人工复检结果',
-					controlType: 'Input',
-					key: 'manualReinspectResult',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '复检人员',
-					controlType: 'Input',
-					key: 'reinspectBy',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '二维码字符提取',
-					controlType: 'Input',
-					key: 'barcode',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '二维码等级提取',
-					controlType: 'Input',
-					key: 'barcodeGrade',
-					disabled: true,
-					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '铝重公差上限设定值',
+					label: '铝重公差上限(D7030/D7031)',
 					controlType: 'Input',
 					key: 'maxWeightTolerance',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重公差下限设定值',
+					label: '铝重公差下限(D7032/D7033)',
 					controlType: 'Input',
 					key: 'minWeightTolerance',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重压铸前',
+					label: '铝重压铸前(D7024/D7025)',
 					controlType: 'Input',
 					key: 'weightBeforeDieCasting',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '铝重压铸后',
+					label: '铝重压铸后(D7026/D7027)',
 					controlType: 'Input',
 					key: 'weightAfterDieCasting',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '使用产品/穴数选择',
+					label: '使用产品/穴数选择(D7010)',
 					controlType: 'Input',
 					key: 'holeSelection',
 					disabled: true,
 					labelCol: {
-						span: 9
+						span: 8
 					}
 				},
 				{
-					label: '打标使用状态',
+					label: '打标使用状态(D7012)',
 					controlType: 'Input',
 					key: 'codeReadingFunc',
 					disabled: true,
 					labelCol: {
-						span: 9
-					}
-				},
-				{
-					label: '数据源',
-					controlType: 'Input',
-					key: 'datasource',
-					disabled: true,
-					labelCol: {
-						span: 9
+						span: 8
 					}
 				}
 			]
@@ -373,8 +310,9 @@ class TestAscPage extends React.Component {
 			if (res.code === 0) {
 				this.formCommon.current.setFieldsValue({
 					logTime: res.data.logTime,
-					moldNo: res.data.logTime,
-					injectionNo: res.data.injectionNo
+					moldNo: res.data.moldNo,
+					injectionNo: res.data.injectionNo,
+					productTypeId: res.data.productTypeId
 				})
 				this.formA.current.setFieldsValue({...res.data.subDieCastings[0]});
 				

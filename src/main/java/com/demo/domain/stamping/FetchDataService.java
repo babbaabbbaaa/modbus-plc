@@ -180,6 +180,12 @@ public class FetchDataService implements IDataFetchService {
             plcData.setBarcodeQualify(getBarcodeQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
         }
         plcData.setQualified(isQualified(plcData.getBarcodeQualify(), Arrays.copyOfRange(data, 6, 13)));
+        if (plcData.isQualified()) {
+            plcData.setAutoInspectResult("设备OK");
+        } else {
+            plcData.setAutoInspectResult("设备NG");
+        }
+
         return plcData;
     }
 
@@ -218,6 +224,7 @@ public class FetchDataService implements IDataFetchService {
             plcList.forEach(v -> v.setDuplicated(BarcodeDuplicateEnum.DUP));
             plcData.setDuplicated(BarcodeDuplicateEnum.DUP);
             plcData.setQualified(false);
+            plcData.setAutoInspectResult("设备NG");
             plcRepository.saveAll(plcList);
             setShortValue(slaveId, 7002, (short) 1);
         }

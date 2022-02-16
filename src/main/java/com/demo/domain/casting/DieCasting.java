@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,15 +29,17 @@ public class DieCasting implements IPLCData {
     private int moldNo;
     private int injectionNo;
     private short productTypeId;
-    @OneToMany(mappedBy = "castingId")
+    @OneToMany(mappedBy = "castingId", cascade = CascadeType.REMOVE)
     private List<SubDieCasting> subDieCastings;
 
     @Transient
     private int index;
 
+    @Transient
+    public static final DieCasting EMPTY_DIE_CASTING = new DieCasting(true);
+
     public DieCasting(short[] dataArrays, short[] barcodeArrays,
-                      PatternConfigRepository patternConfigRepository,
-                      SubDieCastingRepository subDieCastingRepository) {
+                      PatternConfigRepository patternConfigRepository) {
 
         this.logTime = LocalDateTime.now();
         this.productTypeId = dataArrays[3];
@@ -46,33 +47,34 @@ public class DieCasting implements IPLCData {
         this.injectionNo = dataArrays[5];
         this.subDieCastings = new ArrayList<>();
         PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(this.productTypeId);
-        initSubDieCasting(dataArrays, barcodeArrays, "A", patternConfig, subDieCastingRepository);
-        initSubDieCasting(dataArrays, barcodeArrays, "B", patternConfig, subDieCastingRepository);
+        initSubDieCasting(dataArrays, barcodeArrays, "A", patternConfig);
+        initSubDieCasting(dataArrays, barcodeArrays, "B", patternConfig);
+    }
+
+    public DieCasting(boolean empty) {
+        if (empty) {
+            this.logTime = LocalDateTime.now();
+            this.productTypeId = 0;
+            this.moldNo = 1;
+            this.injectionNo = 1;
+            this.subDieCastings = new ArrayList<>();
+            subDieCastings.add(new SubDieCasting(1));
+            subDieCastings.add(new SubDieCasting(2));
+        }
     }
 
     private void initSubDieCasting(short[] dataArrays, short[] barcodeArrays, String type,
-                                   PatternConfig patternConfig, SubDieCastingRepository subDieCastingRepository) {
+                                   PatternConfig patternConfig) {
         SubDieCasting subDieCasting = new SubDieCasting(dataArrays, barcodeArrays, type);
         if (null != patternConfig) {
             subDieCasting.setBarcode(getBarcode(subDieCasting.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
             subDieCasting.setBarcodeGrade(getBarcode(subDieCasting.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
-            checkDup(subDieCasting.getBarcode(), subDieCastingRepository);
         }
         subDieCasting.setAutoInspectionResult();
         subDieCasting.setProductTypeId(this.productTypeId);
         this.subDieCastings.add(subDieCasting);
     }
 
-    private void checkDup(String barcode,
-                          SubDieCastingRepository subDieCastingRepository) {
-        List<SubDieCasting> subDieCastings = subDieCastingRepository.findSubDieCastingByBarcodeAndProduct(barcode, productTypeId);
-        if (!CollectionUtils.isEmpty(subDieCastings)) {
-            for (SubDieCasting subDieCasting : subDieCastings) {
-                subDieCasting.setDuplicated(BarcodeDuplicateEnum.DUP);
-            }
-            subDieCastingRepository.saveAll(subDieCastings);
-        }
-    }
 
     @Override
     public BarcodeDuplicateEnum getDuplicated() {

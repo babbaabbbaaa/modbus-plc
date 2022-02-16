@@ -52,7 +52,7 @@ public class SubDieCasting implements IPLCData {
 
     public SubDieCasting(short[] dataArray, short[] barcodeArray, String type) {
         if ("A".equals(type)) {
-            this.holeSelection = dataArray[6] == 1 ? "A穴使用" : "A穴未使用";
+            this.holeSelection = dataArray[6] == 1 ? "1穴使用" : "1穴屏蔽";
             this.serialNumber = (int) dataArray[7];
             this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[8]);
             this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[9]);
@@ -63,7 +63,7 @@ public class SubDieCasting implements IPLCData {
             this.minWeightTolerance = getFloatValue(dataArray[22], dataArray[23]);
             this.barcodeData = getBarcodeData(barcodeArray, 0, 50);
         } else {
-            this.holeSelection = dataArray[10] == 1 ? "B穴使用" : "B穴未使用";
+            this.holeSelection = dataArray[10] == 1 ? "2穴使用" : "2穴屏蔽";
             this.serialNumber = (int) dataArray[11];
             this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[12]);
             this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[13]);
@@ -82,14 +82,36 @@ public class SubDieCasting implements IPLCData {
         }
     }
 
+    public SubDieCasting(int serialNumber) {
+        this.serialNumber = serialNumber;
+        if (1 == serialNumber) {
+            this.holeSelection = "A穴使用";
+            this.barcodeData = "00000AAA9055750000@0702012027@22011790465:96:A";
+            this.barcode = "22011790465";
+        } else {
+            this.holeSelection = "B穴使用";
+            this.barcodeData = "00000AAA9055750000@0702012027@22011790464:96:A";
+            this.barcode = "22011790464";
+        }
+        this.barcodeGrade = "A";
+        this.markingFunc = "使用且结果合格";
+        this.codeReadingFunc = "使用且结果合格";
+        this.weightBeforeDieCasting = 11.234F;
+        this.weightAfterDieCasting = 11.123F;
+        this.weightDifference = 0.111F;
+        this.maxWeightTolerance = 0.2F;
+        this.minWeightTolerance = -0.2F;
+        this.weightResult = "合格";
+    }
+
     public void setAutoInspectionResult() {
         if (StringUtils.hasText(this.barcodeData)) {
-            if ("".equalsIgnoreCase(this.codeReadingFunc) //读码合格
-                    && "".equalsIgnoreCase(this.weightResult) //铝重合格
+            if ("使用但结果不合格".equalsIgnoreCase(this.codeReadingFunc) //读码合格
+                    && "使用但结果不合格".equalsIgnoreCase(this.weightResult) //铝重合格
                     && this.duplicated != BarcodeDuplicateEnum.DUP) {
-                this.autoInspectResult = "合格";
+                this.autoInspectResult = "设备OK";
             } else {
-                this.autoInspectResult = "不合格";
+                this.autoInspectResult = "设备NG";
             }
         }
 
