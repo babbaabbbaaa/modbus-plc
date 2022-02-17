@@ -55,9 +55,36 @@ class UserPage extends React.Component{
 			modalItem: [],
 			title: '新增用户'
     }
+		
+    this.getRoleList();
   }
   componentDidMount () {
+    this.getTableList();
+  }
+  
+  getTableList = () => {
+    userList().then(res=>{
+			const {code,data} = res;
+			if(code === 0){
+				this.setState({
+					dataSource: data
+				})
+			}
+    })
+  }
+
+  getRoleList = async() => {
+		let list = [];
+    const {code,data} = await roleList();
+		if(code === 0){
+			list = data.map(item => {
+				item.label = item.roleName;
+				item.value = item.roleName;
+				return item;
+			})
+		}
 		this.setState({
+			roleList: list,
 			modalItem: [
 				{
 					label: 'ID',
@@ -72,9 +99,9 @@ class UserPage extends React.Component{
 					placeholder: '请输入',
 					key: 'username',
 					rules: [{
-            required: true,
-            message: '请输入用户名'
-        }]
+						required: true,
+						message: '请输入用户名'
+					}]
 				}, 
 				{
 					label: '卡号',
@@ -82,9 +109,9 @@ class UserPage extends React.Component{
 					placeholder: '请输入',
 					key: 'cardNumber',
 					rules: [{
-            required: true,
-            message: '请输入卡号'
-        }]
+						required: true,
+						message: '请输入卡号'
+					}]
 				}, 
 				{
 					label: '角色',
@@ -94,42 +121,12 @@ class UserPage extends React.Component{
 					mode: 'multiple',
 					options: this.state.roleList,
 					rules: [{
-            required: true,
-            message: '请选择角色'
-        }]
+						required: true,
+						message: '请选择角色'
+					}]
 				}
 			]
-		})
-    this.getTableList();
-    this.getRoleList();
-    
-  }
-  
-  getTableList = () => {
-    userList().then(res=>{
-			const {code,data} = res;
-			if(code === 0){
-				this.setState({
-					dataSource: data
-				})
-			}
-    })
-  }
-
-  getRoleList = () => {
-    roleList().then(res=>{
-			const {code,data} =res;
-			if(code === 0){
-				let list = data.map(item => {
-					item.label = item.roleName;
-					item.value = item.roleName;
-					return item;
-				})
-				this.setState({
-					roleList: list
-				})
-			}
-    })
+		});
   }
 
 	addNewUser = () => {
