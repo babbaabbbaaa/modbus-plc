@@ -19,6 +19,7 @@ class TestAscPage extends React.Component {
 					controlType: 'Input',
 					key: 'logTime',
 					disabled: true,
+					defaultValue: 'fghfghfhfhg',
 					col: {xs:24, sm:24,md:12,lg:12,xl:12}
 				},
 				{
