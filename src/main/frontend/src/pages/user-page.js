@@ -51,13 +51,54 @@ class UserPage extends React.Component{
     super(props);
     this.state = { 
       dataSource: [],
-      roleList: [],
 			modalItem: [],
 			title: '新增用户'
     }
-		
     this.getRoleList();
   }
+	
+	roleList = [];
+	modalItem = [
+		{
+			label: 'ID',
+			controlType: 'Input',
+			placeholder: '请输入',
+			key: 'id',
+			disabled: true
+		}, 
+		{
+			label: '用户名',
+			controlType: 'Input',
+			placeholder: '请输入',
+			key: 'username',
+			rules: [{
+				required: true,
+				message: '请输入用户名'
+			}]
+		}, 
+		{
+			label: '卡号',
+			controlType: 'Input',
+			placeholder: '请输入',
+			key: 'cardNumber',
+			rules: [{
+				required: true,
+				message: '请输入卡号'
+			}]
+		}, 
+		{
+			label: '角色',
+			controlType: 'Select',
+			placeholder: '请选择',
+			key: 'roles',
+			mode: 'multiple',
+			options: this.roleList,
+			rules: [{
+				required: true,
+				message: '请选择角色'
+			}]
+		}
+	]
   componentDidMount () {
     this.getTableList();
   }
@@ -75,6 +116,12 @@ class UserPage extends React.Component{
 
   getRoleList = async() => {
 		let list = [];
+		this.modalItem = this.modalItem.map(item => {
+			if(item.label === '角色'){
+				item.options = list
+			}
+			return item;
+		})
     const {code,data} = await roleList();
 		if(code === 0){
 			list = data.map(item => {
@@ -82,51 +129,8 @@ class UserPage extends React.Component{
 				item.value = item.roleName;
 				return item;
 			})
+			this.roleList = list;
 		}
-		this.setState({
-			roleList: list,
-			modalItem: [
-				{
-					label: 'ID',
-					controlType: 'Input',
-					placeholder: '请输入',
-					key: 'id',
-					disabled: true
-				}, 
-				{
-					label: '用户名',
-					controlType: 'Input',
-					placeholder: '请输入',
-					key: 'username',
-					rules: [{
-						required: true,
-						message: '请输入用户名'
-					}]
-				}, 
-				{
-					label: '卡号',
-					controlType: 'Input',
-					placeholder: '请输入',
-					key: 'cardNumber',
-					rules: [{
-						required: true,
-						message: '请输入卡号'
-					}]
-				}, 
-				{
-					label: '角色',
-					controlType: 'Select',
-					placeholder: '请选择',
-					key: 'roles',
-					mode: 'multiple',
-					options: this.state.roleList,
-					rules: [{
-						required: true,
-						message: '请选择角色'
-					}]
-				}
-			]
-		});
   }
 
 	addNewUser = () => {
@@ -185,7 +189,7 @@ class UserPage extends React.Component{
 	}
 
   render () {
-    const { dataSource,isModalVisible,editData,title,modalItem } = this.state;
+    const { dataSource,isModalVisible,editData,title } = this.state;
     return <div className='page-container'>
       <Form className='page-form' name='search' ref={this.formRef}>
         <Button className='submit-btn' onClick={this.addNewUser}>新增用户</Button>
@@ -199,7 +203,7 @@ class UserPage extends React.Component{
 				isModalVisible={isModalVisible}
 				title={title}
 				data={editData}
-				modalContent={modalItem}
+				modalContent={this.modalItem}
 				operateModalSure={this.changeUser}
 			/>}
     </div>

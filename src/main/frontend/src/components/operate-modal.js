@@ -5,10 +5,8 @@ import FormCondition from '@/components/form-condition';
 const OperateModal = (props) => {
   const { isModalVisible,operateModalSure,title,modalContent,data} = props;
   const [form] = Form.useForm();
-  // const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    console.log(title)
     if (data&&title.indexOf('新增')<0) {
       form.setFieldsValue({
         ...data
@@ -50,7 +48,7 @@ const OperateModal = (props) => {
             modalContent.map(condition => {
               return <Col key={condition.key} xs={24} sm={24} md={24} lg={24} xl={24}>
                 <Form.Item name={condition.key} label={condition.label} rules={condition.rules}>
-                    {FormCondition(condition)}
+                  {FormCondition(condition)}
                 </Form.Item>
               </Col>
             })

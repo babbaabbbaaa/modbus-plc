@@ -75,11 +75,11 @@ service.interceptors.response.use(
         inputPassword();
         return Promise.reject(response.data);
       }else if (code === 403) {  
-        message.error('无权限操作！',20); 
+        message.error('无权限操作！',6); 
         return Promise.reject(response.data); 
       }
       if(config.withCredentials){
-        message.error(msg,10);
+        message.error(msg,6);
       }
       return Promise.reject(response.data);
     }else{
@@ -105,7 +105,7 @@ service.interceptors.response.use(
       message.error('无权限操作！');  
     }else{
       if(config.withCredentials){
-        message.error(msg,10);
+        message.error(msg,6);
       }
     }
     return Promise.reject(error);

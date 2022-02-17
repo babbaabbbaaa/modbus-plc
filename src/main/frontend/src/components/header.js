@@ -26,7 +26,8 @@ class Header extends React.Component {
 
 	logoutClick = () => {
 		logout().then(res=>{
-			localStorage.clear()
+			localStorage.clear();
+			window.location.reload();
 		})
 	}
 
