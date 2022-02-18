@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form,Button,message} from 'antd';
+import {Form,Button,message,Modal} from 'antd';
 import TablePanel from '@/components/table';
 import {userChange,userList,roleList,deleteUser} from '@/service/user-service';
 import OperateModal from '../components/operate-modal';
@@ -44,8 +44,8 @@ class UserPage extends React.Component{
 			width: 200,
 			render: (value,record,index) => {
 				return <div>
-					<Button className='submit-btn' onClick={this.editUser.bind(this,value,record,index)}>编辑</Button>
-					<Button className='submit-btn' onClick={this.deleteTableUser.bind(this,value,record,index)}>删除</Button>
+					<Button className='submit-btn' onClick={this.editUser.bind(this,record)}>编辑</Button>
+					<Button className='submit-btn' onClick={this.deleteTableUser.bind(this,record)}>删除</Button>
 				</div> 
 			}
 		},
@@ -143,7 +143,7 @@ class UserPage extends React.Component{
 		})
 	}
 
-	editUser = (value,record,index) => {
+	editUser = (record) => {
 		let roles = record.roles.length>0&&record.roles.map(item=> {
 			return item.roleName
 		})
@@ -160,20 +160,26 @@ class UserPage extends React.Component{
 		})
 	}
 
-	deleteTableUser = (value,record,index) => {
-		let params = {
-			cardNumber: record.cardNumber,
-			id: record.id,
-			username: record.username,
-			roles: record.roles
-		}
-		deleteUser(params).then(res => {
-			const {code} = res;
-			if(code === 0){
-				this.getTableList();
-				message.success('删除成功');
+	deleteTableUser = (record) => {
+		Modal.confirm({
+			title: '删除用户',
+			content: `您确认要删除用户${record.username}吗？`,
+			onOk: () => {
+				let params = {
+					cardNumber: record.cardNumber,
+					id: record.id,
+					username: record.username,
+					roles: record.roles
+				}
+				deleteUser(params).then(res => {
+					const {code} = res;
+					if(code === 0){
+						this.getTableList();
+						message.success('删除成功');
+					}
+				});
 			}
-		})
+		});
 	}
 
 	changeUser =  (type, data) => {
