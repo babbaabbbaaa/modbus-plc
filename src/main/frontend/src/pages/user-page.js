@@ -1,7 +1,7 @@
 import React from 'react';
 import {Form,Button,message} from 'antd';
 import TablePanel from '@/components/table';
-import {userChange,userList,roleList} from '@/service/user-service';
+import {userChange,userList,roleList,deleteUser} from '@/service/user-service';
 import OperateModal from '../components/operate-modal';
 
 class UserPage extends React.Component{
@@ -41,9 +41,12 @@ class UserPage extends React.Component{
 			dataIndex: 'option',
 			key: 'option',
 			align: 'center',
-			width: 100,
+			width: 200,
 			render: (value,record,index) => {
-				return  <Button className='submit-btn' onClick={this.editUser.bind(this,value,record,index)}>编辑</Button>
+				return <div>
+					<Button className='submit-btn' onClick={this.editUser.bind(this,value,record,index)}>编辑</Button>
+					<Button className='submit-btn' onClick={this.deleteTableUser.bind(this,value,record,index)}>删除</Button>
+				</div> 
 			}
 		},
 	];
@@ -150,11 +153,26 @@ class UserPage extends React.Component{
 			roles: roles,
 			cardNumber: record.cardNumber
 		}
-		console.log(roles)
 		this.setState({
 			title: '',
 			editData: data,
 			isModalVisible: true
+		})
+	}
+
+	deleteTableUser = (value,record,index) => {
+		let params = {
+			cardNumber: record.cardNumber,
+			id: record.id,
+			username: record.username,
+			roles: record.roles
+		}
+		deleteUser(params).then(res => {
+			const {code} = res;
+			if(code === 0){
+				this.getTableList();
+				message.success('删除成功');
+			}
 		})
 	}
 
