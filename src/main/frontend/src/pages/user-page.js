@@ -116,12 +116,6 @@ class UserPage extends React.Component{
 
   getRoleList = async() => {
 		let list = [];
-		this.modalItem = this.modalItem.map(item => {
-			if(item.label === '角色'){
-				item.options = list
-			}
-			return item;
-		})
     const {code,data} = await roleList();
 		if(code === 0){
 			list = data.map(item => {
@@ -130,6 +124,12 @@ class UserPage extends React.Component{
 				return item;
 			})
 			this.roleList = list;
+			this.modalItem = this.modalItem.map(item => {
+				if(item.label === '角色'){
+					item.options = list
+				}
+				return item;
+			})
 		}
   }
 
