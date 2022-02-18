@@ -159,10 +159,9 @@ class UserPage extends React.Component{
 	}
 
 	changeUser =  (type, data) => {
-		
 		if (type) {
 			// eslint-disable-next-line array-callback-return
-			let roles = this.state.roleList.filter(item => {
+			let roles = this.roleList.filter(item => {
 				if(data.roles.indexOf(item.roleName)> -1){
 					return item;
 				}
