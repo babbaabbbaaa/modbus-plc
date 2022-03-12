@@ -22,6 +22,13 @@ public interface IPLCData {
         return buffer.getFloat(0);
     }
 
+    default int getIntValue(short height, short low) {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putShort(low);
+        buffer.putShort(height);
+        return buffer.getInt(0);
+    }
+
     default String getBarcodeData(short[] data, int offset, int length) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(100);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);

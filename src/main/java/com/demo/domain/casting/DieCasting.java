@@ -44,7 +44,7 @@ public class DieCasting implements IPLCData {
         this.logTime = LocalDateTime.now();
         this.productTypeId = dataArrays[3];
         this.moldNo = dataArrays[4];
-        this.injectionNo = dataArrays[5];
+        this.injectionNo = getIntValue(dataArrays[5], dataArrays[6]);
         this.subDieCastings = new ArrayList<>();
         PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(this.productTypeId);
         initSubDieCasting(dataArrays, barcodeArrays, "A", patternConfig);

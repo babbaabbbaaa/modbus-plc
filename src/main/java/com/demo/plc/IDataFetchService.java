@@ -14,11 +14,15 @@ public interface IDataFetchService {
     ModbusMaster getModbusMaster();
 
     default float getFloatValue(short height, short low, int ratio) {
+        int data = getIntValue(height, low);
+        return ((float) data) / ratio;
+    }
+
+    default int getIntValue(short height, short low) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putShort(low);
         buffer.putShort(height);
-        int data = buffer.getInt(0);
-        return ((float) data) / ratio;
+        return buffer.getInt(0);
     }
 
     default String getBarcode(String barcodeData, int start, int end) {

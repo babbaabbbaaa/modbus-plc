@@ -52,26 +52,26 @@ public class SubDieCasting implements IPLCData {
 
     public SubDieCasting(short[] dataArray, short[] barcodeArray, String type) {
         if ("A".equals(type)) {
-            this.holeSelection = dataArray[6] == 1 ? "1穴使用" : "1穴屏蔽";
-            this.serialNumber = (int) dataArray[7];
+            this.holeSelection = dataArray[7] == 1 ? "1穴使用" : "1穴屏蔽";
+            this.serialNumber = (int) dataArray[10];
             this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[8]);
             this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[9]);
-            this.weightBeforeDieCasting = getFloatValue(dataArray[14], dataArray[15]);
-            this.weightAfterDieCasting = getFloatValue(dataArray[16], dataArray[17]);
-            this.weightDifference = getFloatValue(dataArray[18], dataArray[19]);
-            this.maxWeightTolerance = getFloatValue(dataArray[20], dataArray[21]);
-            this.minWeightTolerance = getFloatValue(dataArray[22], dataArray[23]);
+            this.weightBeforeDieCasting = getFloatValue(dataArray[17], dataArray[18]);
+            this.weightAfterDieCasting = getFloatValue(dataArray[19], dataArray[20]);
+            this.weightDifference = getFloatValue(dataArray[21], dataArray[22]);
+            this.maxWeightTolerance = getFloatValue(dataArray[23], dataArray[24]);
+            this.minWeightTolerance = getFloatValue(dataArray[25], dataArray[26]);
             this.barcodeData = getBarcodeData(barcodeArray, 0, 50);
         } else {
-            this.holeSelection = dataArray[10] == 1 ? "2穴使用" : "2穴屏蔽";
-            this.serialNumber = (int) dataArray[11];
-            this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[12]);
-            this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[13]);
-            this.weightBeforeDieCasting = getFloatValue(dataArray[23], dataArray[25]);
-            this.weightAfterDieCasting = getFloatValue(dataArray[26], dataArray[27]);
-            this.weightDifference = getFloatValue(dataArray[28], dataArray[29]);
-            this.maxWeightTolerance = getFloatValue(dataArray[30], dataArray[31]);
-            this.minWeightTolerance = getFloatValue(dataArray[32], dataArray[33]);
+            this.holeSelection = dataArray[12] == 1 ? "2穴使用" : "2穴屏蔽";
+            this.serialNumber = (int) dataArray[15];
+            this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[13]);
+            this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[14]);
+            this.weightBeforeDieCasting = getFloatValue(dataArray[27], dataArray[28]);
+            this.weightAfterDieCasting = getFloatValue(dataArray[29], dataArray[30]);
+            this.weightDifference = getFloatValue(dataArray[31], dataArray[32]);
+            this.maxWeightTolerance = getFloatValue(dataArray[33], dataArray[34]);
+            this.minWeightTolerance = getFloatValue(dataArray[35], dataArray[36]);
             this.barcodeData = getBarcodeData(barcodeArray, 50, 50);
         }
         if (weightAfterDieCasting - weightBeforeDieCasting > minWeightTolerance &&

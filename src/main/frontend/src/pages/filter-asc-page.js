@@ -64,7 +64,7 @@ class FilterAscPage extends React.Component{
     },1000)
     this.setState({
       columns: tableColumns,
-      manualReinspectResultOptions: [{label: "空", value: '空'}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
+      manualReinspectResultOptions: [{label: "", value: ''}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
     })
   }
 
