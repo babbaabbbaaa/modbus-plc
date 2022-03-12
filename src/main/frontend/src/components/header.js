@@ -14,17 +14,20 @@ class Header extends React.Component {
 		isLogin: false
 	};
 
-	menu = (
-		<Menu>
-			<Menu.Item>
-				<div className='logout' onClick={this.logout}>退出账号</div>
-			</Menu.Item>
-		</Menu>
-	);
+	menu = () => {
+		return (
+			<Menu>
+				<Menu.Item>
+					<div className='logout' onClick={this.logoutClick}>退出账号</div>
+				</Menu.Item>
+			</Menu>
+		);
+	} 
 
-	logout = () => {
+	logoutClick = () => {
 		logout().then(res=>{
-			localStorage.clear()
+			localStorage.clear();
+			window.location.reload();
 		})
 	}
 
@@ -47,11 +50,11 @@ class Header extends React.Component {
 	}
 
 	handleClick = e => {
-		console.log('click ', e);
 		this.setState({ current: e.key });
 	}; 
 	render() {
 		const { current,userName,roles,isLogin } = this.state;
+		console.log(roles.indexOf('ADMIN')>-1)
 		return (
 			<div className = 'page-header'>
 				<Menu onClick = { this.handleClick } selectedKeys = {[current]} mode = "horizontal" >

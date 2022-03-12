@@ -8,6 +8,10 @@ export const userList = (params) => {
   return http.get(`${apis.userList}`);
 }
 export const roleList = (params) => {
-    return http.get(`${apis.roleList}`);
-  }
+  return http.get(`${apis.roleList}`);
+}
+
+export const deleteUser = (params) => {
+  return http.post(`${apis.deleteUser}`,params);
+}
   
