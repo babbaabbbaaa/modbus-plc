@@ -1,6 +1,8 @@
 package com.demo.controller;
 
 
+import com.demo.authentication.User;
+import com.demo.authentication.UserService;
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
 import com.demo.model.PLCQualifiedProductCountModel;
@@ -24,12 +26,14 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("plc")
 public class PLCController {
 
 
+    private final UserService userService;
     private final IDataSearchService dataSearchService;
     private final PatternConfigService patternConfigService;
     private final IDataFetchService dataFetchService;
@@ -37,10 +41,11 @@ public class PLCController {
 
     private ModbusMaster modbusMaster;
 
-    public PLCController(IDataSearchService dataSearchService,
+    public PLCController(UserService userService, IDataSearchService dataSearchService,
                          PatternConfigService patternConfigService,
                          IDataFetchService dataFetchService,
                          @Value("${modbus.slave_id}") int slaveId) {
+        this.userService = userService;
         this.dataSearchService = dataSearchService;
         this.patternConfigService = patternConfigService;
         this.dataFetchService = dataFetchService;
@@ -67,6 +72,11 @@ public class PLCController {
     @PostMapping("configs")
     public Response<List<PatternConfig>> configs() {
         return Response.success(patternConfigService.findAllConfig());
+    }
+
+    @GetMapping("users")
+    public Response<List<String>> users() {
+        return Response.success(userService.getUsers().stream().map(User::getUsername).distinct().collect(Collectors.toList()));
     }
 
     @PostMapping("count")

@@ -22,7 +22,7 @@ public class RoleService {
         return roleRepository.findRoleByRoleName(roleName);
     }
 
-    public void addRole(Role role) {
-        roleRepository.save(role);
+    public Role addRole(Role role) {
+        return roleRepository.save(role);
     }
 }

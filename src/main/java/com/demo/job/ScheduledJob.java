@@ -1,7 +1,6 @@
 package com.demo.job;
 
 
-import com.demo.domain.stamping.StampingFetchService;
 import com.demo.plc.IDataFetchService;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
@@ -28,7 +27,7 @@ public class ScheduledJob {
 
     private ModbusMaster modbusMaster;
 
-    public ScheduledJob(StampingFetchService fetchDataService,
+    public ScheduledJob(IDataFetchService fetchDataService,
                         @Value("${modbus.slave_id}") int slaveId) {
         this.fetchDataService = fetchDataService;
         locator = BaseLocator.holdingRegister(slaveId, 7000, DataType.TWO_BYTE_INT_SIGNED);
