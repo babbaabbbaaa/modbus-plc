@@ -19,7 +19,8 @@ const apis = {
   userChange: `${prefix}/user/update`,
   userList: `${prefix}/user/all`,
   roleList: `${prefix}/user/roles`,
-  deleteUser: `${prefix}/user/remove`
+  deleteUser: `${prefix}/user/remove`,
+  getUsers: `${prefix}/plc/users`
 }
 
 export default apis;

@@ -2,7 +2,7 @@ import React from 'react';
 import {Form,Row,Col,Button,Modal,Select,message} from 'antd';
 import TablePanel from '@/components/table';
 import columns from '@/column/filter-asc-column';
-import {searchList,confirmItem,exportList,configOption,reinspect,countQualifiedProducts} from '@/service/filter-service';
+import {searchList,confirmItem,exportList,configOption,usersOptions,reinspect,countQualifiedProducts} from '@/service/filter-service';
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
@@ -45,7 +45,9 @@ class FilterAscPage extends React.Component{
         barcode: '',
         barcodeData: '',
         productOptions: [],
-        manualReinspectResultOptions:[]
+        usersOptions: [],
+        manualReinspectResultOptions:[],
+        autoInspectResultOptions: []
       }
     }
   }
@@ -53,6 +55,7 @@ class FilterAscPage extends React.Component{
   componentDidMount () {
     this.getTableList();
     this.getConfigOption();
+    this.getUsersOptions();
     let tableColumns = columns.map(item => {
       if(item.dataIndex === 'manualReinspectResult'){
         item.render = (value, row, index)=>this.columnRender(value, row, index);
@@ -64,7 +67,8 @@ class FilterAscPage extends React.Component{
     },1000)
     this.setState({
       columns: tableColumns,
-      manualReinspectResultOptions: [{label: "", value: ''}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
+      manualReinspectResultOptions: [{label: "", value: ''}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}],
+      autoInspectResultOptions: [{label: "", value: ''}, {label: "设备OK", value: "设备OK"}, {label: "设备NG", value: "设备NG"}]
     })
   }
 
@@ -88,6 +92,22 @@ class FilterAscPage extends React.Component{
         });
         this.setState({
           productOptions: list
+        })
+      }
+    })
+  }
+
+  getUsersOptions = () => {
+    usersOptions().then(res => {
+      if(res.code === 0){
+        let list = res.data.length>0&&res.data.map((item,index) => {
+          return {
+            label: item,
+            value: item
+          }
+        });
+        this.setState({
+          usersOptions: list
         })
       }
     })
@@ -270,55 +290,8 @@ class FilterAscPage extends React.Component{
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, manualReinspectResultOptions,qualifiedCount,notQualifiedCount } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, usersOptions, manualReinspectResultOptions, autoInspectResultOptions, qualifiedCount,notQualifiedCount } = this.state;
     const formCondition = [
-      {
-        label: '产品类型',
-        controlType: 'Select',
-        placeholder: '请选择',
-        key: 'productTypeId',
-        col: {xs:24, sm:12,md:10,lg:10,xl:8},
-        options: productOptions
-      },
-      {
-        label: '时间',
-        controlType: 'RangePicker',
-        placeholder: ['开始时间','结束时间'],
-        format: 'YYYY-MM-DD HH:mm:ss',
-        key: 'date',
-        showTime: true,
-        col: {xs:24, sm:12,md:10,lg:10,xl:8},
-        changeValue: this.dateChange
-      },
-      {
-        label: '二维码字符提取',
-        controlType: 'Input',
-        placeholder: '请输入',
-        key: 'barcode',
-        col: {xs:24, sm:12,md:10,lg:10,xl:8}
-      },
-      {
-        label: '自动线检测结果',
-        controlType: 'Input',
-        placeholder: '请输入',
-        key: 'autoInspectResult',
-        col: {xs:24, sm:12,md:10,lg:10,xl:8}
-      },
-      {
-        label: '人工复检结果',
-        controlType: 'Select',
-        placeholder: '请输入',
-        key: 'manualReinspectResult',
-        col: {xs:24, sm:12,md:10,lg:10,xl:8},
-        options: manualReinspectResultOptions
-      },
-      {
-        label: '复检人员',
-        controlType: 'Input',
-        placeholder: '请输入',
-        key: 'reinspectBy',
-        col: {xs:24, sm:12,md:10,lg:10,xl:8}
-      },
       {
         label: 'SR1000二维码编号',
         controlType: 'Input',
@@ -327,7 +300,49 @@ class FilterAscPage extends React.Component{
         ref: 'barcodeRef',
         changeValue: this.changeBarcode,
         onFocus: this.focusHandle,
-        col: {xs:24, sm:24,md:24,lg:24,xl:24}
+        col: {xs: 24, sm: 24, md: 12, lg: 12, xl: 12}
+      },
+      {
+        label: '时间',
+        controlType: 'RangePicker',
+        placeholder: ['开始时间', '结束时间'],
+        format: 'YYYY-MM-DD HH:mm:ss',
+        key: 'date',
+        showTime: true,
+        col: {xs: 24, sm: 12, md: 12, lg: 12, xl: 12},
+        changeValue: this.dateChange
+      },
+      {
+        label: '产品类型',
+        controlType: 'Select',
+        placeholder: '请选择',
+        key: 'productTypeId',
+        col: {xs: 24, sm: 12, md: 6, lg: 6, xl: 6},
+        options: productOptions
+      },
+      {
+        label: '自动线检测结果',
+        controlType: 'Select',
+        placeholder: '请输入',
+        key: 'autoInspectResult',
+        col: {xs: 24, sm: 12, md: 6, lg: 6, xl: 6},
+        options: autoInspectResultOptions
+      },
+      {
+        label: '人工复检结果',
+        controlType: 'Select',
+        placeholder: '请输入',
+        key: 'manualReinspectResult',
+        col: {xs: 24, sm: 12, md: 6, lg: 6, xl: 6},
+        options: manualReinspectResultOptions
+      },
+      {
+        label: '复检人员',
+        controlType: 'Select',
+        placeholder: '请输入',
+        key: 'reinspectBy',
+        col: {xs: 24, sm: 12, md: 6, lg: 6, xl: 6},
+        options: usersOptions
       },
     ];
     const rowClassName = (record) => {
@@ -388,8 +403,6 @@ class FilterAscPage extends React.Component{
           <Col xs={24} sm={12} md={8} lg={6} xl={6}>
             <Button className="btn submit-btn" onClick={this.exportHandle}>导出</Button>
           </Col>
-        </Row>
-        <Row>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
             <div className='text-line'>合格数量：{ qualifiedCount }</div>
           </Col>
