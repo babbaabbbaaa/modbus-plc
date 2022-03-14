@@ -25,15 +25,4 @@ public interface IDataFetchService {
         return buffer.getInt(0);
     }
 
-    default String getBarcode(String barcodeData, int start, int end) {
-        if (!StringUtils.hasText(barcodeData) || "error".equalsIgnoreCase(barcodeData)
-                || barcodeData.length() < end) {
-            return "";
-        }
-        if (StringUtils.hasText(barcodeData) && barcodeData.length() > end) {
-            return barcodeData.substring(start, end);
-        }
-        return "";
-    }
-
 }

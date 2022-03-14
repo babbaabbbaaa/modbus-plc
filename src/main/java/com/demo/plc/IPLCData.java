@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public interface IPLCData {
 
-    void setIndex(int index);
+    default void setIndex(int index) {}
 
     BarcodeDuplicateEnum getDuplicated();
 
@@ -44,6 +44,13 @@ public interface IPLCData {
         }
         if (StringUtils.hasText(barcodeData) && barcodeData.length() > end) {
             return barcodeData.substring(start, end);
+        }
+        return "";
+    }
+
+    default String getBarcodeGrade(String barcodeData, int qualifyStart, int qualifyEnd) {
+        if (StringUtils.hasText(barcodeData) && barcodeData.length() >= qualifyEnd) {
+            return barcodeData.substring(qualifyStart, qualifyEnd).toUpperCase();
         }
         return "";
     }

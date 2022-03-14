@@ -263,7 +263,7 @@ class FilterAscPage extends React.Component{
     return <Select 
       defaultValue={value}
       onChange={this.changeValue.bind(this,value,row,index)}>
-      <Option value='空'>空</Option>        
+      <Option value=''/>
       <Option value='复检NG'>复检NG</Option>
       <Option value='复检OK'>复检OK</Option>
     </Select>
@@ -361,7 +361,7 @@ class FilterAscPage extends React.Component{
         default: break;
       }
 
-      if (record.barcodeQualify) {
+      if (record.autoInspectResult === '设备NG') {
         if (invalidQualified.includes(record.barcodeQualify.toUpperCase())) {
           className = 'bg-red';
         }

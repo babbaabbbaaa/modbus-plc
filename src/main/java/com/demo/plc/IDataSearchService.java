@@ -16,7 +16,7 @@ public interface IDataSearchService {
     byte[] export(PLCSearchCriteria criteria) throws Exception;
 
     @Transactional
-    int reinspect(int id, String status);
+    int reinspect(long id, String status);
 
     @Transactional
     int clear(short productTypeId);

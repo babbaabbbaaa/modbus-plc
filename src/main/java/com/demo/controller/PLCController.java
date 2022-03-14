@@ -3,7 +3,6 @@ package com.demo.controller;
 
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
-import com.demo.domain.stamping.PLCData;
 import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.model.Response;

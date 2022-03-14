@@ -6,6 +6,7 @@ import com.demo.config.PatternConfigRepository;
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.enums.GeneralFunctionEnum;
 import com.demo.plc.IDataFetchService;
+import com.demo.plc.IPLCData;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -32,21 +33,19 @@ import java.util.*;
 @Slf4j
 @Service
 @Profile("stamping")
-public class FetchDataService implements IDataFetchService {
+public class StampingFetchService implements IDataFetchService {
 
-    private static final Set<String> NOT_QUALIFIED_TAGS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("C", "D", "E", "F")));
-
-    private final PLCRepository plcRepository;
+    private final StampingRepository stampingRepository;
     private final PatternConfigRepository patternConfigRepository;
     private final int slaveId;
     private final BaseLocator<Number> dataReadyLocator;
 
     private ModbusMaster modbusMaster;
 
-    public FetchDataService(PLCRepository plcRepository,
-                            PatternConfigRepository patternConfigRepository,
-                            @Value("${modbus.slave_id}") int slaveId) {
-        this.plcRepository = plcRepository;
+    public StampingFetchService(StampingRepository stampingRepository,
+                                PatternConfigRepository patternConfigRepository,
+                                @Value("${modbus.slave_id}") int slaveId) {
+        this.stampingRepository = stampingRepository;
         this.patternConfigRepository = patternConfigRepository;
         this.slaveId = slaveId;
         dataReadyLocator = BaseLocator.holdingRegister(slaveId, 7001, DataType.TWO_BYTE_INT_SIGNED);
@@ -57,15 +56,18 @@ public class FetchDataService implements IDataFetchService {
         if (isDataNotReady()) {
             return;
         }
-        PLCData plcData = getData();
-        if (plcData.isValid()) {
-            checkDup(plcData, plcData.getProductTypeId());
-            plcRepository.save(plcData);
+        Stamping stamping = getData();
+        if (stamping.isValid()) {
+            checkDup(stamping, stamping.getProductTypeId());
+            stampingRepository.save(stamping);
         }
         setShortValue(slaveId, 7001, (short) 0);//mark the data read done
     }
 
-    public PLCData getData() throws ModbusTransportException {
+    public Stamping getData() throws ModbusTransportException {
+        if (null == modbusMaster) {
+            return Stamping.EMPTY_PLC_DATA;
+        }
         ReadHoldingRegistersRequest request = new ReadHoldingRegistersRequest(slaveId, 7000, 125);
         ReadHoldingRegistersResponse response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] data = response.getShortData();
@@ -76,15 +78,15 @@ public class FetchDataService implements IDataFetchService {
                 break;
             }
         }
-        PLCData plcData = new PLCData();
-        plcData.setDataSource("自动线");
-        plcData.setLogTime(LocalDateTime.now());
-        plcData.setValid(valid);
+        Stamping stamping = new Stamping();
+        stamping.setDataSource("自动线");
+        stamping.setLogTime(LocalDateTime.now());
+        stamping.setValid(valid);
         //7000 ON/OFF SIGNAL
         //7001 Data Ready
-        plcData.setReady(data[1]);
+        stamping.setReady(data[1]);
         //7002 DUP SIGNAL
-        plcData.setDuplicate(data[2]);
+        stamping.setDuplicate(data[2]);
         //7003 Product Type ID
         short productTypeId = data[3];
         PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(productTypeId);
@@ -92,65 +94,65 @@ public class FetchDataService implements IDataFetchService {
         if (null != patternConfig) {
             ratio = patternConfig.getRatio() == 0 ? 2000 : patternConfig.getRatio();
         }
-        plcData.setProductTypeId(productTypeId);
-        plcData.setRatio(ratio);
+        stamping.setProductTypeId(productTypeId);
+        stamping.setRatio(ratio);
         //7005 RESERVED
         //7006 GENERAL
-        plcData.setGeneralFunc(GeneralFunctionEnum.mapDefinition(data[6]));
+        stamping.setGeneralFunc(GeneralFunctionEnum.mapDefinition(data[6]));
         //7007 HEIGHT
-        plcData.setHeightFunc(GeneralFunctionEnum.mapDefinition(data[7]));
+        stamping.setHeightFunc(GeneralFunctionEnum.mapDefinition(data[7]));
         //7008 FLAG
-        plcData.setFlagFunc(GeneralFunctionEnum.mapDefinition(data[8]));
+        stamping.setFlagFunc(GeneralFunctionEnum.mapDefinition(data[8]));
         //7009 SCAN
-        plcData.setScanFunc(GeneralFunctionEnum.mapDefinition(data[9]));
+        stamping.setScanFunc(GeneralFunctionEnum.mapDefinition(data[9]));
         //7010 Typhoon
-        plcData.setTyphoonFunc(GeneralFunctionEnum.mapDefinition(data[10]));
+        stamping.setTyphoonFunc(GeneralFunctionEnum.mapDefinition(data[10]));
         //7011 Slot
-        plcData.setSlotDepthFunc(GeneralFunctionEnum.mapDefinition(data[11]));
+        stamping.setSlotDepthFunc(GeneralFunctionEnum.mapDefinition(data[11]));
         //7012 Spin
-        plcData.setSpinCheckFunc(GeneralFunctionEnum.mapDefinition(data[12]));
+        stamping.setSpinCheckFunc(GeneralFunctionEnum.mapDefinition(data[12]));
         //7013 Weld
-        plcData.setWeldFunc(GeneralFunctionEnum.mapDefinition(data[13]));
+        stamping.setWeldFunc(GeneralFunctionEnum.mapDefinition(data[13]));
         //7014 ~ 7015 Test 1
-        plcData.setHeightMeasure1(getFloatValue(data[14], data[15], ratio));
+        stamping.setHeightMeasure1(getFloatValue(data[14], data[15], ratio));
         //7016 ~ 7017 Test 2
-        plcData.setHeightMeasure2(getFloatValue(data[16], data[17], ratio));
+        stamping.setHeightMeasure2(getFloatValue(data[16], data[17], ratio));
         //7018 ~ 7019 Test 3
-        plcData.setHeightMeasure3(getFloatValue(data[18], data[19], ratio));
+        stamping.setHeightMeasure3(getFloatValue(data[18], data[19], ratio));
         //7020 ~ 7021 Test 4
-        plcData.setHeightMeasure4(getFloatValue(data[20], data[21], ratio));
+        stamping.setHeightMeasure4(getFloatValue(data[20], data[21], ratio));
         //7022 ~ 7023 Test 5
-        plcData.setHeightMeasure5(getFloatValue(data[22], data[23], ratio));
+        stamping.setHeightMeasure5(getFloatValue(data[22], data[23], ratio));
         //7024 ~ 7025 Test 6
-        plcData.setHeightMeasure6(getFloatValue(data[24], data[25], ratio));
+        stamping.setHeightMeasure6(getFloatValue(data[24], data[25], ratio));
         //7026 ~ 7027 Test 7
-        plcData.setHeightMeasure7(getFloatValue(data[26], data[27], ratio));
+        stamping.setHeightMeasure7(getFloatValue(data[26], data[27], ratio));
         //7028 ~ 7029 Test 8
-        plcData.setHeightMeasure8(getFloatValue(data[28], data[29], ratio));
+        stamping.setHeightMeasure8(getFloatValue(data[28], data[29], ratio));
         //7030 ~ 7031 Test 9
-        plcData.setHeightMeasure9(getFloatValue(data[30], data[31], ratio));
+        stamping.setHeightMeasure9(getFloatValue(data[30], data[31], ratio));
         //7032 ~ 7033 Test 10
-        plcData.setHeightMeasure10(getFloatValue(data[32], data[33], ratio));
+        stamping.setHeightMeasure10(getFloatValue(data[32], data[33], ratio));
         //7034 ~ 7035 Test 11
-        plcData.setHeightMeasure11(getFloatValue(data[34], data[35], ratio));
+        stamping.setHeightMeasure11(getFloatValue(data[34], data[35], ratio));
         //7036 ~ 7037 Test 12
-        plcData.setHeightMeasure12(getFloatValue(data[36], data[37], ratio));
+        stamping.setHeightMeasure12(getFloatValue(data[36], data[37], ratio));
         //7038 ~ 7039 Test 13
-        plcData.setHeightMeasure13(getFloatValue(data[38], data[39], ratio));
+        stamping.setHeightMeasure13(getFloatValue(data[38], data[39], ratio));
         //7040 ~ 7041 Test 14
-        plcData.setHeightMeasure14(getFloatValue(data[40], data[41], ratio));
+        stamping.setHeightMeasure14(getFloatValue(data[40], data[41], ratio));
         //7042 ~ 7043 Test 15
-        plcData.setHeightMeasure15(getFloatValue(data[42], data[43], ratio));
+        stamping.setHeightMeasure15(getFloatValue(data[42], data[43], ratio));
         //7044 ~ 7045 Test 16
-        plcData.setHeightMeasure16(getFloatValue(data[44], data[45], ratio));
+        stamping.setHeightMeasure16(getFloatValue(data[44], data[45], ratio));
         //7046 ~ 7047 Test 17
-        plcData.setHeightMeasure17(getFloatValue(data[46], data[47], ratio));
+        stamping.setHeightMeasure17(getFloatValue(data[46], data[47], ratio));
         //7048 ~ 7049 Test 18
-        plcData.setHeightMeasure18(getFloatValue(data[48], data[49], ratio));
+        stamping.setHeightMeasure18(getFloatValue(data[48], data[49], ratio));
         //7050 ~ 7051 Test 19
-        plcData.setHeightMeasure19(getFloatValue(data[50], data[51], ratio));
+        stamping.setHeightMeasure19(getFloatValue(data[50], data[51], ratio));
         //7052 ~ 7053 Test 20
-        plcData.setHeightMeasure20(getFloatValue(data[52], data[53], ratio));
+        stamping.setHeightMeasure20(getFloatValue(data[52], data[53], ratio));
         //7054 ~ 7154 Barcode Data
         ByteBuffer byteBuffer = ByteBuffer.allocate(200);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -174,19 +176,14 @@ public class FetchDataService implements IDataFetchService {
             }
         }
         String barcodeData = new String(byteBuffer.array(), StandardCharsets.UTF_8);
-        plcData.setBarcodeData(barcodeData.trim());
+        stamping.setBarcodeData(barcodeData.trim());
         if (null != patternConfig) {
-            plcData.setBarcode(getBarcode(plcData.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
-            plcData.setBarcodeQualify(getBarcodeQualify(plcData.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
+            stamping.setBarcode(stamping.getBarcode(stamping.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
+            stamping.setBarcodeGrade(stamping.getBarcodeGrade(stamping.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
         }
-        plcData.setQualified(isQualified(plcData.getBarcodeQualify(), Arrays.copyOfRange(data, 6, 13)));
-        if (plcData.isQualified()) {
-            plcData.setAutoInspectResult("设备OK");
-        } else {
-            plcData.setAutoInspectResult("设备NG");
-        }
-
-        return plcData;
+        stamping.setQualified(isQualified(Arrays.copyOfRange(data, 6, 13)));
+        stamping.autoInspect();
+        return stamping;
     }
 
     private boolean isDataNotReady() throws ModbusTransportException, ErrorResponseException {
@@ -199,33 +196,31 @@ public class FetchDataService implements IDataFetchService {
         modbusMaster.send(request);
     }
 
-    private String getBarcodeQualify(String barcodeData, int qualifyStart, int qualifyEnd) {
-        if (StringUtils.hasText(barcodeData) && barcodeData.length() >= qualifyEnd) {
-            return barcodeData.substring(qualifyStart, qualifyEnd).toUpperCase();
-        }
-        return "";
-    }
 
-    private boolean isQualified(String barcodeQualify, short... func) {
+    /**
+     * 通规等功能结果
+     * @param func PLC寄存器的值，参考 {@link com.demo.enums.GeneralFunctionEnum}
+     */
+    private boolean isQualified(short... func) {
         for (short f : func) {
             if (f == 2) {
                 return false;
             }
         }
-        return !NOT_QUALIFIED_TAGS.contains(barcodeQualify);
+        return true;
     }
 
-    private void checkDup(PLCData plcData, int productTypeId) throws ModbusTransportException {
-        if (!StringUtils.hasText(plcData.getBarcode()) || "error".equalsIgnoreCase(plcData.getBarcode())) {
+    private void checkDup(Stamping stamping, int productTypeId) throws ModbusTransportException {
+        if (!StringUtils.hasText(stamping.getBarcode()) || "error".equalsIgnoreCase(stamping.getBarcode())) {
             return;
         }
-        List<PLCData> plcList = plcRepository.getDataByBarcode(plcData.getBarcode(), productTypeId);
+        List<Stamping> plcList = stampingRepository.getDataByBarcode(stamping.getBarcode(), productTypeId);
         if (!CollectionUtils.isEmpty(plcList)) {
             plcList.forEach(v -> v.setDuplicated(BarcodeDuplicateEnum.DUP));
-            plcData.setDuplicated(BarcodeDuplicateEnum.DUP);
-            plcData.setQualified(false);
-            plcData.setAutoInspectResult("设备NG");
-            plcRepository.saveAll(plcList);
+            stamping.setDuplicated(BarcodeDuplicateEnum.DUP);
+            stamping.setQualified(false);
+            stamping.setAutoInspectResult("设备NG");
+            stampingRepository.saveAll(plcList);
             setShortValue(slaveId, 7002, (short) 1);
         }
     }

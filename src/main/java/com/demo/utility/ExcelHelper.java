@@ -2,7 +2,7 @@ package com.demo.utility;
 
 import com.demo.domain.casting.DieCasting;
 import com.demo.domain.casting.SubDieCasting;
-import com.demo.domain.stamping.PLCData;
+import com.demo.domain.stamping.Stamping;
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IPLCData;
 import org.apache.poi.ss.usermodel.*;
@@ -52,7 +52,7 @@ public class ExcelHelper {
         if (!CollectionUtils.isEmpty(rows)) {
             for (IPLCData row : rows) {
                 row.setIndex(i++);
-                if (row instanceof PLCData) {
+                if (row instanceof Stamping) {
                     int j = 0;
                     SXSSFRow body = sheet.createRow(rowNo);
                     for (ExcelCell item : headerList) {

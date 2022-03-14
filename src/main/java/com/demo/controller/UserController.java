@@ -33,6 +33,12 @@ public class UserController {
         return Response.success(userService.addUser(user));
     }
 
+    @PostMapping("remove")
+    public Response<Void> delete(@RequestBody User user) {
+        userService.deleteUser(user);
+        return Response.success();
+    }
+
     @GetMapping("roles")
     public Response<List<Role>> getRoles() {
         return Response.success(roleService.getRoles());

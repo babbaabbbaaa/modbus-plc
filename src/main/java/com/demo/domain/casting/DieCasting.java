@@ -34,6 +34,8 @@ public class DieCasting implements IPLCData {
 
     @Transient
     private int index;
+    @Transient
+    private int duplicateFlag;
 
     @Transient
     public static final DieCasting EMPTY_DIE_CASTING = new DieCasting(true);
@@ -42,6 +44,7 @@ public class DieCasting implements IPLCData {
                       PatternConfigRepository patternConfigRepository) {
 
         this.logTime = LocalDateTime.now();
+        this.duplicateFlag = dataArrays[2];
         this.productTypeId = dataArrays[3];
         this.moldNo = dataArrays[4];
         this.injectionNo = getIntValue(dataArrays[5], dataArrays[6]);
@@ -57,6 +60,7 @@ public class DieCasting implements IPLCData {
             this.productTypeId = 0;
             this.moldNo = 1;
             this.injectionNo = 1;
+            this.duplicateFlag = 0;
             this.subDieCastings = new ArrayList<>();
             subDieCastings.add(new SubDieCasting(1));
             subDieCastings.add(new SubDieCasting(2));
@@ -68,9 +72,9 @@ public class DieCasting implements IPLCData {
         SubDieCasting subDieCasting = new SubDieCasting(dataArrays, barcodeArrays, type);
         if (null != patternConfig) {
             subDieCasting.setBarcode(getBarcode(subDieCasting.getBarcodeData(), patternConfig.getStart(), patternConfig.getEnd()));
-            subDieCasting.setBarcodeGrade(getBarcode(subDieCasting.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
+            subDieCasting.setBarcodeGrade(getBarcodeGrade(subDieCasting.getBarcodeData(), patternConfig.getQualifiedStart(), patternConfig.getQualifiedEnd()));
         }
-        subDieCasting.setAutoInspectionResult();
+        subDieCasting.autoInspectionResult();
         subDieCasting.setProductTypeId(this.productTypeId);
         this.subDieCastings.add(subDieCasting);
     }

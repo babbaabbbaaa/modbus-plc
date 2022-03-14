@@ -17,30 +17,35 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public interface PLCRepository extends JpaRepository<PLCData, Long>, JpaSpecificationExecutor<PLCData> {
+public interface StampingRepository extends JpaRepository<Stamping, Long>, JpaSpecificationExecutor<Stamping> {
 
-    @Query("from PLCData where barcode = :#{#barcode} and product_type_id = :#{#productTypeId}")
-    List<PLCData> getDataByBarcode(String barcode, Integer productTypeId);
+    @Query(value = "from Stamping where barcode = :#{#barcode} and productTypeId = :#{#productTypeId}")
+    List<Stamping> getDataByBarcode(String barcode, Integer productTypeId);
 
-    @Query("delete from PLCData as d where d.productTypeId = :#{#productTypeId}")
+    @Query(value = "delete from Stamping as d where d.productTypeId = :#{#productTypeId}")
     @Modifying
     int deleteAllByProductTypeId(short productTypeId);
 
+    @Query(value = "update Stamping set manualReinspectResult = :#{#status}, reinspectBy = :#{#reinspectBy} where id = :#{#id}")
+    @Modifying
+    int updateStampingById(long id, String status, String reinspectBy);
 
-    default Specification<PLCData> buildSpecification(PLCSearchCriteria criteria) {
+
+    default Specification<Stamping> buildSpecification(PLCSearchCriteria criteria) {
         return (root, query, builder) -> query.where(buildPredicates(root, query, builder, criteria).toArray(new Predicate[0]))
                 .orderBy(new OrderImpl(root.get("logTime"), false)).getRestriction();
     }
 
     default CriteriaQuery<Object[]> buildCountQualifiedProducts(PLCSearchCriteria criteria, CriteriaBuilder builder) {
         CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
-        Root<PLCData> root = query.from(PLCData.class);
-        return query.multiselect(root.get("qualified"), builder.count(root)).where(buildPredicates(root, query, builder, criteria).toArray(new Predicate[0]))
-                .groupBy(root.get("qualified"));
+        Root<Stamping> root = query.from(Stamping.class);
+        return query.multiselect(root.get("autoInspectResult"), builder.count(root)).where(buildPredicates(root, query, builder, criteria).toArray(new Predicate[0]))
+                .groupBy(root.get("autoInspectResult"));
     }
 
-    default List<Predicate> buildPredicates(Root<PLCData> root, CriteriaQuery<?> query, CriteriaBuilder builder, PLCSearchCriteria criteria) {
+    default List<Predicate> buildPredicates(Root<Stamping> root, CriteriaQuery<?> query, CriteriaBuilder builder, PLCSearchCriteria criteria) {
         List<Predicate> predicates = new ArrayList<>();
         if (StringUtils.hasText(criteria.getBarcode())) {
             predicates.add(builder.equal(root.get("barcode"), criteria.getBarcode()));
@@ -62,9 +67,9 @@ public interface PLCRepository extends JpaRepository<PLCData, Long>, JpaSpecific
         if (null != end) {
             predicates.add(builder.lessThanOrEqualTo(root.get("logTime"), end));
         }
-        if (null != criteria.getQualified()) {
-            predicates.add(builder.equal(root.get("qualified"), criteria.getQualified()));
-            if (criteria.getQualified()) {
+        if (null != criteria.getAutoInspectResult()) {
+            predicates.add(builder.equal(root.get("autoInspectResult"), criteria.getAutoInspectResult()));
+            if (Objects.equals("设备OK", criteria.getAutoInspectResult())) {
                 predicates.add(builder.and(builder.isNotNull(root.get("barcodeData")), builder.notEqual(root.get("barcodeData"), "")));
             }
         }

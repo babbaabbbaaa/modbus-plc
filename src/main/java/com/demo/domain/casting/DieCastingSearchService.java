@@ -101,7 +101,7 @@ public class DieCastingSearchService implements IDataSearchService {
     }
 
     @Override
-    public int reinspect(int id, String status) {
+    public int reinspect(long id, String status) {
         return subDieCastingRepository.saveManualReinspectResult(status, SecurityUtil.getCurrentUser(), id);
     }
 

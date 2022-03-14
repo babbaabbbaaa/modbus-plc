@@ -84,12 +84,12 @@ public class DieCastingFetchService implements IDataFetchService {
             if (!CollectionUtils.isEmpty(subDieCastings)) {
                 for (SubDieCasting sub : subDieCastings) {
                     sub.setDuplicated(BarcodeDuplicateEnum.DUP);
-                    sub.setAutoInspectionResult();
+                    sub.autoInspectionResult();
                 }
                 subDieCastingRepository.saveAll(subDieCastings);
                 modbusMaster.setValue(BaseLocator.holdingRegister(1, 7002, DataType.TWO_BYTE_INT_SIGNED), 1);
                 subDieCasting.setDuplicated(BarcodeDuplicateEnum.DUP);
-                subDieCasting.setAutoInspectionResult();
+                subDieCasting.autoInspectionResult();
             }
         }
 

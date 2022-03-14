@@ -2,11 +2,13 @@ package com.demo.domain.stamping;
 
 
 import com.demo.enums.BarcodeDuplicateEnum;
+import com.demo.exceptions.ServiceException;
 import com.demo.model.PLCQualifiedProductCountModel;
 import com.demo.model.PLCSearchCriteria;
 import com.demo.plc.IDataSearchService;
 import com.demo.utility.ExcelHeaderConstants;
 import com.demo.utility.ExcelHelper;
+import com.demo.utility.SecurityUtil;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -27,37 +30,40 @@ import java.util.Objects;
 @Service
 @Slf4j
 @Profile("stamping")
-public class PLCDataService implements IDataSearchService {
+public class StampingSearchService implements IDataSearchService {
 
-    private final PLCRepository plcRepository;
+    private final StampingRepository stampingRepository;
     private final BaseLocator<Number> duplicateLocator;
     private final EntityManager entityManager;
 
     private ModbusMaster modbusMaster;
 
-    public PLCDataService(PLCRepository plcRepository,
-                          @Value("${modbus.slave_id}") int slaveId, EntityManager entityManager) {
-        this.plcRepository = plcRepository;
+    public StampingSearchService(StampingRepository stampingRepository,
+                                 @Value("${modbus.slave_id}") int slaveId, EntityManager entityManager) {
+        this.stampingRepository = stampingRepository;
         this.duplicateLocator = BaseLocator.holdingRegister(slaveId, 7002, DataType.TWO_BYTE_INT_SIGNED);
         this.entityManager = entityManager;
     }
 
     @Override
-    public Page<PLCData> search(PLCSearchCriteria criteria) {
-        return plcRepository.findAll(plcRepository.buildSpecification(criteria), criteria.createPageRequest());
+    public Page<Stamping> search(PLCSearchCriteria criteria) {
+        Page<Stamping> stampings = stampingRepository.findAll(stampingRepository.buildSpecification(criteria), criteria.createPageRequest());
+        if (StringUtils.hasText(criteria.getBarcodeData()) && stampings.isEmpty()) {
+            throw new ServiceException("二维码有误！");
+        }
+        return stampings;
     }
 
     @Override
     public PLCQualifiedProductCountModel countQualifiedProducts(PLCSearchCriteria criteria) {
-        List<Object[]> results = entityManager.createQuery(plcRepository.buildCountQualifiedProducts(criteria, entityManager.getCriteriaBuilder())).getResultList();
+        List<Object[]> results = entityManager.createQuery(stampingRepository.buildCountQualifiedProducts(criteria, entityManager.getCriteriaBuilder())).getResultList();
         PLCQualifiedProductCountModel model = new PLCQualifiedProductCountModel();
         if (!CollectionUtils.isEmpty(results)) {
             for (Object[] result : results) {
                 if (result.length == 2) {
-                    if (Objects.equals(result[0], true)) {
+                    if (Objects.equals(result[0], "设备OK")) {
                         model.setQualifiedCount(result[1]);
-                    }
-                    if (Objects.equals(result[0], false)) {
+                    } else if (Objects.equals(result[0], "设备NG")) {
                         model.setNotQualifiedCount(result[1]);
                     }
                 }
@@ -68,12 +74,12 @@ public class PLCDataService implements IDataSearchService {
 
     @Override
     public void confirmDuplicate(String barcode, Integer productTypeId) throws ModbusTransportException, ErrorResponseException {
-        List<PLCData> plcData = plcRepository.getDataByBarcode(barcode, productTypeId);
+        List<Stamping> plcData = stampingRepository.getDataByBarcode(barcode, productTypeId);
         if (!CollectionUtils.isEmpty(plcData)) {
-            for (PLCData plc : plcData) {
+            for (Stamping plc : plcData) {
                 plc.setDuplicated(BarcodeDuplicateEnum.CONFIRMED);
             }
-            plcRepository.saveAll(plcData);
+            stampingRepository.saveAll(plcData);
             short dup = modbusMaster.getValue(duplicateLocator).shortValue();
             if (dup == 1) {
                 modbusMaster.setValue(duplicateLocator, 0);
@@ -83,18 +89,18 @@ public class PLCDataService implements IDataSearchService {
 
     @Override
     public byte[] export(PLCSearchCriteria criteria) throws Exception {
-        List<PLCData> plcData = plcRepository.findAll(plcRepository.buildSpecification(criteria));
+        List<Stamping> plcData = stampingRepository.findAll(stampingRepository.buildSpecification(criteria));
         return ExcelHelper.writeBean(plcData, ExcelHeaderConstants.EXCEL_HEADERS);
     }
 
     @Override
-    public int reinspect(int id, String status) {
-        return 0;
+    public int reinspect(long id, String status) {
+        return stampingRepository.updateStampingById(id, status, SecurityUtil.getCurrentUser());
     }
 
     @Override
     public int clear(short productTypeId) {
-        return plcRepository.deleteAllByProductTypeId(productTypeId);
+        return stampingRepository.deleteAllByProductTypeId(productTypeId);
     }
 
     @Autowired(required = false)

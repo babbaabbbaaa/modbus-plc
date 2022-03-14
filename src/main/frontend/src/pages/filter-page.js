@@ -43,7 +43,7 @@ class FilterPage extends React.Component{
         barcode: '',
         barcodeData: '',
         productOptions: [],
-        qualifiedList:[]
+        autoInspectResultOptions:[]
       }
     }
   }
@@ -62,8 +62,8 @@ class FilterPage extends React.Component{
     },1000)
     this.setState({
       columns: tableColumns,
-      qualifiedList: [{label: "合格", value: 1}, {label: "不合格", value: 0}],
-      manualReinspectResultOptions: [{label: "空", value: '空'}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
+      autoInspectResultOptions: [{label: "设备OK", value: "设备OK"}, {label: "设备NG", value: "设备NG"}],
+      manualReinspectResultOptions: [{label: "", value: ''}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}]
     })
   }
 
@@ -244,14 +244,14 @@ class FilterPage extends React.Component{
     return <Select 
       defaultValue={value}
       onChange={this.changeValue.bind(this,value,row,index)}>
-      <Option value='空'>空</Option>        
+      <Option value=''/>
       <Option value='复检NG'>复检NG</Option>
       <Option value='复检OK'>复检OK</Option>
     </Select>
   }
 
   render () {
-    const { columns, dataSource,totalCount,page,size,productOptions, qualifiedList, qualifiedCount, notQualifiedCount } = this.state;
+    const { columns, dataSource,totalCount,page,size,productOptions, autoInspectResultOptions, qualifiedCount, notQualifiedCount } = this.state;
     const formCondition = [
       {
         label: '产品类型',
@@ -279,12 +279,12 @@ class FilterPage extends React.Component{
         col: {xs:24, sm:12,md:10,lg:10,xl:8}
       },
       {
-        label: '产品合格',
+        label: '自动线检测结果',
         controlType: 'Select',
         placeholder: '请选择',
-        key: 'qualified',
+        key: 'autoInspectResult',
         col: {xs:24, sm:12,md:10,lg:10,xl:8},
-        options: qualifiedList
+        options: autoInspectResultOptions
       },
       {
         label: 'SR1000二维码编号',
@@ -328,10 +328,8 @@ class FilterPage extends React.Component{
         default: break;
       }
 
-      if (record.barcodeQualify) {
-        if (invalidQualified.includes(record.barcodeQualify.toUpperCase())) {
-          className = 'bg-red';
-        }
+      if (record.barcodeGrade !== 'A' && record.barcodeGrade !== 'B') {
+        className = 'bg-red';
       }
       return className
     }
@@ -358,10 +356,10 @@ class FilterPage extends React.Component{
         </Row>
         <Row>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
-            <div className='text-line'>合格数量：{ qualifiedCount }</div>
+            <div className='text-line'>设备OK：{ qualifiedCount }</div>
           </Col>
           <Col xs={24} sm={12} md={6} lg={4} xl={4}>
-            <div className='text-line'>不合格数量：{ notQualifiedCount }</div>
+            <div className='text-line'>设备NG：{ notQualifiedCount }</div>
           </Col>
         </Row>
       </Form>

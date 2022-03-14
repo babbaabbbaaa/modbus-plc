@@ -104,21 +104,22 @@ public class SubDieCasting implements IPLCData {
         this.weightResult = "合格";
     }
 
-    public void setAutoInspectionResult() {
-        if (StringUtils.hasText(this.barcodeData)) {
-            if ("使用但结果不合格".equalsIgnoreCase(this.codeReadingFunc) //读码合格
-                    && "使用但结果不合格".equalsIgnoreCase(this.weightResult) //铝重合格
-                    && this.duplicated != BarcodeDuplicateEnum.DUP) {
-                this.autoInspectResult = "设备OK";
-            } else {
-                this.autoInspectResult = "设备NG";
-            }
+    public void autoInspectionResult() {
+        if (!StringUtils.hasText(this.barcodeData)) {
+            this.autoInspectResult = "";
+            return;
         }
-
+        if (this.duplicated == BarcodeDuplicateEnum.DUP) {
+            this.autoInspectResult = "设备NG";
+            return;
+        }
+        if ("使用但结果不合格".equalsIgnoreCase(this.codeReadingFunc) //读码合格
+                && "使用但结果不合格".equalsIgnoreCase(this.weightResult) //铝重合格
+                && "使用但结果不合格".equalsIgnoreCase(this.markingFunc)) { //打标合格
+            this.autoInspectResult = "设备OK";
+        } else {
+            this.autoInspectResult = "设备NG";
+        }
     }
 
-    @Override
-    public void setIndex(int index) {
-
-    }
 }

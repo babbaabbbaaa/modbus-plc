@@ -1,7 +1,8 @@
 package com.demo.job;
 
 
-import com.demo.domain.stamping.FetchDataService;
+import com.demo.domain.stamping.StampingFetchService;
+import com.demo.plc.IDataFetchService;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -22,12 +23,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class ScheduledJob {
 
 
-    private final FetchDataService fetchDataService;
+    private final IDataFetchService fetchDataService;
     private final BaseLocator<Number> locator;
 
     private ModbusMaster modbusMaster;
 
-    public ScheduledJob(FetchDataService fetchDataService,
+    public ScheduledJob(StampingFetchService fetchDataService,
                         @Value("${modbus.slave_id}") int slaveId) {
         this.fetchDataService = fetchDataService;
         locator = BaseLocator.holdingRegister(slaveId, 7000, DataType.TWO_BYTE_INT_SIGNED);
