@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { Form,Row,Col,Modal, Button,Input } from 'antd';
 import {login} from '@/service/common-service';
-import md5 from 'md5';
 
 class Login extends PureComponent {
   formRef = React.createRef();
@@ -34,13 +33,13 @@ class Login extends PureComponent {
     let params = new FormData();
     params.append('username',passwordValue);
     params.append('password',passwordValue);
+    localStorage.setItem('userInfo',JSON.stringify({username: 'lll',roles:['admin1']}))
     login(params).then(res => {
       if(res.code === 0){
         localStorage.setItem('userInfo',JSON.stringify(res.data))
         this.setState({
           visible: false
-        })
-        window.location.reload();
+        });
       }
     })
     .catch(errorInfo => {

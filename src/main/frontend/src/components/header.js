@@ -36,7 +36,16 @@ class Header extends React.Component {
 	}
 
 	componentDidMount () {
-		let userInfo = localStorage.getItem('userInfo')||'{}';
+		this.getUserInfo(localStorage.getItem('userInfo')||'{}');
+		window.addEventListener("setItemEvent", (e) => {
+			if(e.key === 'userInfo'){
+				this.getUserInfo(e.newValue||'{}');
+			}
+		});
+	}
+
+	getUserInfo = (value) => {
+		let userInfo = value;
 		userInfo = JSON.parse(userInfo);
 		let loginInfo = false;
 		if(userInfo.username){
@@ -53,8 +62,7 @@ class Header extends React.Component {
 		this.setState({ current: e.key });
 	}; 
 	render() {
-		const { current,userName,roles,isLogin } = this.state;
-		console.log(roles.indexOf('ADMIN')>-1)
+		const { current,userName,isLogin } = this.state;
 		return (
 			<div className = 'page-header'>
 				<Menu onClick = { this.handleClick } selectedKeys = {[current]} mode = "horizontal" >
@@ -66,12 +74,10 @@ class Header extends React.Component {
 					</Menu.Item > 
 					<Menu.Item key = "config" >
 						<Link to = "/config" > 安全控制器 </Link>
-					</Menu.Item > 
-					{ roles.indexOf('ADMIN')>-1&&
-						<Menu.Item key = "user" >
-							<Link to = "/user" > 用户管理 </Link>
-						</Menu.Item > 
-					}
+					</Menu.Item >
+					<Menu.Item key = "user" >
+						<Link to = "/user" > 用户管理 </Link>
+					</Menu.Item >
 				</Menu>
 				<div className='header-right'>
 					<Semaphore />

@@ -2,8 +2,10 @@ import React from 'react'
 import {HashRouter as Router,Routes,Route} from 'react-router-dom';
 import routes from './routes/index';
 import Header from '@/components/header';
+import { dispatchEventStroage } from '@/utils/index';
 
 function App() {
+  dispatchEventStroage();
   let userInfo = localStorage.getItem('userInfo')||'{}';
   userInfo = JSON.parse(userInfo);
   let roles = userInfo.roles||[];

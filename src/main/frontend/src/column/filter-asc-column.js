@@ -8,10 +8,6 @@ function columnRender (value, row, index) {
   return obj;
 }
 
-function changeValue (value) {
-
-}
-
 const data = [ 
   {
     title: '序号',
@@ -19,7 +15,7 @@ const data = [
     key: 'index',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 60
+    width: 50
   },
   {
     title: '时间',
@@ -27,7 +23,7 @@ const data = [
     key: 'logTime',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 170
+    width: 100
   },
   {
     title: '模具号',
@@ -35,7 +31,7 @@ const data = [
     key: 'moldNo',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 80
+    width: 60
   },
   {
     title: '压射号',
@@ -43,19 +39,19 @@ const data = [
     key: 'injectionNo',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 80
+    width: 60
   },
   {
     title: '流水号',
     dataIndex: 'serialNumber',
     key: 'serialNumber',
-    width: 80
+    width: 60
   },
   {
     title: 'SR1000二维码编号',
     dataIndex: 'barcodeData',
     key: 'barcodeData',
-    width: 420
+    width: 400
   },
   {
     title: '读码判定结果',
