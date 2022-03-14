@@ -8,7 +8,7 @@ import {download} from '@/utils/index';
 
 const { Option } = Select;
 
-let invalidQualified = ['C', 'D', 'E', 'F'];
+let invalidGrade = ['C', 'D', 'E', 'F'];
 class FilterAscPage extends React.Component{
   formRef = React.createRef();
   barcode = '';
@@ -362,7 +362,7 @@ class FilterAscPage extends React.Component{
       }
 
       if (record.autoInspectResult === '设备NG') {
-        if (invalidQualified.includes(record.barcodeQualify.toUpperCase())) {
+        if (invalidGrade.includes(record.barcodeGrade?.toUpperCase())) {
           className = 'bg-red';
         }
       }

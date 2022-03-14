@@ -7,7 +7,7 @@ import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
 const {Option} = Select;
-let invalidQualified = ['C', 'D', 'E', 'F'];
+let invalidGrade = ['C', 'D', 'E', 'F'];
 class FilterPage extends React.Component{
   options = {
     title: '操作',
@@ -328,8 +328,10 @@ class FilterPage extends React.Component{
         default: break;
       }
 
-      if (record.barcodeGrade !== 'A' && record.barcodeGrade !== 'B') {
-        className = 'bg-red';
+      if (record.autoInspectResult === '设备NG') {
+        if (invalidGrade.includes(record.barcodeGrade.toUpperCase())) {
+          className = 'bg-red';
+        }
       }
       return className
     }
