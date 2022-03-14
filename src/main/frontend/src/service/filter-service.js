@@ -21,3 +21,6 @@ export const configOption = () => {
 export const reinspect = (params) => {
     return http.get(`${apis.reinspect}?id=${params.id}&status=${params.status}`)
 }
+export const usersOptions = () => {
+  return http.get(`${apis.getUsers}`)
+}

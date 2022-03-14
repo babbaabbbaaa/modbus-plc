@@ -31,13 +31,17 @@ public class InitialDataLine {
     public CommandLineRunner initUserData() {
         return args -> {
             Role role = roleService.getRoleByName("ADMIN");
+            if (null == role) {
+                role = new Role();
+                role.setRoleName("ADMIN");
+                role = roleService.addRole(role);
+                log.info("Initiate role [ADMIN] for system.");
+            }
             try {
-                userService.loadUserByUsername("12345678");
-                if (null == role) {
-                    role = new Role();
-                    role.setRoleName("ADMIN");
-                    roleService.addRole(role);
-                    log.info("Initiate role [ADMIN] for system.");
+                User user = (User) userService.loadUserByUsername("12345678");
+                if (null == user.getRoles()) {
+                    user.setRoles(new HashSet<>(Collections.singletonList(role)));
+                    userService.addUser(user);
                 }
             } catch (UsernameNotFoundException e) {
                 User user = new User();
