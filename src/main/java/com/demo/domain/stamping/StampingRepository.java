@@ -22,7 +22,7 @@ import java.util.Objects;
 public interface StampingRepository extends JpaRepository<Stamping, Long>, JpaSpecificationExecutor<Stamping> {
 
     @Query(value = "from Stamping where barcode = :#{#barcode} and productTypeId = :#{#productTypeId}")
-    List<Stamping> getDataByBarcode(String barcode, Integer productTypeId);
+    List<Stamping> getDataByBarcode(String barcode, short productTypeId);
 
     @Query(value = "delete from Stamping as d where d.productTypeId = :#{#productTypeId}")
     @Modifying

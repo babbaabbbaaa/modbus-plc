@@ -1,12 +1,19 @@
 package com.demo.domain.stamping;
 
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.ShortBuffer;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigRepository;
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.enums.GeneralFunctionEnum;
 import com.demo.plc.IDataFetchService;
-import com.demo.plc.IPLCData;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -15,7 +22,7 @@ import com.serotonin.modbus4j.locator.BaseLocator;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersResponse;
 import com.serotonin.modbus4j.msg.WriteRegisterRequest;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -23,14 +30,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.ShortBuffer;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.*;
-
-@Slf4j
 @Service
 @Profile("stamping")
 public class StampingFetchService implements IDataFetchService {
@@ -98,21 +97,21 @@ public class StampingFetchService implements IDataFetchService {
         stamping.setRatio(ratio);
         //7005 RESERVED
         //7006 GENERAL
-        stamping.setGeneralFunc(GeneralFunctionEnum.mapDefinition(data[6]));
+        stamping.setGeneralFunc(GeneralFunctionEnum.mapLongDefinition(data[6]));
         //7007 HEIGHT
-        stamping.setHeightFunc(GeneralFunctionEnum.mapDefinition(data[7]));
+        stamping.setHeightFunc(GeneralFunctionEnum.mapLongDefinition(data[7]));
         //7008 FLAG
-        stamping.setFlagFunc(GeneralFunctionEnum.mapDefinition(data[8]));
+        stamping.setFlagFunc(GeneralFunctionEnum.mapLongDefinition(data[8]));
         //7009 SCAN
-        stamping.setScanFunc(GeneralFunctionEnum.mapDefinition(data[9]));
+        stamping.setScanFunc(GeneralFunctionEnum.mapLongDefinition(data[9]));
         //7010 Typhoon
-        stamping.setTyphoonFunc(GeneralFunctionEnum.mapDefinition(data[10]));
+        stamping.setTyphoonFunc(GeneralFunctionEnum.mapLongDefinition(data[10]));
         //7011 Slot
-        stamping.setSlotDepthFunc(GeneralFunctionEnum.mapDefinition(data[11]));
+        stamping.setSlotDepthFunc(GeneralFunctionEnum.mapLongDefinition(data[11]));
         //7012 Spin
-        stamping.setSpinCheckFunc(GeneralFunctionEnum.mapDefinition(data[12]));
+        stamping.setSpinCheckFunc(GeneralFunctionEnum.mapLongDefinition(data[12]));
         //7013 Weld
-        stamping.setWeldFunc(GeneralFunctionEnum.mapDefinition(data[13]));
+        stamping.setWeldFunc(GeneralFunctionEnum.mapLongDefinition(data[13]));
         //7014 ~ 7015 Test 1
         stamping.setHeightMeasure1(getFloatValue(data[14], data[15], ratio));
         //7016 ~ 7017 Test 2
@@ -210,7 +209,7 @@ public class StampingFetchService implements IDataFetchService {
         return true;
     }
 
-    private void checkDup(Stamping stamping, int productTypeId) throws ModbusTransportException {
+    private void checkDup(Stamping stamping, short productTypeId) throws ModbusTransportException {
         if (!StringUtils.hasText(stamping.getBarcode()) || "error".equalsIgnoreCase(stamping.getBarcode())) {
             return;
         }

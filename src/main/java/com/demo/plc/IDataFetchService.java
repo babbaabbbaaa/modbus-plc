@@ -1,11 +1,10 @@
 package com.demo.plc;
 
+import java.nio.ByteBuffer;
+
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
-import org.springframework.util.StringUtils;
-
-import java.nio.ByteBuffer;
 
 public interface IDataFetchService {
 

@@ -43,4 +43,15 @@ public class UserController {
     public Response<List<Role>> getRoles() {
         return Response.success(roleService.getRoles());
     }
+
+    @PostMapping("role")
+    public Response<Role> updateRole(@RequestBody Role role) {
+        return Response.success(roleService.addRole(role));
+    }
+
+    @DeleteMapping("role")
+    public Response<Void> deleteRole(@RequestBody Role role) {
+        roleService.deleteRole(role);
+        return Response.success();
+    }
 }

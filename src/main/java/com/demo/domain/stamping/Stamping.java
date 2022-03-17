@@ -1,16 +1,24 @@
 package com.demo.domain.stamping;
 
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IPLCData;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.util.StringUtils;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -122,10 +130,10 @@ public class Stamping implements IPLCData {
 
 
     public void autoInspect() {
-        if (!StringUtils.hasText(this.barcodeData)) {
-            this.autoInspectResult = "";
-            return;
-        }
+//        if (!StringUtils.hasText(this.barcodeData)) {
+//            this.autoInspectResult = "";
+//            return;
+//        }
         if (this.duplicated == BarcodeDuplicateEnum.DUP) {
             this.autoInspectResult = "设备NG";
             return;

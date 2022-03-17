@@ -1,20 +1,23 @@
 package com.demo.controller;
 
 
+import java.util.List;
+
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
 import com.demo.model.DataClearModel;
 import com.demo.model.PLCConfirmModel;
 import com.demo.model.Response;
 import com.demo.plc.IDataSearchService;
-import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("secure")

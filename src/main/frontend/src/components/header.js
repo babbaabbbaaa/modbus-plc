@@ -78,6 +78,9 @@ class Header extends React.Component {
 					<Menu.Item key = "user" >
 						<Link to = "/user" > 用户管理 </Link>
 					</Menu.Item >
+					<Menu.Item key = "role" >
+						<Link to = "/role" > 角色管理 </Link>
+					</Menu.Item >
 				</Menu>
 				<div className='header-right'>
 					<Semaphore />

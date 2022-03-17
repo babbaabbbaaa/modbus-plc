@@ -10,13 +10,13 @@ function App() {
   userInfo = JSON.parse(userInfo);
   let roles = userInfo.roles||[];
   let routeList = routes;
-  if(roles.indexOf('ADMIN')<0){
-    routeList = routes.filter(item => {
-      if(item.path !== '/user'){
-        return item;
-      }
-    })
-  }
+  // if(roles.indexOf('ADMIN')<0){
+  //   routeList = routes.filter(item => {
+  //     if(item.path !== '/user' && item.path !== '/role'){
+  //       return item;
+  //     }
+  //   })
+  // }
   return (
     <Router>
       <Header/>

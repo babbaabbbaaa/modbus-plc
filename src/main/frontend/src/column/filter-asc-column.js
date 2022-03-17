@@ -23,7 +23,8 @@ const data = [
     key: 'logTime',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 100
+    width: 100,
+    onCell: () => {}
   },
   {
     title: '模具号',

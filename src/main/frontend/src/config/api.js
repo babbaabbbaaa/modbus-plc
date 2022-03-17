@@ -20,7 +20,9 @@ const apis = {
   userList: `${prefix}/user/all`,
   roleList: `${prefix}/user/roles`,
   deleteUser: `${prefix}/user/remove`,
-  getUsers: `${prefix}/plc/users`
+  getUsers: `${prefix}/plc/users`,
+  addRole: `${prefix}/user/role`,
+  deleteRole: `${prefix}/user/role`
 }
 
 export default apis;

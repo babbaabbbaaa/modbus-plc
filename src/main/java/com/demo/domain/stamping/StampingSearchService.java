@@ -1,6 +1,11 @@
 package com.demo.domain.stamping;
 
 
+import java.util.List;
+import java.util.Objects;
+
+import javax.persistence.EntityManager;
+
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.exceptions.ServiceException;
 import com.demo.model.PLCQualifiedProductCountModel;
@@ -14,7 +19,7 @@ import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
 import com.serotonin.modbus4j.locator.BaseLocator;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -23,12 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Objects;
-
 @Service
-@Slf4j
 @Profile("stamping")
 public class StampingSearchService implements IDataSearchService {
 
@@ -74,7 +74,7 @@ public class StampingSearchService implements IDataSearchService {
 
     @Override
     public void confirmDuplicate(String barcode, Integer productTypeId) throws ModbusTransportException, ErrorResponseException {
-        List<Stamping> plcData = stampingRepository.getDataByBarcode(barcode, productTypeId);
+        List<Stamping> plcData = stampingRepository.getDataByBarcode(barcode, productTypeId.shortValue());
         if (!CollectionUtils.isEmpty(plcData)) {
             for (Stamping plc : plcData) {
                 plc.setDuplicated(BarcodeDuplicateEnum.CONFIRMED);

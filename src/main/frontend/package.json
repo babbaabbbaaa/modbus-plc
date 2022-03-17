@@ -68,8 +68,8 @@
   "scripts": {
     "start-asc": "node scripts/start-asc.js",
     "start-exam": "node scripts/start-exam.js",
-    "build-asc": "node scripts/build-asc.js",
-    "build-exam": "node scripts/build-exam.js"
+    "build-casting": "node scripts/build-asc.js",
+    "build-stamping": "node scripts/build-exam.js"
   },
   "eslintConfig": {
     "extends": [
