@@ -111,6 +111,11 @@ class ConfigPage extends React.Component {
 
     componentDidMount() {
         this.getConfigs();
+        window.addEventListener("setItemEvent", (e) => {
+			if(e.key === 'userInfo'){
+				this.getConfigs();
+			}
+		});
     }
 
     getConfigs = () => {

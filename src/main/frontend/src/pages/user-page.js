@@ -104,6 +104,11 @@ class UserPage extends React.Component{
 	]
   componentDidMount () {
     this.getTableList();
+		window.addEventListener("setItemEvent", (e) => {
+			if(e.key === 'userInfo'){
+				this.getTableList();
+			}
+		});
   }
   
   getTableList = () => {
