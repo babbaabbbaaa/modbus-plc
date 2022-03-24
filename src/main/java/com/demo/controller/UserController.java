@@ -6,6 +6,7 @@ import com.demo.authentication.RoleService;
 import com.demo.authentication.User;
 import com.demo.authentication.UserService;
 import com.demo.model.Response;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,7 +52,11 @@ public class UserController {
 
     @DeleteMapping("role")
     public Response<Void> deleteRole(@RequestBody Role role) {
-        roleService.deleteRole(role);
+        try {
+            roleService.deleteRole(role);
+        } catch (DataIntegrityViolationException e) {
+            return Response.fail(String.format("角色【%s】无法被删除，请先将该角色从对应用户中剔除！", role.getRoleName()));
+        }
         return Response.success();
     }
 }

@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.*;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
@@ -38,18 +37,19 @@ public class PLCController {
     private final PatternConfigService patternConfigService;
     private final IDataFetchService dataFetchService;
     private final BaseLocator<Number> signalLocator;
-
-    private ModbusMaster modbusMaster;
+    private final ModbusMaster modbusMaster;
 
     public PLCController(UserService userService, IDataSearchService dataSearchService,
                          PatternConfigService patternConfigService,
                          IDataFetchService dataFetchService,
-                         @Value("${modbus.slave_id}") int slaveId) {
+                         @Value("${modbus.slave_id}") int slaveId,
+                         @Autowired(required = false) ModbusMaster modbusMaster) {
         this.userService = userService;
         this.dataSearchService = dataSearchService;
         this.patternConfigService = patternConfigService;
         this.dataFetchService = dataFetchService;
         this.signalLocator = BaseLocator.holdingRegister(slaveId, 7000, DataType.TWO_BYTE_INT_SIGNED);
+        this.modbusMaster = modbusMaster;
     }
 
     @PostMapping("search")
@@ -58,7 +58,6 @@ public class PLCController {
     }
 
     @PostMapping("export")
-    @PreAuthorize("hasRole('EXPORT')")
     public ResponseEntity<byte[]> export(@RequestBody PLCSearchCriteria criteria) throws Exception {
         byte[] bytes = dataSearchService.export(criteria);
         HttpHeaders headers = new HttpHeaders();
@@ -121,11 +120,6 @@ public class PLCController {
             return Response.success(modbusMaster.getValue(BaseLocator.holdingRegister(1, offset, DataType.TWO_BYTE_INT_SIGNED)).intValue());
         }
         return Response.success();
-    }
-
-    @Autowired(required = false)
-    public void setModbusMaster(ModbusMaster modbusMaster) {
-        this.modbusMaster = modbusMaster;
     }
 
 

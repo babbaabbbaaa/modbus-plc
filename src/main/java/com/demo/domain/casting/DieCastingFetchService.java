@@ -1,8 +1,10 @@
 package com.demo.domain.casting;
 
+import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigRepository;
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IDataFetchService;
+import com.demo.utility.JsonUtil;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
@@ -11,14 +13,17 @@ import com.serotonin.modbus4j.locator.BaseLocator;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersRequest;
 import com.serotonin.modbus4j.msg.ReadHoldingRegistersResponse;
 import com.serotonin.modbus4j.msg.WriteRegisterRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 
+@Slf4j
 @Service
 @Profile("casting")
 public class DieCastingFetchService implements IDataFetchService {
@@ -44,6 +49,7 @@ public class DieCastingFetchService implements IDataFetchService {
             return;
         }
         DieCasting dieCasting = getData();
+        log.info(JsonUtil.writeAsString(dieCasting));
         checkDup(dieCasting);
         dieCastingRepository.save(dieCasting);
         setDataReadDone();//mark the data read done
@@ -60,7 +66,12 @@ public class DieCastingFetchService implements IDataFetchService {
         request = new ReadHoldingRegistersRequest(1, 7054, 100);
         response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
         short[] barcodeArrays = response.getShortData();
-        return new DieCasting(dataArrays, barcodeArrays, patternConfigRepository);
+        DieCasting dieCasting = new DieCasting(dataArrays);
+
+        PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(dieCasting.getProductTypeId());
+        dieCasting.initSubDieCasting(dataArrays, barcodeArrays, "A", patternConfig);
+        dieCasting.initSubDieCasting(dataArrays, barcodeArrays, "B", patternConfig);
+        return dieCasting;
     }
 
     @Override
@@ -79,6 +90,10 @@ public class DieCastingFetchService implements IDataFetchService {
 
     public void checkDup(DieCasting dieCasting) throws ModbusTransportException, ErrorResponseException {
         for (SubDieCasting subDieCasting : dieCasting.getSubDieCastings()) {
+            if (!StringUtils.hasText(subDieCasting.getBarcodeData()) || "ERROR".equalsIgnoreCase(subDieCasting.getBarcodeData())) {
+                continue;
+            }
+            log.info("checking duplicate code");
             List<SubDieCasting> subDieCastings = subDieCastingRepository
                     .findSubDieCastingByBarcodeAndProduct(subDieCasting.getBarcodeData(), dieCasting.getProductTypeId());
             if (!CollectionUtils.isEmpty(subDieCastings)) {

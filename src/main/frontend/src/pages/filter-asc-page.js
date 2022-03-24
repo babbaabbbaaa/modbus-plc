@@ -64,7 +64,7 @@ class FilterAscPage extends React.Component{
     })
     this.timer = setInterval(()=>{
       this.getTableList()
-    },1000)
+    },3000)
     this.setState({
       columns: tableColumns,
       manualReinspectResultOptions: [{label: "", value: ''}, {label: "复检OK", value: "复检OK"}, {label: "复检NG", value: "复检NG"}],
@@ -130,26 +130,29 @@ class FilterAscPage extends React.Component{
       if(code === 0){
         // eslint-disable-next-line array-callback-return
         let tableList = [];
-        data.content.map((item,index) => {
-          let subLength = item.subDieCastings.length;
-          item.index = index+1+(page-1)*size;
-          // eslint-disable-next-line array-callback-return
-          subLength>0&&item.subDieCastings.map((ele,ind) => {
-            if(ind === 0){
-              tableList.push({
-                ...item,
-                ...ele,
-                rowSpan: subLength
-              })
-            }else{
-              tableList.push({
-                ...item,
-                ...ele,
-                rowSpan: 0
-              })
-            }
+        if (data.content && data.content.length > 0) {
+          data.content.map((item,index) => {
+            let subLength = item.subDieCastings.length;
+            item.index = index+1+(page-1)*size;
+            // eslint-disable-next-line array-callback-return
+            subLength>0&&item.subDieCastings.map((ele,ind) => {
+              if(ind === 0){
+                tableList.push({
+                  ...item,
+                  ...ele,
+                  rowSpan: subLength
+                })
+              }else{
+                tableList.push({
+                  ...item,
+                  ...ele,
+                  rowSpan: 0
+                })
+              }
+            })
           })
-        })
+        }
+
         this.setState({
           dataSource: tableList,
           searchParam: {
@@ -183,12 +186,14 @@ class FilterAscPage extends React.Component{
       })
     })
     countQualifiedProducts(params).then(res => {
-      const {code, data} = res;
-      if (code === 0) {
-        this.setState({
-          qualifiedCount: data.qualifiedCount,
-          notQualifiedCount: data.notQualifiedCount
-        })
+      if (res) {
+        const {code, data} = res;
+        if (code === 0) {
+          this.setState({
+            qualifiedCount: data.qualifiedCount,
+            notQualifiedCount: data.notQualifiedCount
+          })
+        }
       }
     })
   }
@@ -199,7 +204,7 @@ class FilterAscPage extends React.Component{
       okText: '确认',
       cancelText: '取消',
       onOk: () => {
-        reinspect({id: record.id, status: e}).then(res=>{
+        reinspect({id: record.subId, status: e}).then(res=>{
           if(res.code === 0) {
             message.success('确认成功');
             this.getTableList();

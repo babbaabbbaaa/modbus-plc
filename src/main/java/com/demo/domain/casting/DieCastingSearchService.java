@@ -69,9 +69,9 @@ public class DieCastingSearchService implements IDataSearchService {
         PLCQualifiedProductCountModel model = new PLCQualifiedProductCountModel();
         if (!CollectionUtils.isEmpty(results)) {
             for (Object[] result : results) {
-                if (Objects.equals("合格", result[0])) {
+                if (Objects.equals("设备OK", result[0])) {
                     model.setQualifiedCount(result[1]);
-                } else if (Objects.equals("不合格", result[0])) {
+                } else if (Objects.equals("设备NG", result[0])) {
                     model.setNotQualifiedCount(result[1]);
                 }
             }

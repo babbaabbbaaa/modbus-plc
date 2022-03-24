@@ -4,6 +4,7 @@ package com.demo.domain.casting;
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.enums.GeneralFunctionEnum;
 import com.demo.plc.IPLCData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,8 +21,7 @@ public class SubDieCasting implements IPLCData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long castingId;
+    private Long subId;
     private Integer serialNumber;
     private String barcodeData;
     private String markingFunc;  //打标
@@ -45,6 +45,10 @@ public class SubDieCasting implements IPLCData {
     private String codeReadingFunc; // 读码
     private String datasource = "自动线";
     private int productTypeId;
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "casting_id")
+    private DieCasting dieCasting;
 
     @Enumerated(EnumType.STRING)
     private BarcodeDuplicateEnum duplicated = BarcodeDuplicateEnum.NONE;

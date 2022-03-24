@@ -107,10 +107,11 @@ class FilterPage extends React.Component{
       const {code,data,msg} = res;
       if(code === 0){
         this.errMessageShow = true;
-        // eslint-disable-next-line array-callback-return
-        data.content.map((item,index) => {
-          item.index = index+1+(page-1)*size;
-        })
+        if (data.content && data.content.length > 0) {
+          data.content.map((item,index) => {
+            item.index = index+1+(page-1)*size;
+          })
+        }
         this.setState({
           searchParam: {
             page: 1,

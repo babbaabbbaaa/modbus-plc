@@ -23,13 +23,13 @@ public class DieCasting implements IPLCData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long castingId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime logTime;
     private int moldNo;
     private int injectionNo;
     private short productTypeId;
-    @OneToMany(mappedBy = "castingId", cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dieCasting")
     private List<SubDieCasting> subDieCastings;
 
     @Transient
@@ -40,8 +40,7 @@ public class DieCasting implements IPLCData {
     @Transient
     public static final DieCasting EMPTY_DIE_CASTING = new DieCasting(true);
 
-    public DieCasting(short[] dataArrays, short[] barcodeArrays,
-                      PatternConfigRepository patternConfigRepository) {
+    public DieCasting(short[] dataArrays) {
 
         this.logTime = LocalDateTime.now();
         this.duplicateFlag = dataArrays[2];
@@ -49,9 +48,6 @@ public class DieCasting implements IPLCData {
         this.moldNo = dataArrays[4];
         this.injectionNo = getIntValue(dataArrays[5], dataArrays[6]);
         this.subDieCastings = new ArrayList<>();
-        PatternConfig patternConfig = patternConfigRepository.findByProductTypeId(this.productTypeId);
-        initSubDieCasting(dataArrays, barcodeArrays, "A", patternConfig);
-        initSubDieCasting(dataArrays, barcodeArrays, "B", patternConfig);
     }
 
     public DieCasting(boolean empty) {
@@ -67,7 +63,7 @@ public class DieCasting implements IPLCData {
         }
     }
 
-    private void initSubDieCasting(short[] dataArrays, short[] barcodeArrays, String type,
+    public void initSubDieCasting(short[] dataArrays, short[] barcodeArrays, String type,
                                    PatternConfig patternConfig) {
         SubDieCasting subDieCasting = new SubDieCasting(dataArrays, barcodeArrays, type);
         if (null != patternConfig) {
@@ -76,6 +72,7 @@ public class DieCasting implements IPLCData {
         }
         subDieCasting.autoInspectionResult();
         subDieCasting.setProductTypeId(this.productTypeId);
+        subDieCasting.setDieCasting(this);
         this.subDieCastings.add(subDieCasting);
     }
 

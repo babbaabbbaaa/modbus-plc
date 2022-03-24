@@ -12,7 +12,7 @@ public interface SubDieCastingRepository extends JpaRepository<SubDieCasting, Lo
     List<SubDieCasting> findSubDieCastingByBarcodeAndProduct(String barcode, int productTypeId);
 
     @Modifying
-    @Query("update SubDieCasting s set s.manualReinspectResult = :#{#status}, s.reinspectBy = :#{#reinspectBy} where id = :#{#id}")
+    @Query("update SubDieCasting s set s.manualReinspectResult = :#{#status}, s.reinspectBy = :#{#reinspectBy} where s.subId = :#{#id}")
     int saveManualReinspectResult(String status, String reinspectBy, long id);
 
 }

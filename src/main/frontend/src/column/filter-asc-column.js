@@ -15,7 +15,7 @@ const data = [
     key: 'index',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 50
+    width: 43
   },
   {
     title: '时间',
@@ -23,7 +23,7 @@ const data = [
     key: 'logTime',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 100,
+    width: 89,
     onCell: () => {}
   },
   {
@@ -32,7 +32,7 @@ const data = [
     key: 'moldNo',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 60
+    width: 50
   },
   {
     title: '压射号',
@@ -40,55 +40,55 @@ const data = [
     key: 'injectionNo',
     render: (value, row, index)=>columnRender (value, row, index),
     fixed: 'left',
-    width: 60
+    width: 50
   },
   {
     title: '流水号',
     dataIndex: 'serialNumber',
     key: 'serialNumber',
-    width: 60
+    width: 50
   },
   {
     title: 'SR1000二维码编号',
     dataIndex: 'barcodeData',
     key: 'barcodeData',
-    width: 400
+    width: 386
   },
   {
     title: '读码判定结果',
     dataIndex: 'codeReadingFunc',
     key: 'codeReadingFunc',
-    width: 135
+    width: 90
   },
   {
     title: '铝重差值',
     dataIndex: 'weightDifference',
     key: 'weightDifference',
-    width: 135
+    width: 69
   },
   {
     title: '铝重判定结果',
     dataIndex: 'weightResult',
     key: 'weightResult',
-    width: 135
+    width: 97
   },
   {
     title: '自动线检测结果',
     dataIndex: 'autoInspectResult',
     key: 'autoInspectResult',
-    width: 135
+    width: 110
   },
   {
     title: '人工复检结果',
     dataIndex: 'manualReinspectResult',
     key: 'manualReinspectResult',
-    width: 135
+    width: 110
   },
   {
     title: '复检人员',
     dataIndex: 'reinspectBy',
     key: 'reinspectBy',
-    width: 135
+    width: 67
   },
   {
     title: '二维码字符提取',

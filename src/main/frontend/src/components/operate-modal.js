@@ -12,7 +12,9 @@ const OperateModal = (props) => {
         ...data
       });
     }else{
-      form.resetFields();
+      form.setFieldsValue({
+        ...data
+      });
     }
   });
 

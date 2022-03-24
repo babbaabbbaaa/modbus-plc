@@ -41,9 +41,12 @@ public class AppWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
-                .antMatchers("/secure/**").hasAnyAuthority("ADMIN", "OPERATOR")
-                .antMatchers("/user/**").hasAnyAuthority("ADMIN")
+                .antMatchers("/secure/confirm").hasAnyAuthority("ADMIN", "OPERATOR", "ENGINEER", "MANAGER") //重码确认
+                .antMatchers("/secure/reinspect").hasAnyAuthority("ADMIN", "OPERATOR", "ENGINEER", "MANAGER") //人工复检
+                .antMatchers("/secure/config", "/secure/configs", "/secure/clear").hasAnyAuthority("ADMIN", "MANAGER") //控制器
+                .antMatchers("/user/**").hasAnyAuthority("ADMIN", "MANAGER") //用户管理/角色管理
                 .anyRequest().authenticated()
+//                .accessDecisionManager(accessDecisionManager())
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new Http401AuthenticationEntryPoint())
@@ -65,4 +68,14 @@ public class AppWebSecurityConfig extends WebSecurityConfigurerAdapter {
         ;
 
     }
+
+//    @Bean
+//    public AccessDecisionManager accessDecisionManager() {
+//        List<AccessDecisionVoter<?>> accessDecisionVoters = Arrays.asList(
+//                new WebExpressionVoter(),
+//                new DynamicAccessDecisionVoter(),
+//                new AuthenticatedVoter()
+//        );
+//        return new UnanimousBased(accessDecisionVoters);
+//    }
 }

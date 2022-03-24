@@ -33,8 +33,9 @@ class Login extends PureComponent {
     let params = new FormData();
     params.append('username',passwordValue);
     params.append('password',passwordValue);
-    localStorage.setItem('userInfo',JSON.stringify({username: 'lll',roles:['admin1']}))
+    localStorage.setItem('userInfo',JSON.stringify({username: '',roles:['']}))
     login(params).then(res => {
+      res = JSON.parse(decodeURIComponent(res));
       if(res.code === 0){
         localStorage.setItem('userInfo',JSON.stringify(res.data))
         this.setState({

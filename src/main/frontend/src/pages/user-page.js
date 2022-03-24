@@ -144,7 +144,8 @@ class UserPage extends React.Component{
 	addNewUser = () => {
 		this.setState({
 			isModalVisible: true,
-			title: '新增用户'
+			title: '新增用户',
+			editData: {}
 		})
 	}
 

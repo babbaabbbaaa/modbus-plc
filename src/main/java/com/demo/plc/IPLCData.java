@@ -49,6 +49,9 @@ public interface IPLCData {
     }
 
     default String getBarcodeGrade(String barcodeData, int qualifyStart, int qualifyEnd) {
+        if ("ERROR".equalsIgnoreCase(barcodeData)) {
+            return "";
+        }
         if (StringUtils.hasText(barcodeData) && barcodeData.length() >= qualifyEnd) {
             return barcodeData.substring(qualifyStart, qualifyEnd).toUpperCase();
         }

@@ -31,7 +31,7 @@ public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, J
         CriteriaQuery<Object[]> query = builder.createQuery(Object[].class);
         Root<DieCasting> root = query.from(DieCasting.class);
         Path<Collection<SubDieCasting>> subDieCasting = root.join("subDieCastings");
-        return query.multiselect(subDieCasting.get("autoInspectResult"), builder.countDistinct(subDieCasting.get("id"))).where(buildPredicates(root, builder, criteria).toArray(new Predicate[0]))
+        return query.multiselect(subDieCasting.get("autoInspectResult"), builder.countDistinct(subDieCasting.get("subId"))).where(buildPredicates(root, builder, criteria).toArray(new Predicate[0]))
                 .groupBy(subDieCasting.get("autoInspectResult"));
     }
 
