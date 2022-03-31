@@ -42,7 +42,7 @@ public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, J
             predicates.add(builder.equal(subDieCasting.get("barcode"), criteria.getBarcode()));
         }
         if (StringUtils.hasText(criteria.getBarcodeData())) {
-            predicates.add(builder.equal(subDieCasting.get("barcodeData"), criteria.getBarcodeData()));
+            predicates.add(builder.like(subDieCasting.get("barcodeData"), criteria.getBarcodeData() + "%"));
         }
         if (StringUtils.hasText(criteria.getAutoInspectResult())) {
             predicates.add(builder.equal(subDieCasting.get("autoInspectResult"), criteria.getAutoInspectResult()));

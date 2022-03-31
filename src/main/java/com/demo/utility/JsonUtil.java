@@ -24,4 +24,13 @@ public class JsonUtil {
             return "";
         }
     }
+
+    public static <T> T readObject(String content, Class<T> type) {
+        try {
+            return OBJECT_MAPPER.readValue(content, type);
+        } catch (JsonProcessingException e) {
+            log.error("JSON deserialize failed: ", e);
+            return null;
+        }
+    }
 }

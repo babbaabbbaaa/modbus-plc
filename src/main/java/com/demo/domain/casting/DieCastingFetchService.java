@@ -35,7 +35,9 @@ public class DieCastingFetchService implements IDataFetchService {
     private final BaseLocator<Number> dataReadyLocator;
 
     public DieCastingFetchService(DieCastingRepository dieCastingRepository,
-                                  SubDieCastingRepository subDieCastingRepository, PatternConfigRepository patternConfigRepository, @Autowired(required = false) ModbusMaster modbusMaster) {
+                                  SubDieCastingRepository subDieCastingRepository,
+                                  PatternConfigRepository patternConfigRepository,
+                                  @Autowired(required = false) ModbusMaster modbusMaster) {
         this.dieCastingRepository = dieCastingRepository;
         this.subDieCastingRepository = subDieCastingRepository;
         this.patternConfigRepository = patternConfigRepository;

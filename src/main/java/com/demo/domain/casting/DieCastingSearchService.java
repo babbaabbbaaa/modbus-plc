@@ -57,7 +57,7 @@ public class DieCastingSearchService implements IDataSearchService {
         List<DieCasting> dieCastingList = dieCastings.stream().distinct().collect(Collectors.toList());
         if (StringUtils.hasText(criteria.getBarcodeData())) {
             for (DieCasting dieCasting : dieCastingList) {
-                dieCasting.setSubDieCastings(dieCasting.getSubDieCastings().stream().filter(sub -> Objects.equals(sub.getBarcodeData(), criteria.getBarcodeData())).collect(Collectors.toList()));
+                dieCasting.setSubDieCastings(dieCasting.getSubDieCastings().stream().filter(sub -> sub.getBarcodeData().startsWith(criteria.getBarcodeData())).collect(Collectors.toList()));
             }
         }
         return new PageImpl<>(dieCastingList, dieCastings.getPageable(), dieCastings.getTotalElements());

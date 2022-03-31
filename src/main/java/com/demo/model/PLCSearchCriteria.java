@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 public class PLCSearchCriteria {
 
-    private short productTypeId;
+    private short productTypeId = 0;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime from;
@@ -28,8 +28,8 @@ public class PLCSearchCriteria {
     private String autoInspectResult;
     private String manualReinspectResult;
     private String reinspectBy;
-    private int page;
-    private int size;
+    private int page = 0;
+    private int size = 10;
 
     @JsonIgnore
     @ApiParam(hidden = true)

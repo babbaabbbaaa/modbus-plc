@@ -51,7 +51,7 @@ public interface StampingRepository extends JpaRepository<Stamping, Long>, JpaSp
             predicates.add(builder.equal(root.get("barcode"), criteria.getBarcode()));
         }
         if (StringUtils.hasText(criteria.getBarcodeData())) {
-            predicates.add(builder.equal(root.get("barcodeData"), criteria.getBarcodeData()));
+            predicates.add(builder.like(root.get("barcodeData"), criteria.getBarcodeData() + "%"));
         }
         LocalDateTime from = criteria.getFrom();
         LocalDateTime end = criteria.getEnd();
