@@ -1,34 +1,34 @@
 import React from 'react';
-import {Form,Button,message,Modal} from 'antd';
+import { Form, Button, message, Modal } from 'antd';
 import TablePanel from '@/components/table';
-import {userChange,userList,roleList,deleteUser} from '@/service/user-service';
+import { userChange, userList, roleList, deleteUser } from '@/service/user-service';
 import OperateModal from '../components/operate-modal';
 
-class UserPage extends React.Component{
-  formRef = React.createRef();
+class UserPage extends React.Component {
+	formRef = React.createRef();
 	columns = [
 		{
 			title: 'ID',
 			dataIndex: 'id',
 			key: 'id',
 			width: 80
-		},{
+		}, {
 			title: '用户名',
 			dataIndex: 'username',
 			key: 'username',
 			width: 160
-		},{
+		}, {
 			title: '卡号',
 			dataIndex: 'cardNumber',
 			key: 'cardNumber',
 			width: 260
-		},{
+		}, {
 			title: '角色',
 			dataIndex: 'roles',
 			key: 'roles',
 			width: 260,
-			render: (value,record,index) => {
-				return  <div>
+			render: (value, record, index) => {
+				return <div>
 					{
 						record.roles.map(item => {
 							return <span>{item.roleName},</span>
@@ -36,30 +36,30 @@ class UserPage extends React.Component{
 					}
 				</div>
 			}
-		},{
+		}, {
 			title: '操作',
 			dataIndex: 'option',
 			key: 'option',
 			align: 'center',
 			width: 200,
-			render: (value,record,index) => {
+			render: (value, record, index) => {
 				return <div>
-					<Button className='submit-btn' onClick={this.editUser.bind(this,record)}>编辑</Button>
-					<Button className='submit-btn' onClick={this.deleteTableUser.bind(this,record)}>删除</Button>
-				</div> 
+					<Button className='submit-btn' onClick={this.editUser.bind(this, record)}>编辑</Button>
+					<Button className='submit-btn' onClick={this.deleteTableUser.bind(this, record)}>删除</Button>
+				</div>
 			}
 		},
 	];
-  constructor(props){
-    super(props);
-    this.state = { 
-      dataSource: [],
+	constructor(props) {
+		super(props);
+		this.state = {
+			dataSource: [],
 			modalItem: [],
 			title: '新增用户'
-    }
-    this.getRoleList();
-  }
-	
+		}
+		this.getRoleList();
+	}
+
 	roleList = [];
 	modalItem = [
 		{
@@ -68,7 +68,7 @@ class UserPage extends React.Component{
 			placeholder: '请输入',
 			key: 'id',
 			disabled: true
-		}, 
+		},
 		{
 			label: '用户名',
 			controlType: 'Input',
@@ -78,7 +78,7 @@ class UserPage extends React.Component{
 				required: true,
 				message: '请输入用户名'
 			}]
-		}, 
+		},
 		{
 			label: '卡号',
 			controlType: 'Input',
@@ -88,7 +88,7 @@ class UserPage extends React.Component{
 				required: true,
 				message: '请输入卡号'
 			}]
-		}, 
+		},
 		{
 			label: '角色',
 			controlType: 'Select',
@@ -102,30 +102,30 @@ class UserPage extends React.Component{
 			}]
 		}
 	]
-  componentDidMount () {
-    this.getTableList();
+	componentDidMount() {
+		this.getTableList();
 		window.addEventListener("setItemEvent", (e) => {
-			if(e.key === 'userInfo'){
+			if (e.key === 'userInfo') {
 				this.getTableList();
 			}
 		});
-  }
-  
-  getTableList = () => {
-    userList().then(res=>{
-			const {code,data} = res;
-			if(code === 0){
+	}
+
+	getTableList = () => {
+		userList().then(res => {
+			const { code, data } = res;
+			if (code === 0) {
 				this.setState({
 					dataSource: data
 				})
 			}
-    })
-  }
+		})
+	}
 
-  getRoleList = async() => {
+	getRoleList = async () => {
 		let list = [];
-    const {code,data} = await roleList();
-		if(code === 0){
+		const { code, data } = await roleList();
+		if (code === 0) {
 			list = data.map(item => {
 				item.label = item.roleName;
 				item.value = item.roleName;
@@ -133,13 +133,13 @@ class UserPage extends React.Component{
 			})
 			this.roleList = list;
 			this.modalItem = this.modalItem.map(item => {
-				if(item.label === '角色'){
+				if (item.label === '角色') {
 					item.options = list
 				}
 				return item;
 			})
 		}
-  }
+	}
 
 	addNewUser = () => {
 		this.setState({
@@ -150,7 +150,7 @@ class UserPage extends React.Component{
 	}
 
 	editUser = (record) => {
-		let roles = record.roles.length>0&&record.roles.map(item=> {
+		let roles = record.roles.length > 0 && record.roles.map(item => {
 			return item.roleName
 		})
 		let data = {
@@ -178,8 +178,8 @@ class UserPage extends React.Component{
 					roles: record.roles
 				}
 				deleteUser(params).then(res => {
-					const {code} = res;
-					if(code === 0){
+					const { code } = res;
+					if (code === 0) {
 						this.getTableList();
 						message.success('删除成功');
 					}
@@ -188,11 +188,11 @@ class UserPage extends React.Component{
 		});
 	}
 
-	changeUser =  (type, data) => {
+	changeUser = (type, data) => {
 		if (type) {
 			// eslint-disable-next-line array-callback-return
 			let roles = this.roleList.filter(item => {
-				if(data.roles.indexOf(item.roleName)> -1){
+				if (data.roles.indexOf(item.roleName) > -1) {
 					return item;
 				}
 			});
@@ -203,12 +203,12 @@ class UserPage extends React.Component{
 				roles: roles
 			}
 			userChange(params).then(res => {
-					message.success(`${this.state.title}成功！`);
-					this.getTableList();
-					this.setState({
-						editData: {},
-						isModalVisible: false
-					});
+				message.success(`${this.state.title}成功！`);
+				this.getTableList();
+				this.setState({
+					editData: {},
+					isModalVisible: false
+				});
 			})
 		} else {
 			this.setState({
@@ -217,26 +217,26 @@ class UserPage extends React.Component{
 		}
 	}
 
-  render () {
-    const { dataSource,isModalVisible,editData,title } = this.state;
-    return <div className='page-container'>
-      <Form className='page-form' name='search' ref={this.formRef}>
-        <Button className='submit-btn' onClick={this.addNewUser}>新增用户</Button>
-      </Form>
-      <TablePanel
-        columns={this.columns}
-        showHeader={true}
-        dataSource={dataSource}
-      />
-			{isModalVisible&&<OperateModal
+	render() {
+		const { dataSource, isModalVisible, editData, title } = this.state;
+		return <div className='page-container'>
+			<Form className='page-form' name='search' ref={this.formRef}>
+				<Button className='submit-btn' onClick={this.addNewUser}>新增用户</Button>
+			</Form>
+			<TablePanel
+				columns={this.columns}
+				showHeader={true}
+				dataSource={dataSource}
+			/>
+			{isModalVisible && <OperateModal
 				isModalVisible={isModalVisible}
 				title={title}
 				data={editData}
 				modalContent={this.modalItem}
 				operateModalSure={this.changeUser}
 			/>}
-    </div>
-  }
+		</div>
+	}
 }
 
 export default UserPage;

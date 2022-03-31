@@ -59,7 +59,7 @@ class FilterPage extends React.Component{
     })
     this.timer = setInterval(()=>{
       this.getTableList()
-    },1000)
+    },3000)
     this.setState({
       columns: tableColumns,
       autoInspectResultOptions: [{label: "设备OK", value: "设备OK"}, {label: "设备NG", value: "设备NG"}],

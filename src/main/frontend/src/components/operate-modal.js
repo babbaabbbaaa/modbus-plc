@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Form,Row,Col,Modal, Button } from 'antd';
+import { Form, Row, Col, Modal, Button } from 'antd';
 import FormCondition from '@/components/form-condition';
 
 const OperateModal = (props) => {
-  const { isModalVisible,operateModalSure,title,modalContent,data} = props;
+  const { isModalVisible, operateModalSure, title, modalContent, data } = props;
   const [form] = Form.useForm();
 
   useEffect(() => {
-    if (data&&title.indexOf('新增')<0) {
+    if (data && title.indexOf('新增') < 0) {
       form.setFieldsValue({
         ...data
       });
-    }else{
+    } else {
       form.setFieldsValue({
         ...data
       });
@@ -20,12 +20,12 @@ const OperateModal = (props) => {
 
   const handleOk = () => {
     form.validateFields()
-    .then(values => {
-      operateModalSure(true,values)
-    })
-    .catch(errorInfo => {
-      console.log(errorInfo)
-    });
+      .then(values => {
+        operateModalSure(true, values)
+      })
+      .catch(errorInfo => {
+        console.log(errorInfo)
+      });
   };
 
   const handleCancel = () => {
@@ -33,12 +33,12 @@ const OperateModal = (props) => {
   };
 
   return (
-    <Modal 
-      title={title} 
+    <Modal
+      title={title}
       closable={false}
       maskClosable={false}
-      visible={isModalVisible} 
-      onOk={handleOk} 
+      visible={isModalVisible}
+      onOk={handleOk}
       onCancel={handleCancel}
       footer={[
         <Button key="back" onClick={handleCancel}>取消</Button>,
@@ -58,7 +58,7 @@ const OperateModal = (props) => {
         </Row>
       </Form>
     </Modal>
-);
+  );
 };
 
 export default OperateModal;
