@@ -41,6 +41,10 @@ class Login extends PureComponent {
         this.setState({
           visible: false
         });
+        let timer = setTimeout(() => {
+          clearTimeout(timer);
+          localStorage.setItem('userInfo','');
+        },1000*60*30)
       }
     })
     .catch(errorInfo => {
