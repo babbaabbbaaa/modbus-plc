@@ -25,7 +25,10 @@ class Login extends PureComponent {
 	}
 
 	handleCancel = () => {
-		this.setState({ visible: false });
+		this.setState({ 
+      passwordValue: '',
+      visible: false
+    });
 	}
 
   handleOk = () => {
@@ -39,7 +42,8 @@ class Login extends PureComponent {
       if(res.code === 0){
         localStorage.setItem('userInfo',JSON.stringify(res.data))
         this.setState({
-          visible: false
+          visible: false,
+          passwordValue: '',
         });
         let timer = setTimeout(() => {
           clearTimeout(timer);
