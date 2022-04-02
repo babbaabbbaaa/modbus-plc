@@ -18,9 +18,9 @@ class Login extends PureComponent {
 		this.setState({ visible: true },()=>{
       let timer = setTimeout(()=>{
         clearTimeout(timer);
-        console.log(document.getElementById('loginInput'))
+        console.log(document.getElementById('loginInput').focus())
         document.getElementById('loginInput').focus();
-      },5)
+      },10);
     });
 	}
 
@@ -40,15 +40,15 @@ class Login extends PureComponent {
     login(params).then(res => {
       res = JSON.parse(decodeURIComponent(res));
       if(res.code === 0){
-        localStorage.setItem('userInfo',JSON.stringify(res.data))
+        localStorage.setItem('userInfo',JSON.stringify(res.data));
         this.setState({
-          visible: false,
           passwordValue: '',
+          visible: false,
         });
         let timer = setTimeout(() => {
           clearTimeout(timer);
           localStorage.setItem('userInfo','');
-        },1000*60*30)
+        },10000)
       }
     })
     .catch(errorInfo => {
@@ -66,7 +66,6 @@ class Login extends PureComponent {
     let value = e.target.value;
     if(value.indexOf('↵')>-1){
       let data = value.split('↵')[0];
-      console.log(data)
       this.setState({
         passwordValue: data
       },this.handleOk)
@@ -93,9 +92,7 @@ class Login extends PureComponent {
     >
       <Row className='page-form'>
         <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-          <Form.Item name='password'>
-            <Input id='loginInput' type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle}/>
-          </Form.Item>
+          <Input id='loginInput' type="password" value={passwordValue} onKeyDown={this.keyDownHandle} onChange={this.changeHandle}/>
         </Col>
       </Row>
     </Modal>
