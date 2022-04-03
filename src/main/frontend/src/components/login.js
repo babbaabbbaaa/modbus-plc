@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
-import { Form,Row,Col,Modal, Button,Input } from 'antd';
+import { Row,Col,Modal, Button,Input } from 'antd';
 import {login} from '@/service/common-service';
 
 class Login extends PureComponent {
@@ -48,7 +48,7 @@ class Login extends PureComponent {
         let timer = setTimeout(() => {
           clearTimeout(timer);
           localStorage.setItem('userInfo','');
-        },10000)
+        },1000*60*30)
       }
     })
     .catch(errorInfo => {
