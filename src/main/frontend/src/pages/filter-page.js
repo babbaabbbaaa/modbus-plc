@@ -76,7 +76,7 @@ class FilterPage extends React.Component{
       if(res.code === 0){
         let list = res.data.length>0&&res.data.map((item,index) => {
           if(index ===0){
-            this.formRef.current.setFieldsValue({
+            this.formRef.current?.setFieldsValue({
               productTypeId: item.productTypeId
             })
           }
@@ -94,7 +94,7 @@ class FilterPage extends React.Component{
 
   getTableList = () => {
     const {searchParam,page,size} = this.state;
-    let formValue = this.formRef.current.getFieldsValue();
+    let formValue = this.formRef.current?.getFieldsValue();
     delete formValue['date']
     let params = {
       page,
@@ -160,7 +160,7 @@ class FilterPage extends React.Component{
   }
 
   resetHandle = () => {
-    this.formRef.current.resetFields();
+    this.formRef.current?.resetFields();
     this.getTableList();
   }
 
@@ -300,7 +300,7 @@ class FilterPage extends React.Component{
     ];
     const rowClassName = (record) => {
       let className = '';
-      let formValue = this.formRef.current.getFieldsValue();
+      let formValue = this.formRef.current?.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
           if(this.showDup&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){
