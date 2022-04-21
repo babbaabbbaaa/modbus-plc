@@ -60,6 +60,9 @@ class FilterAscPage extends React.Component{
       if(item.dataIndex === 'manualReinspectResult'){
         item.render = (value, row, index)=>this.columnRender(value, row, index);
       }
+      if(item.dataIndex === 'autoInspectResult' ) {
+        item.render = (value) => value.includes('NG')? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
+      }
       return item;
     })
     this.timer = setInterval(()=>{
@@ -114,9 +117,8 @@ class FilterAscPage extends React.Component{
   }
 
   getTableList = () => {
-    
     const {searchParam,page,size} = this.state;
-    let formValue = this.formRef.current.getFieldsValue();
+    let formValue = this.formRef.current?.getFieldsValue();
     delete formValue['date']
     let params = {
       page,
@@ -352,7 +354,7 @@ class FilterAscPage extends React.Component{
     ];
     const rowClassName = (record) => {
       let className = '';
-      let formValue = this.formRef.current.getFieldsValue();
+      let formValue = this.formRef.current?.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
           if(this.showDup&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){

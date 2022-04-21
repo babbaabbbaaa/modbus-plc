@@ -73,7 +73,7 @@ const data = [
     width: 97
   },
   {
-    title: '自动线检测结果',
+    title: '自动检测结果',
     dataIndex: 'autoInspectResult',
     key: 'autoInspectResult',
     width: 110
