@@ -32,7 +32,7 @@ class FilterAscPage extends React.Component{
     super(props);
     this.state = { 
       columns: [this.options,...columns],
-      dataSource: [],
+      dataSource: [{autoInspectResult: 'NG'},{autoInspectResult: 'ff'}],
       page: 1,
       size: 10,
       totalCount: 0,
@@ -114,9 +114,8 @@ class FilterAscPage extends React.Component{
   }
 
   getTableList = () => {
-    
     const {searchParam,page,size} = this.state;
-    let formValue = this.formRef.current.getFieldsValue();
+    let formValue = this.formRef.current?.getFieldsValue();
     delete formValue['date']
     let params = {
       page,
@@ -352,7 +351,7 @@ class FilterAscPage extends React.Component{
     ];
     const rowClassName = (record) => {
       let className = '';
-      let formValue = this.formRef.current.getFieldsValue();
+      let formValue = this.formRef.current?.getFieldsValue();
       switch(record.duplicated){
         case 'DUP': 
           if(this.showDup&&formValue.barcodeData?.toUpperCase()===record.barcodeData?.toUpperCase()){

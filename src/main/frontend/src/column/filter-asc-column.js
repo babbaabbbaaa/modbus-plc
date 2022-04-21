@@ -73,10 +73,11 @@ const data = [
     width: 97
   },
   {
-    title: '自动线检测结果',
+    title: '自动检测结果',
     dataIndex: 'autoInspectResult',
     key: 'autoInspectResult',
-    width: 110
+    width: 110,
+    render: (value) => value.includes('NG')? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '人工复检结果',
