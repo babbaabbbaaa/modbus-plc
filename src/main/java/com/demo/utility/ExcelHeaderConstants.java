@@ -55,7 +55,7 @@ public class ExcelHeaderConstants {
             new ExcelCell("序号", 2500, "getIndex", DieCasting.class, DataType.INTEGER, 0, 1),
             new ExcelCell("时间", 5000, "getLogTime", DieCasting.class, DataType.STRING, 0, 1),
             new ExcelCell("模具号", 5000, "getMoldNo", DieCasting.class, DataType.STRING, 0, 1),
-            new ExcelCell("压射号", 5000, "getInjectionNo", DieCasting.class, DataType.STRING, 0, 1),
+            new ExcelCell("压射号", 5000, "getInjectionNo", DieCasting.class, DataType.INTEGER, 0, 1),
             new ExcelCell("流水号", 2500, "getSerialNumber", SubDieCasting.class, DataType.STRING),
             new ExcelCell("SR1000二维码编号", 14000, "getBarcodeData", SubDieCasting.class, DataType.STRING),
             new ExcelCell("读码判定结果", 4000, "getCodeReadingFunc", SubDieCasting.class, DataType.STRING),

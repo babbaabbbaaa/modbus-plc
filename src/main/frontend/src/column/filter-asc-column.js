@@ -1,3 +1,6 @@
+import React from "react";
+
+
 function columnRender (value, row, index) {
   const obj = {
     children: value,
@@ -58,7 +61,8 @@ const data = [
     title: '读码判定结果',
     dataIndex: 'codeReadingFunc',
     key: 'codeReadingFunc',
-    width: 90
+    width: 90,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '铝重差值',
@@ -70,14 +74,15 @@ const data = [
     title: '铝重判定结果',
     dataIndex: 'weightResult',
     key: 'weightResult',
-    width: 97
+    width: 97,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '自动检测结果',
     dataIndex: 'autoInspectResult',
     key: 'autoInspectResult',
     width: 110,
-    render: (value) => value.includes('NG')? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
+    render: (value) => value?.includes('NG')? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '人工复检结果',
@@ -137,7 +142,8 @@ const data = [
     title: '打标使用状态',
     dataIndex: 'codeReadingFunc',
     key: 'codeReadingFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '数据源',

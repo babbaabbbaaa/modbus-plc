@@ -3,7 +3,6 @@ package com.demo.utility;
 import com.demo.domain.casting.DieCasting;
 import com.demo.domain.casting.SubDieCasting;
 import com.demo.domain.stamping.Stamping;
-import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IPLCData;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFRow;
@@ -56,7 +55,7 @@ public class ExcelHelper {
                     int j = 0;
                     SXSSFRow body = sheet.createRow(rowNo);
                     for (ExcelCell item : headerList) {
-                        item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), row.getDuplicated()), item.getInvokeMethod().invoke(row), j++);
+                        item.createCell(body, j++, cellStyleMap, row);
                     }
                     rowNo++;
                 } else if (row instanceof DieCasting) {
@@ -66,13 +65,13 @@ public class ExcelHelper {
                         SXSSFRow body = sheet.createRow(rowIndex++);
                         for (int headIndex = 4; headIndex < headerList.size(); headIndex++) {
                             ExcelCell item = headerList.get(headIndex);
-                            item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), subDieCasting.getDuplicated()), item.getInvokeMethod().invoke(subDieCasting), headIndex);
+                            item.createCell(body, headIndex, cellStyleMap, subDieCasting);
                         }
                     }
                     for (int headIndex = 0; headIndex < 4; headIndex++) {
                         ExcelCell item = headerList.get(headIndex);
                         SXSSFRow body = sheet.getRow(rowNo);
-                        item.createCell(body, getCellStyle(workbook, cellStyleMap, item.getFormat(), row.getDuplicated()), item.getInvokeMethod().invoke(row), headIndex);
+                        item.createCell(body, headIndex, cellStyleMap, row);
                     }
                     rowNo = rowIndex;
                 }
@@ -103,38 +102,5 @@ public class ExcelHelper {
             cellStyle.setFont(xssfFont);
         }
         return cellStyle;
-    }
-
-    private static CellStyle getCellStyle(Workbook workbook, Map<Integer, CellStyle> cellStyleMap, DataType format,
-                                          BarcodeDuplicateEnum duplicated) {
-        switch (format) {
-            case FLOAT:
-                switch (duplicated) {
-                    case DUP:
-                        return ExcelFormat.FLOAT_DUP.createCellStyle(workbook, cellStyleMap);
-                    case CONFIRMED:
-                        return ExcelFormat.FLOAT_CONFIRMED.createCellStyle(workbook, cellStyleMap);
-                    default:
-                        return ExcelFormat.FLOAT_NORMAL.createCellStyle(workbook, cellStyleMap);
-                }
-            case INTEGER:
-                switch (duplicated) {
-                    case DUP:
-                        return ExcelFormat.INTEGER_DUP.createCellStyle(workbook, cellStyleMap);
-                    case CONFIRMED:
-                        return ExcelFormat.INTEGER_CONFIRMED.createCellStyle(workbook, cellStyleMap);
-                    default:
-                        return ExcelFormat.INTEGER_NORMAL.createCellStyle(workbook, cellStyleMap);
-                }
-            default:
-                switch (duplicated) {
-                    case DUP:
-                        return ExcelFormat.STRING_DUP.createCellStyle(workbook, cellStyleMap);
-                    case CONFIRMED:
-                        return ExcelFormat.STRING_CONFIRMED.createCellStyle(workbook, cellStyleMap);
-                    default:
-                        return ExcelFormat.STRING_NORMAL.createCellStyle(workbook, cellStyleMap);
-                }
-        }
     }
 }

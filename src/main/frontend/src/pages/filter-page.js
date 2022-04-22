@@ -1,8 +1,15 @@
 import React from 'react';
-import {Form,Row,Col,Button,Modal,message,Select} from 'antd';
+import {Button, Col, Form, message, Modal, Row, Select} from 'antd';
 import TablePanel from '@/components/table';
 import columns from '@/column/filter-column';
-import {searchList,confirmItem,exportList,configOption, countQualifiedProducts,reinspect} from '@/service/filter-service';
+import {
+  configOption,
+  confirmItem,
+  countQualifiedProducts,
+  exportList,
+  reinspect,
+  searchList
+} from '@/service/filter-service';
 import FormCondition from '@/components/form-condition';
 import {download} from '@/utils/index';
 
@@ -242,9 +249,11 @@ class FilterPage extends React.Component{
   }
 
   columnRender = (value, row, index) => {
-    return <Select 
-      defaultValue={value}
-      onChange={this.changeValue.bind(this,value,row,index)}>
+    let classNameBg = value?.includes('NG') ? 'bg-red color-white' : '';
+    return <Select
+        className={classNameBg}
+        defaultValue={value}
+        onChange={this.changeValue.bind(this, value, row, index)}>
       <Option value=''/>
       <Option value='复检NG'>复检NG</Option>
       <Option value='复检OK'>复检OK</Option>

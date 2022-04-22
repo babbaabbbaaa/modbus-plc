@@ -10,7 +10,8 @@ const data = [
     title: '自动线检测结果',
     dataIndex: 'autoInspectResult',
     key: 'autoInspectResult',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('NG') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '人工复检结果',
@@ -52,49 +53,57 @@ const data = [
     title: '通规功能',
     dataIndex: 'generalFunc',
     key: 'generalFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '测高功能',
     dataIndex: 'heightFunc',
     key: 'heightFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '打标功能',
     dataIndex: 'flagFunc',
     key: 'flagFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '读码功能',
     dataIndex: 'scanFunc',
     key: 'scanFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '台风功能',
     dataIndex: 'typhoonFunc',
     key: 'typhoonFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '槽深检测功能',
     dataIndex: 'slotDepthFunc',
     key: 'slotDepthFunc',
-    width: 165
+    width: 165,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '旋转错误检测',
     dataIndex: 'spinCheckFunc',
     key: 'spinCheckFunc',
-    width: 165
+    width: 165,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '焊缝功能',
     dataIndex: 'weldFunc',
     key: 'weldFunc',
-    width: 135
+    width: 135,
+    render: (value) => value?.includes('不合格') ? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
   },
   {
     title: '测高数值1',

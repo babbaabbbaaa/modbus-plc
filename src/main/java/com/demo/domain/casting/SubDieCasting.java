@@ -53,11 +53,16 @@ public class SubDieCasting implements IPLCData {
     @Enumerated(EnumType.STRING)
     private BarcodeDuplicateEnum duplicated = BarcodeDuplicateEnum.NONE;
 
+    @JsonIgnore
+    @Transient
+    private static final String[] WEIGHT_RESULTS_DESC = {"未使用", "合格", "不合格", "可疑品"};
 
-    public SubDieCasting(short[] dataArray, short[] barcodeArray, String type) {
+
+    public  SubDieCasting(short[] dataArray, short[] barcodeArray, String type) {
         if ("A".equals(type)) {
             this.holeSelection = dataArray[7] == 1 ? "1穴使用" : "1穴屏蔽";
             this.serialNumber = (int) dataArray[10];
+            this.weightResult = WEIGHT_RESULTS_DESC[dataArray[11]];
             this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[8]);
             this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[9]);
             this.weightBeforeDieCasting = getFloatValue(dataArray[17], dataArray[18]);
@@ -69,6 +74,7 @@ public class SubDieCasting implements IPLCData {
         } else {
             this.holeSelection = dataArray[12] == 1 ? "2穴使用" : "2穴屏蔽";
             this.serialNumber = (int) dataArray[15];
+            this.weightResult = WEIGHT_RESULTS_DESC[dataArray[16]];
             this.markingFunc = GeneralFunctionEnum.mapDefinition(dataArray[13]);
             this.codeReadingFunc = GeneralFunctionEnum.mapDefinition(dataArray[14]);
             this.weightBeforeDieCasting = getFloatValue(dataArray[27], dataArray[28]);
@@ -77,12 +83,6 @@ public class SubDieCasting implements IPLCData {
             this.maxWeightTolerance = getFloatValue(dataArray[33], dataArray[34]);
             this.minWeightTolerance = getFloatValue(dataArray[35], dataArray[36]);
             this.barcodeData = getBarcodeData(barcodeArray, 50, 50);
-        }
-        if (weightAfterDieCasting - weightBeforeDieCasting > minWeightTolerance &&
-                weightAfterDieCasting - weightBeforeDieCasting < maxWeightTolerance) {
-            this.weightResult = "合格";
-        } else {
-            this.weightResult = "不合格";
         }
     }
 

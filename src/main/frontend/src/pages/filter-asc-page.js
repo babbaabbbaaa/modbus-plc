@@ -60,9 +60,6 @@ class FilterAscPage extends React.Component{
       if(item.dataIndex === 'manualReinspectResult'){
         item.render = (value, row, index)=>this.columnRender(value, row, index);
       }
-      if(item.dataIndex === 'autoInspectResult' ) {
-        item.render = (value) => value.includes('NG')? <div className='bg-red color-white'>{value}</div> : <div>{value}</div>
-      }
       return item;
     })
     this.timer = setInterval(()=>{

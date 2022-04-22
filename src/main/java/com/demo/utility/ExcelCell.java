@@ -1,18 +1,23 @@
 package com.demo.utility;
 
+import com.demo.enums.BarcodeDuplicateEnum;
+import com.demo.plc.IPLCData;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 
 /**
@@ -62,8 +67,10 @@ public class ExcelCell {
     }
 
 
-    public void createCell(Row row, CellStyle cellStyle, Object value, int index) {
+    public void createCell(Row row, int index, Map<Integer, CellStyle> cellStyleMap, IPLCData plcData) throws InvocationTargetException, IllegalAccessException {
         Cell cell = row.createCell(index);
+        Object value = this.invokeMethod.invoke(plcData);
+        CellStyle cellStyle = getCellStyle(row.getSheet().getWorkbook(), cellStyleMap, plcData.getDuplicated(), value);
         cell.setCellStyle(cellStyle);
         if (merged) {
             int rowNum = row.getRowNum();
@@ -100,5 +107,29 @@ public class ExcelCell {
         return invokeMethod;
     }
 
+    private CellStyle getCellStyle(Workbook workbook, Map<Integer, CellStyle> cellStyleMap, BarcodeDuplicateEnum duplicated, Object value) {
+        if (this.format == DataType.FLOAT) {
+            switch (duplicated) {
+                case DUP:
+                    return CellStyleEnum.FLOAT_RED.createCellStyle(workbook, cellStyleMap);
+                case CONFIRMED:
+                    return CellStyleEnum.FLOAT_YELLOW.createCellStyle(workbook, cellStyleMap);
+                default:
+                    return CellStyleEnum.FLOAT_NORMAL.createCellStyle(workbook, cellStyleMap);
+            }
+        } else {
+            if (this.format == DataType.STRING && null != value && (value.toString().contains("不合格") || value.toString().contains("NG"))) {
+                return CellStyleEnum.GENERAL_RED.createCellStyle(workbook, cellStyleMap);
+            }
+            switch (duplicated) {
+                case DUP:
+                    return CellStyleEnum.GENERAL_RED.createCellStyle(workbook, cellStyleMap);
+                case CONFIRMED:
+                    return CellStyleEnum.GENERAL_YELLOW.createCellStyle(workbook, cellStyleMap);
+                default:
+                    return CellStyleEnum.GENERAL_NORMAL.createCellStyle(workbook, cellStyleMap);
+            }
+        }
+    }
 
 }
