@@ -288,22 +288,22 @@ class TestAscPage extends React.Component {
 
 	testHandle = () => {
 		
-		this.formCommon.current.setFieldsValue({});
-		this.formA.current.setFieldsValue({});
-		this.formB.current.setFieldsValue({});
+		this.formCommon.current?.setFieldsValue({});
+		this.formA.current?.setFieldsValue({});
+		this.formB.current?.setFieldsValue({});
     
 		testSearch().then(res => {
 			if (res.code === 0) {
-				this.formCommon.current.setFieldsValue({
+				this.formCommon.current?.setFieldsValue({
 					logTime: res.data.logTime,
 					moldNo: res.data.moldNo,
 					injectionNo: res.data.injectionNo,
 					productTypeId: res.data.productTypeId,
 					duplicateFlag: res.data.duplicateFlag
 				})
-				this.formA.current.setFieldsValue({...res.data.subDieCastings[0]});
+				this.formA.current?.setFieldsValue({...res.data.subDieCastings[0]});
 				
-				this.formB.current.setFieldsValue({...res.data.subDieCastings[1]})
+				this.formB.current?.setFieldsValue({...res.data.subDieCastings[1]})
 			}
 		})
 	}

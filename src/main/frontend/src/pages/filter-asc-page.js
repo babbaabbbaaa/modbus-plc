@@ -84,7 +84,7 @@ class FilterAscPage extends React.Component{
       if(res.code === 0){
         let list = res.data.length>0&&res.data.map((item,index) => {
           if(index ===0){
-            this.formRef.current.setFieldsValue({
+            this.formRef.current?.setFieldsValue({
               productTypeId: item.productTypeId
             })
           }
@@ -224,7 +224,7 @@ class FilterAscPage extends React.Component{
   }
 
   resetHandle = () => {
-    this.formRef.current.resetFields();
+    this.formRef.current?.resetFields();
     this.getTableList();
   }
 
@@ -287,7 +287,9 @@ class FilterAscPage extends React.Component{
   }
 
   columnRender = (value, row, index) => {
+    let classNameBg = value?.includes('NG') ? 'bg-red color-white' : '';
     return <Select 
+      className={classNameBg}
       defaultValue={value}
       onChange={this.changeValue.bind(this,value,row,index)}>
       <Option value=''/>
