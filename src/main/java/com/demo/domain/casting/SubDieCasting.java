@@ -117,9 +117,9 @@ public class SubDieCasting implements IPLCData {
             this.autoInspectResult = "设备NG";
             return;
         }
-        if ("使用但结果不合格".equalsIgnoreCase(this.codeReadingFunc) //读码合格
-                && "使用但结果不合格".equalsIgnoreCase(this.weightResult) //铝重合格
-                && "使用但结果不合格".equalsIgnoreCase(this.markingFunc)) { //打标合格
+        if ("合格".equalsIgnoreCase(this.codeReadingFunc) //读码合格
+                && "合格".equalsIgnoreCase(this.weightResult) //铝重合格
+                && "合格".equalsIgnoreCase(this.markingFunc)) { //打标合格
             this.autoInspectResult = "设备OK";
         } else {
             this.autoInspectResult = "设备NG";
