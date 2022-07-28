@@ -115,8 +115,10 @@ class FilterPage extends React.Component{
       if(code === 0){
         this.errMessageShow = true;
         if (data.content && data.content.length > 0) {
+          let total = data.totalElements;
+          let currentIndex = total - (page - 1) * size;
           data.content.map((item,index) => {
-            item.index = index+1+(page-1)*size;
+            item.index = currentIndex--;
           })
         }
         this.setState({

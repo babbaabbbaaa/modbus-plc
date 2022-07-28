@@ -46,11 +46,11 @@ public class ExcelHelper {
             head.createHeader(header, headerStyle, i++);
         }
         Map<Integer, CellStyle> cellStyleMap = new HashMap<>();
-        i = 1;
+        i = rows.size();
         int rowNo = 1;
         if (!CollectionUtils.isEmpty(rows)) {
             for (IPLCData row : rows) {
-                row.setIndex(i++);
+                row.setIndex(i--);
                 if (row instanceof Stamping) {
                     int j = 0;
                     SXSSFRow body = sheet.createRow(rowNo);

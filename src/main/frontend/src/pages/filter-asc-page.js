@@ -130,11 +130,13 @@ class FilterAscPage extends React.Component{
         // eslint-disable-next-line array-callback-return
         let tableList = [];
         if (data.content && data.content.length > 0) {
+          let total = data.totalElements;
+          let currentIndex = total - ((page - 1) * size);
           data.content.map((item,index) => {
             let subLength = item.subDieCastings.length;
-            item.index = index+1+(page-1)*size;
+            item.index = currentIndex--
             // eslint-disable-next-line array-callback-return
-            subLength>0&&item.subDieCastings.map((ele,ind) => {
+            subLength > 0 && item.subDieCastings.map((ele, ind) => {
               if(ind === 0){
                 tableList.push({
                   ...item,

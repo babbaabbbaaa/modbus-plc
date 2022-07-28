@@ -50,6 +50,7 @@ public class DieCastingSearchService implements IDataSearchService {
 
     @Override
     public Page<? extends IPLCData> search(PLCSearchCriteria criteria) {
+        criteria.setSize(criteria.getSize() * 2);
         Page<DieCasting> dieCastings = dieCastingRepository.findAll(dieCastingRepository.buildSpecification(criteria), criteria.createPageRequest());
         if (StringUtils.hasText(criteria.getBarcodeData()) && dieCastings.isEmpty()) {
             throw new ServiceException("二维码有误！");
@@ -60,7 +61,8 @@ public class DieCastingSearchService implements IDataSearchService {
                 dieCasting.setSubDieCastings(dieCasting.getSubDieCastings().stream().filter(sub -> sub.getBarcodeData().startsWith(criteria.getBarcodeData())).collect(Collectors.toList()));
             }
         }
-        return new PageImpl<>(dieCastingList, dieCastings.getPageable(), dieCastings.getTotalElements());
+        criteria.setSize(criteria.getSize() / 2);
+        return new PageImpl<>(dieCastingList, criteria.createPageRequest(), dieCastings.getTotalElements() / 2);
     }
 
     @Override
