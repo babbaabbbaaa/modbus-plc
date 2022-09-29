@@ -86,7 +86,7 @@ public class DieCasting implements IPLCData {
         ByteBuffer byteBuffer = ByteBuffer.allocate(8);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-        shortBuffer.put(Arrays.copyOfRange(dataArrays, 37, 40));
+        shortBuffer.put(Arrays.copyOfRange(dataArrays, 37, 41));
         return new String(byteBuffer.array(), StandardCharsets.UTF_8).trim();
     }
 
