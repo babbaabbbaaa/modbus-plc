@@ -36,4 +36,8 @@ public class PatternConfigService {
     }
 
 
+    public void delete(PatternConfig patternConfig) {
+        patternConfigRepository.delete(patternConfig);
+    }
+
 }
