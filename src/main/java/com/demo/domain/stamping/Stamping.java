@@ -3,14 +3,7 @@ package com.demo.domain.stamping;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IPLCData;
@@ -66,6 +59,9 @@ public class Stamping implements IPLCData {
     private String weldFunc;
     private String barcodeData;
     private String barcode;
+    @Column(columnDefinition = "varchar(255)")
+    private String trayIdentityCode;
+
     @Enumerated(EnumType.STRING)
     private BarcodeDuplicateEnum duplicated = BarcodeDuplicateEnum.NONE;
     private LocalDateTime confirmedTime;
