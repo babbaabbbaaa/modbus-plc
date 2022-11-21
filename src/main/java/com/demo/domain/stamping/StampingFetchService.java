@@ -152,7 +152,7 @@ public class StampingFetchService implements IDataFetchService {
         stamping.setHeightMeasure19(getFloatValue(data[50], data[51], ratio));
         //7052 ~ 7053 Test 20
         stamping.setHeightMeasure20(getFloatValue(data[52], data[53], ratio));
-        //7054 ~ 7154 Barcode Data
+        //7054 ~ 7153 Barcode Data
         ByteBuffer byteBuffer = ByteBuffer.allocate(200);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
@@ -174,6 +174,12 @@ public class StampingFetchService implements IDataFetchService {
                 }
             }
         }
+
+        //7154 ~ 7157 Tray Identity Code
+        request = new ReadHoldingRegistersRequest(slaveId, 7154, 4);
+        response = (ReadHoldingRegistersResponse) modbusMaster.send(request);
+        stamping.setTrayIdentityCode(getStringValue(response.getShortData(), 8));
+
         String barcodeData = new String(byteBuffer.array(), StandardCharsets.UTF_8);
         stamping.setBarcodeData(barcodeData.trim());
         if (null != patternConfig) {
@@ -195,6 +201,17 @@ public class StampingFetchService implements IDataFetchService {
         modbusMaster.send(request);
     }
 
+    private String getStringValue(short[] data, int capacity) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(capacity);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+        for (short datum : data) {
+            if (datum > 0) {
+                shortBuffer.put(datum);
+            }
+        }
+        return new String(byteBuffer.array(), StandardCharsets.UTF_8).trim();
+    }
 
     /**
      * 通规等功能结果
