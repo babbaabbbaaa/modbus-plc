@@ -1,8 +1,6 @@
 package com.demo.controller;
 
 
-import java.util.List;
-
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
 import com.demo.model.DataClearModel;
@@ -10,14 +8,10 @@ import com.demo.model.PLCConfirmModel;
 import com.demo.model.Response;
 import com.demo.plc.IDataSearchService;
 import com.serotonin.modbus4j.exception.ErrorResponseException;
-import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.exception.ModbusTransportException;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("secure")
@@ -28,7 +22,7 @@ public class SecureController {
 
 
     public SecureController(PatternConfigService patternConfigService,
-                            IDataSearchService dataSearchService) throws ModbusInitException {
+                            IDataSearchService dataSearchService) {
         this.patternConfigService = patternConfigService;
         this.dataSearchService = dataSearchService;
     }
@@ -41,6 +35,12 @@ public class SecureController {
     @PostMapping("config")
     public Response<PatternConfig> config(@RequestBody PatternConfig config) {
         return Response.success(patternConfigService.save(config));
+    }
+
+    @DeleteMapping("config")
+    public Response<PatternConfig> deleteConfig(@RequestBody PatternConfig config) {
+        patternConfigService.delete(config);
+        return Response.success();
     }
 
     @PostMapping("clear")
