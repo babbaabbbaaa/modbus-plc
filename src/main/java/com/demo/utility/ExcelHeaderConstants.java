@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ExcelHeaderConstants {
-    Stamping sta = new Stamping();
 
     public static final List<ExcelCell> EXCEL_HEADERS = Arrays.asList(
 
@@ -21,6 +20,7 @@ public class ExcelHeaderConstants {
             new ExcelCell("复检人员", 5000, "getReinspectBy", Stamping.class, DataType.STRING),
             new ExcelCell("SR1000二维码编号", 14000, "getBarcodeData", Stamping.class, DataType.STRING),
             new ExcelCell("二维码字符提取", 5000, "getBarcode", Stamping.class, DataType.STRING),
+            new ExcelCell("托盘识别号", 5000, "getTrayIdentityCode", Stamping.class, DataType.STRING),
             new ExcelCell("通规功能", 4000, "getGeneralFunc", Stamping.class, DataType.STRING),
             new ExcelCell("测高功能", 4000, "getHeightFunc", Stamping.class, DataType.STRING),
             new ExcelCell("打标功能", 4000, "getFlagFunc", Stamping.class, DataType.STRING),
