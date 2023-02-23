@@ -16,3 +16,6 @@ export const secureLogin = (params) => {
 export const secureSignal = () => {
   return http.get(`${apis.secureSignal}`,{withCredentials:false});
 }
+export const secureDelete = (params) => {
+  return http.delete(`${apis.secureConfig}`, {"data": params});
+}
