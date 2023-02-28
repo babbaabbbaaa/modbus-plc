@@ -56,7 +56,7 @@ public class DieCasting implements IPLCData {
     }
 
     public DieCasting(boolean empty) {
-        if (empty) {
+        if (empty) {//创建测试数据
             this.logTime = LocalDateTime.now();
             this.productTypeId = 0;
             this.moldNo = "1";
