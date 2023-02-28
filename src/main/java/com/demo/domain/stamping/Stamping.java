@@ -86,7 +86,7 @@ public class Stamping implements IPLCData {
     public static final Stamping EMPTY_PLC_DATA = new Stamping(true);
 
     public Stamping(boolean empty) {
-        if (empty) {
+        if (empty) { //测试数据创建
             this.barcodeData = "000017212109004100@0000373029@20052200006:92:A";
             this.barcode = "20052200006";
             this.barcodeGrade = "A";
