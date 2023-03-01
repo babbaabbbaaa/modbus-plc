@@ -2,6 +2,8 @@ package com.demo.security;
 
 import com.demo.model.Response;
 import com.demo.utility.JsonUtil;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 public class SessionTimeoutFilter extends OncePerRequestFilter {
 
@@ -23,6 +26,7 @@ public class SessionTimeoutFilter extends OncePerRequestFilter {
             session.invalidate();
             try (OutputStream out = response.getOutputStream();
                  PrintStream ps = new PrintStream(out)) {
+                response.setHeader(HttpHeaders.CONTENT_TYPE, new MediaType("application", "json", StandardCharsets.UTF_8).toString());
                 ps.println(JsonUtil.writeAsString(Response.notAuthenticated()));
             }
             return;
