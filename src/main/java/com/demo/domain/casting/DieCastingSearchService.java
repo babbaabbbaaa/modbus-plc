@@ -111,4 +111,9 @@ public class DieCastingSearchService implements IDataSearchService {
     public int clear(short productTypeId) {
         return dieCastingRepository.deleteAllByProductTypeId(productTypeId);
     }
+
+    //delete all data for die casting
+    public void clear() {
+        dieCastingRepository.deleteAll();
+    }
 }
