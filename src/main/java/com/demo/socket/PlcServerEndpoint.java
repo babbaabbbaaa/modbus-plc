@@ -4,7 +4,7 @@ package com.demo.socket;
 import com.demo.plc.IDataSearchService;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.websocket.*;
+import jakarta.websocket.*;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,7 +1,7 @@
 package com.demo.domain.casting;
 
 import com.demo.model.PLCSearchCriteria;
-import org.hibernate.query.criteria.internal.OrderImpl;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, J
 
     default Specification<DieCasting> buildSpecification(PLCSearchCriteria criteria) {
         return (root, query, builder) -> query.where(buildPredicates(root, builder, criteria).toArray(new Predicate[0]))
-                .orderBy(new OrderImpl(root.get("logTime"), false)).getRestriction();
+                .orderBy(builder.desc(root.get("logTime"))).getRestriction();
     }
 
     default CriteriaQuery<Object[]> buildCountQualifiedProducts(PLCSearchCriteria criteria, CriteriaBuilder builder) {

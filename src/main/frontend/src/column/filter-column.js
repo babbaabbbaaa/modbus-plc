@@ -50,6 +50,12 @@ const data = [
     width: 135
   },
   {
+    title: '托盘识别号',
+    dataIndex: 'trayIdentityCode',
+    key: 'trayIdentityCode',
+    width: 135
+  },
+  {
     title: '通规功能',
     dataIndex: 'generalFunc',
     key: 'generalFunc',

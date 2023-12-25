@@ -1,21 +1,18 @@
 package com.demo.authentication;
 
 
-import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.TypeDef;
 import org.springframework.security.core.GrantedAuthority;
-
-import javax.persistence.*;
 
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @Table(name = "plc_role", uniqueConstraints = {@UniqueConstraint(columnNames = {"roleName"})})
-@TypeDef(name = "json", typeClass = JsonStringType.class)
+//@TypeDef(name = "json", typeClass = JsonStringType.class)
 public class Role implements GrantedAuthority {
 
     @Id

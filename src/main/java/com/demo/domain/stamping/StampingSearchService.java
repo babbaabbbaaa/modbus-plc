@@ -4,7 +4,7 @@ package com.demo.domain.stamping;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.exceptions.ServiceException;

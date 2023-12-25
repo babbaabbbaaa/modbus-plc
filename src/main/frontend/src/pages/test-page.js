@@ -31,6 +31,14 @@ class TestPage extends React.Component {
             labelCol: {span: 12}
         },
         {
+            label: '托盘识别号',
+            controlType: 'Input',
+            key: 'trayIdentityCode',
+            disabled: true,
+            col: {xs:24, sm:24,md:6,lg:6,xl:6},
+            labelCol: {span: 12}
+        },
+        {
             label: '通规功能(D7006)',
             controlType: 'Input',
             key: 'generalFunc',

@@ -2,7 +2,7 @@ import React from 'react';
 import {Form, Row, Col, Button, Modal, message} from 'antd';
 import TablePanel from '@/components/table';
 import OperateModal from '../components/operate-modal';
-import {secureConfig, secureConfigs, secureClear, secureLogin, secureSignal} from '@/service/config-service';
+import {secureConfig, secureConfigs, secureClear, secureDelete} from '@/service/config-service';
 
 
 class ConfigAscPage extends React.Component {
@@ -176,6 +176,25 @@ class ConfigAscPage extends React.Component {
         });
     }
 
+    deleteHandle = () => {
+        Modal.confirm({
+            title: `您确认要删除吗？`,
+            okText: '确认',
+            cancelText: '取消',
+            onOk: () => {
+                const data = this.state.selectedRows[0];
+                secureDelete({productTypeId: data.productTypeId, id: data.id}).then(res => {
+                    if (res.code === 0) {
+                        message.success('删除成功！');
+                        this.getConfigs();
+                    } else {
+                        message.error(res.message || '删除失败！');
+                    }
+                })
+            }
+        });
+    }
+
     editHandle = () => {
         this.setState({
             title: '编辑配置',
@@ -217,6 +236,9 @@ class ConfigAscPage extends React.Component {
                         <Button className="btn submit-btn"
                                 disabled={selectedRowKeys.length !== 1}
                                 onClick={this.editHandle}> 编辑配置 </Button>
+                        <Button className="btn submit-btn"
+                                disabled={selectedRowKeys.length !== 1}
+                                onClick={this.deleteHandle}> 删除配置 </Button>
                         <Button className="btn submit-btn" onClick={this.addHandle}> 新增 </Button>
                     </Col>
                 </Row>

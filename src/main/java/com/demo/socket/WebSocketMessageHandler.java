@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 
 @Getter
 @Setter

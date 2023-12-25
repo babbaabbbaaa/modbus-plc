@@ -1,7 +1,6 @@
 package com.demo.domain.stamping;
 
 import com.demo.model.PLCSearchCriteria;
-import org.hibernate.query.criteria.internal.OrderImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -9,10 +8,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,7 +34,7 @@ public interface StampingRepository extends JpaRepository<Stamping, Long>, JpaSp
 
     default Specification<Stamping> buildSpecification(PLCSearchCriteria criteria) {
         return (root, query, builder) -> query.where(buildPredicates(root, query, builder, criteria).toArray(new Predicate[0]))
-                .orderBy(new OrderImpl(root.get("logTime"), false)).getRestriction();
+                .orderBy(builder.desc(root.get("logTime"))).getRestriction();
     }
 
     default CriteriaQuery<Object[]> buildCountQualifiedProducts(PLCSearchCriteria criteria, CriteriaBuilder builder) {

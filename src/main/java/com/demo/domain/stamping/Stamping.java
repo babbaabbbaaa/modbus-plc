@@ -3,7 +3,7 @@ package com.demo.domain.stamping;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import com.demo.enums.BarcodeDuplicateEnum;
 import com.demo.plc.IPLCData;
