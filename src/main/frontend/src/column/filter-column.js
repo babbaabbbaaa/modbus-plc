@@ -44,6 +44,12 @@ const data = [
     width: 420
   },
   {
+    title: 'SR1000二维码编号位数',
+    dataIndex: 'barcodeDataLength',
+    key: 'barcodeDataLength',
+    width: 420
+  },
+  {
     title: '二维码字符提取',
     dataIndex: 'barcode',
     key: 'barcode',

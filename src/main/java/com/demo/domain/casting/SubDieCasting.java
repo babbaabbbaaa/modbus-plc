@@ -24,6 +24,7 @@ public class SubDieCasting implements IPLCData {
     private Long subId;
     private Integer serialNumber;
     private String barcodeData;
+    private String barcodeDataLength;
     private String markingFunc;  //打标
     @Column(columnDefinition = "double")
     private Float weightDifference;

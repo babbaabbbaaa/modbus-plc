@@ -58,6 +58,7 @@ public class Stamping implements IPLCData {
     private String spinCheckFunc;
     private String weldFunc;
     private String barcodeData;
+    private String barcodeDataLength;
     private String barcode;
     @Column(columnDefinition = "varchar(255)")
     private String trayIdentityCode;
