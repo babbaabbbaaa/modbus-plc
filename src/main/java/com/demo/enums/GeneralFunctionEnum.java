@@ -1,6 +1,8 @@
 package com.demo.enums;
 
 
+import lombok.Getter;
+
 public enum GeneralFunctionEnum {
 
     UNDEFINED(0, "未定义", "未定义"),
@@ -10,6 +12,7 @@ public enum GeneralFunctionEnum {
 
     private final String definition;
     private final String longDefinition;
+    @Getter
     private final int code;
 
     GeneralFunctionEnum(int code, String definition, String longDefinition) {
@@ -29,7 +32,4 @@ public enum GeneralFunctionEnum {
         return FUNCTION_ENUMS[ordinal].longDefinition;
     }
 
-    public int getCode() {
-        return this.code;
-    }
 }
