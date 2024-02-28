@@ -1,21 +1,10 @@
 package com.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Response<T> {
-
-
-    private int code;
-    private String msg;
-    private String message;
-    private T data;
+public record Response<T>(
+        int code,
+        String msg,
+        String message,
+        T data) {
 
     public static <T> Response<T> success(T data) {
         return new Response<>(0, "", "", data);

@@ -3,6 +3,7 @@ package com.demo.controller;
 
 import com.demo.config.PatternConfig;
 import com.demo.config.PatternConfigService;
+import com.demo.model.DataClearDto;
 import com.demo.model.DataClearModel;
 import com.demo.model.PLCConfirmModel;
 import com.demo.model.Response;
@@ -44,8 +45,8 @@ public class SecureController {
     }
 
     @PostMapping("clear")
-    public Response<Integer> clear(@RequestBody DataClearModel dataClearModel) {
-        return Response.success(dataSearchService.clear(dataClearModel.getProductTypeId()));
+    public Response<Integer> clear(@RequestBody DataClearDto dataClearModel) {
+        return Response.success(dataSearchService.clear(dataClearModel.productTypeId()));
     }
 
     @GetMapping("reinspect")

@@ -13,23 +13,24 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class PLCSearchCriteria {
+public record PLCSearchCriteria(
+        short productTypeId,
+        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime from,
+        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        LocalDateTime end,
+        String barcode,
+        String barcodeData,
+        Boolean qualified,
+        String autoInspectResult,
+        String manualReinspectResult,
+        String reinspectBy,
+        int page,
+        int size
+) {
 
-    private short productTypeId = 0;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime from;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime end;
-    private String barcode;
-    private String barcodeData;
-    private Boolean qualified;
-    private String autoInspectResult;
-    private String manualReinspectResult;
-    private String reinspectBy;
-    private int page = 0;
-    private int size = 10;
 
     @JsonIgnore
     @ApiParam(hidden = true)
