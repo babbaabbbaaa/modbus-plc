@@ -2,6 +2,7 @@ package com.demo.security;
 
 import com.demo.model.Response;
 import com.demo.utility.JsonUtil;
+import jakarta.annotation.Nonnull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,8 +21,11 @@ public class SessionTimeoutFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    @Nonnull HttpServletResponse response,
+                                    @Nonnull FilterChain filterChain) throws ServletException, IOException {
         HttpSession session = request.getSession();
+        //this is for some requests to invalidate the session
         if (System.currentTimeMillis() - session.getCreationTime() > 1800000L) {
             session.invalidate();
             try (OutputStream out = response.getOutputStream();

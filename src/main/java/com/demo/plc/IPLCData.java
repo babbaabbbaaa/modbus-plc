@@ -30,7 +30,8 @@ public interface IPLCData {
     }
 
     default String getBarcodeData(short[] data, int offset, int length) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(100);
+        //calculate the byte length according to the string length, one character persists four bytes.
+        ByteBuffer byteBuffer = ByteBuffer.allocate(length * 4);
         byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
         shortBuffer.put(Arrays.copyOfRange(data, offset, offset + length));
