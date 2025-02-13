@@ -37,23 +37,23 @@ public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, J
     default List<Predicate> buildPredicates(Root<DieCasting> root, CriteriaBuilder builder, PLCSearchCriteria criteria) {
         List<Predicate> predicates = new ArrayList<>();
         Path<Collection<SubDieCasting>> subDieCasting = root.join("subDieCastings");
-        if (StringUtils.hasText(criteria.getBarcode())) {
-            predicates.add(builder.equal(subDieCasting.get("barcode"), criteria.getBarcode()));
+        if (StringUtils.hasText(criteria.barcode())) {
+            predicates.add(builder.equal(subDieCasting.get("barcode"), criteria.barcode()));
         }
-        if (StringUtils.hasText(criteria.getBarcodeData())) {
-            predicates.add(builder.like(subDieCasting.get("barcodeData"), criteria.getBarcodeData() + "%"));
+        if (StringUtils.hasText(criteria.barcodeData())) {
+            predicates.add(builder.like(subDieCasting.get("barcodeData"), criteria.barcodeData() + "%"));
         }
-        if (StringUtils.hasText(criteria.getAutoInspectResult())) {
-            predicates.add(builder.equal(subDieCasting.get("autoInspectResult"), criteria.getAutoInspectResult()));
+        if (StringUtils.hasText(criteria.autoInspectResult())) {
+            predicates.add(builder.equal(subDieCasting.get("autoInspectResult"), criteria.autoInspectResult()));
         }
-        if (StringUtils.hasText(criteria.getManualReinspectResult())) {
-            predicates.add(builder.equal(subDieCasting.get("manualReinspectResult"), criteria.getManualReinspectResult()));
+        if (StringUtils.hasText(criteria.manualReinspectResult())) {
+            predicates.add(builder.equal(subDieCasting.get("manualReinspectResult"), criteria.manualReinspectResult()));
         }
-        if (StringUtils.hasText(criteria.getReinspectBy())) {
-            predicates.add(builder.equal(subDieCasting.get("reinspectBy"), criteria.getReinspectBy()));
+        if (StringUtils.hasText(criteria.reinspectBy())) {
+            predicates.add(builder.equal(subDieCasting.get("reinspectBy"), criteria.reinspectBy()));
         }
-        LocalDateTime from = criteria.getFrom();
-        LocalDateTime end = criteria.getEnd();
+        LocalDateTime from = criteria.from();
+        LocalDateTime end = criteria.end();
         if (null == from && predicates.isEmpty()) {
             from = LocalDate.now().atStartOfDay();
         }
@@ -66,7 +66,7 @@ public interface DieCastingRepository extends JpaRepository<DieCasting, Long>, J
         if (null != end) {
             predicates.add(builder.lessThanOrEqualTo(root.get("logTime"), end));
         }
-        predicates.add(builder.equal(root.get("productTypeId"), criteria.getProductTypeId()));
+        predicates.add(builder.equal(root.get("productTypeId"), criteria.productTypeId()));
         return predicates;
     }
 }

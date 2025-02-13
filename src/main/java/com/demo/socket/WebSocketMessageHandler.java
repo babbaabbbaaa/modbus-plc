@@ -24,7 +24,7 @@ public class WebSocketMessageHandler {
     public WebSocketMessageHandler(IDataSearchService dataSearchService, Session session) {
         this.dataSearchService = dataSearchService;
         this.session = session;
-        this.criteria = new PLCSearchCriteria();
+        this.criteria = null;
     }
 
 

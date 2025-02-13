@@ -2,6 +2,7 @@ package com.demo.socket;
 
 
 import com.demo.plc.IDataSearchService;
+import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;
 
 import jakarta.websocket.*;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-//@ServerEndpoint("/plc/server")
+@ServerEndpoint("/plc/server")
 public class PlcServerEndpoint {
 
     private static final Map<String, WebSocketMessageHandler> CLIENTS_SESSIONS = new ConcurrentHashMap<>();
