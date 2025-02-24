@@ -11,8 +11,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 public record PLCSearchCriteria(
         short productTypeId,
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

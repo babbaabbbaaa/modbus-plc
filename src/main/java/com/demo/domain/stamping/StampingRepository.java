@@ -46,14 +46,14 @@ public interface StampingRepository extends JpaRepository<Stamping, Long>, JpaSp
 
     default List<Predicate> buildPredicates(Root<Stamping> root, CriteriaQuery<?> query, CriteriaBuilder builder, PLCSearchCriteria criteria) {
         List<Predicate> predicates = new ArrayList<>();
-        if (StringUtils.hasText(criteria.getBarcode())) {
-            predicates.add(builder.equal(root.get("barcode"), criteria.getBarcode()));
+        if (StringUtils.hasText(criteria.barcode())) {
+            predicates.add(builder.equal(root.get("barcode"), criteria.barcode()));
         }
-        if (StringUtils.hasText(criteria.getBarcodeData())) {
-            predicates.add(builder.like(root.get("barcodeData"), criteria.getBarcodeData() + "%"));
+        if (StringUtils.hasText(criteria.barcodeData())) {
+            predicates.add(builder.like(root.get("barcodeData"), criteria.barcodeData() + "%"));
         }
-        LocalDateTime from = criteria.getFrom();
-        LocalDateTime end = criteria.getEnd();
+        LocalDateTime from = criteria.from();
+        LocalDateTime end = criteria.end();
         if (null == from && predicates.isEmpty()) {
             from = LocalDate.now().atStartOfDay();
         }
@@ -66,13 +66,13 @@ public interface StampingRepository extends JpaRepository<Stamping, Long>, JpaSp
         if (null != end) {
             predicates.add(builder.lessThanOrEqualTo(root.get("logTime"), end));
         }
-        if (null != criteria.getAutoInspectResult()) {
-            predicates.add(builder.equal(root.get("autoInspectResult"), criteria.getAutoInspectResult()));
-            if (Objects.equals("设备OK", criteria.getAutoInspectResult())) {
+        if (null != criteria.autoInspectResult()) {
+            predicates.add(builder.equal(root.get("autoInspectResult"), criteria.autoInspectResult()));
+            if (Objects.equals("设备OK", criteria.autoInspectResult())) {
                 predicates.add(builder.and(builder.isNotNull(root.get("barcodeData")), builder.notEqual(root.get("barcodeData"), "")));
             }
         }
-        predicates.add(builder.equal(root.get("productTypeId"), criteria.getProductTypeId()));
+        predicates.add(builder.equal(root.get("productTypeId"), criteria.productTypeId()));
         return predicates;
     }
 }

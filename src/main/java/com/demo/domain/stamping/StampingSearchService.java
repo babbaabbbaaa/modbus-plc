@@ -48,7 +48,7 @@ public class StampingSearchService implements IDataSearchService {
     @Override
     public Page<Stamping> search(PLCSearchCriteria criteria) {
         Page<Stamping> stampings = stampingRepository.findAll(stampingRepository.buildSpecification(criteria), criteria.createPageRequest());
-        if (StringUtils.hasText(criteria.getBarcodeData()) && stampings.isEmpty()) {
+        if (StringUtils.hasText(criteria.barcodeData()) && stampings.isEmpty()) {
             throw new ServiceException("二维码有误！");
         }
         return stampings;
