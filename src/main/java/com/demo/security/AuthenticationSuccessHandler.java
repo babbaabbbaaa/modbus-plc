@@ -27,7 +27,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
             String result = JsonUtil.writeAsString(Response.success(
                 new UserModel(authentication.getName(),
                         authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))));
-            out.println(URLEncoder.encode(result, StandardCharsets.UTF_8.displayName()));
+            out.println(URLEncoder.encode(result, StandardCharsets.UTF_8));
             out.flush();
 
         }
